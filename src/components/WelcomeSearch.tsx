@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { AnimatePresence, m } from "motion/react";
 import { BuildingsIcon, MagnifyingGlassIcon, MapTrifoldIcon } from "@phosphor-icons/react/ssr";
 import { SearchPanel } from "@/components/SearchPanel";
@@ -72,12 +73,17 @@ export function WelcomeSearch() {
           {path === "mapa" ? (
             <div>
               <p className="text-sm leading-6 text-ink/70">
-                El mapa está un poco más abajo. Cada mancha es un barrio: el verde se oscurece con memoria vecinal, el
-                vino marca avisos de abuso.
+                El plano está más abajo y no se come el scroll. Si conoces el nombre, entra por la lista; si quieres
+                panear, pulsa «Usar el mapa».
               </p>
-              <a href="#mapa" className="btn btn-ink mt-4">
-                Ver el mapa de Madrid
-              </a>
+              <div className="mt-4 flex flex-wrap gap-2">
+                <a href="#mapa" className="btn btn-ink">
+                  Ver el mapa de Madrid
+                </a>
+                <Link href="/barrios" className="btn btn-ghost">
+                  Lista de barrios
+                </Link>
+              </div>
             </div>
           ) : null}
         </m.div>

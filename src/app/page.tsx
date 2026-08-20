@@ -20,6 +20,15 @@ import { getBarrio } from "@/lib/barrios-data";
 
 export const dynamic = "force-dynamic";
 
+const MAP_SHORTCUTS = [
+  { slug: "embajadores", label: "Embajadores" },
+  { slug: "universidad", label: "Universidad" },
+  { slug: "justicia", label: "Justicia" },
+  { slug: "goya", label: "Goya" },
+  { slug: "acacias", label: "Acacias" },
+  { slug: "cuatro-caminos", label: "Cuatro Caminos" },
+];
+
 export default async function HomePage() {
   const stats = await reportStats();
   const latest = (await listReports()).slice(0, 3);
@@ -116,25 +125,14 @@ export default async function HomePage() {
         </p>
       </section>
 
-      <section id="mapa" className="mx-auto max-w-6xl scroll-mt-24 px-4 py-6">
-        <div className="mb-4 flex flex-wrap items-end justify-between gap-3">
-          <div>
-            <p className="kicker">Mapa vivo</p>
-            <h2 className="mt-2 font-display text-3xl">Pulsa un barrio de Madrid</h2>
-            <p className="mt-2 max-w-2xl text-sm leading-6 text-ink/65">
-              {BARRIOS.length} barrios oficiales. El verde se oscurece donde hay más relatos; el vino marca avisos de
-              abuso. Si quieres un portal concreto, activa parcelas del Catastro: un clic abre la hoja.
-            </p>
-          </div>
-          <Link href="/barrios" className="text-sm underline decoration-gold">
-            Lista de barrios
-          </Link>
-        </div>
-        <MadridMap statsByBarrio={stats.byBarrio} />
-      </section>
-
-      <section className="mx-auto max-w-6xl px-4 py-10">
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+      <section className="mx-auto max-w-6xl px-4 py-8">
+        <p className="kicker">Sin pasar por el plano</p>
+        <h2 className="mt-2 font-display text-3xl sm:text-4xl">Atajos que no atrapan el dedo</h2>
+        <p className="mt-3 max-w-2xl text-sm leading-6 text-ink/65">
+          En el teléfono el mapa se come el scroll. Estos caminos van antes a propósito: firma, gestora, lista de
+          barrios o dejar rastro. El plano, más abajo, no se mueve hasta que pulses «Usar el mapa».
+        </p>
+        <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           <Job
             href="/checklist"
             kicker="Tarea"
@@ -151,9 +149,9 @@ export default async function HomePage() {
           />
           <Job
             href="/barrios"
-            kicker="Mapa"
+            kicker="Lista"
             title="131 barrios"
-            body="Si conoces el nombre, entra por la lista."
+            body="Por distrito y por nombre, sin arrastrar el plano."
             icon={MapTrifoldIcon}
           />
           <Job
@@ -172,6 +170,38 @@ export default async function HomePage() {
           />
           <HeroStat label="Avisos de abuso" value={String(stats.abuso)} />
         </dl>
+      </section>
+
+      <section id="mapa" className="mx-auto max-w-6xl scroll-mt-24 px-4 py-6">
+        <div className="mb-4 flex flex-wrap items-end justify-between gap-3">
+          <div>
+            <p className="kicker">Mapa vivo</p>
+            <h2 className="mt-2 font-display text-3xl">Pulsa un barrio de Madrid</h2>
+            <p className="mt-2 max-w-2xl text-sm leading-6 text-ink/65">
+              {BARRIOS.length} barrios oficiales. El verde se oscurece donde hay más relatos; el vino marca avisos de
+              abuso. El plano está quieto a propósito: «Usar el mapa» para panear, «Seguir con la página» para seguir
+              bajando.
+            </p>
+            <p className="mt-3 flex flex-wrap gap-2">
+              {MAP_SHORTCUTS.map((item) => (
+                <Link
+                  key={item.slug}
+                  href={`/barrios/${item.slug}`}
+                  className="rounded-full border border-ink/10 bg-white/70 px-3 py-1.5 text-xs text-ink/75 hover:border-gold"
+                >
+                  {item.label}
+                </Link>
+              ))}
+              <Link
+                href="/barrios"
+                className="rounded-full bg-ink px-3 py-1.5 text-xs text-paper"
+              >
+                Toda la lista
+              </Link>
+            </p>
+          </div>
+        </div>
+        <MadridMap statsByBarrio={stats.byBarrio} />
       </section>
 
       <section className="mx-auto grid max-w-6xl gap-10 px-4 pb-20 lg:grid-cols-[1.1fr_0.9fr]">

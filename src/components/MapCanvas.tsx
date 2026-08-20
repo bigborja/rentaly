@@ -43,6 +43,29 @@ function InvalidateSize() {
   return null;
 }
 
+function GestureLock({ live }: { live: boolean }) {
+  const map = useMap();
+  useEffect(() => {
+    map.scrollWheelZoom.disable();
+    if (live) {
+      map.dragging.enable();
+      map.touchZoom.enable();
+      map.doubleClickZoom.enable();
+      map.boxZoom.enable();
+      map.keyboard.enable();
+    } else {
+      map.dragging.disable();
+      map.touchZoom.disable();
+      map.doubleClickZoom.disable();
+      map.boxZoom.disable();
+      map.keyboard.disable();
+    }
+    const timer = window.setTimeout(() => map.invalidateSize(), 80);
+    return () => window.clearTimeout(timer);
+  }, [map, live]);
+  return null;
+}
+
 function ClickCatastro({
   enabled,
   onSelect,
@@ -93,6 +116,7 @@ export default function MapCanvas({
   const router = useRouter();
   const [geo, setGeo] = useState<GeoJsonObject | null>(null);
   const [catastro, setCatastro] = useState(false);
+  const [live, setLive] = useState(false);
   const [hit, setHit] = useState<ParcelHit | null>(null);
   const maxTotal = useMemo(
     () => Math.max(1, ...Object.values(statsByBarrio).map((item) => item.total)),
@@ -115,8 +139,8 @@ export default function MapCanvas({
     <div
       className={
         bleed
-          ? `relative h-full min-h-[420px] overflow-hidden ${className || ""}`
-          : `relative overflow-hidden rounded-[28px] border border-ink/10 shadow-lift ${className || ""}`
+          ? `relative h-full min-h-[420px] overflow-hidden ${live ? "" : "[&_.leaflet-container]:pointer-events-none"} ${className || ""}`
+          : `relative overflow-hidden rounded-[28px] border border-ink/10 shadow-lift ${live ? "" : "[&_.leaflet-container]:pointer-events-none"} ${className || ""}`
       }
     >
       <MapContainer
@@ -124,8 +148,8 @@ export default function MapCanvas({
         zoom={12}
         minZoom={11}
         maxZoom={18}
-        scrollWheelZoom
-        className={bleed ? "h-full w-full min-h-[420px]" : "h-[min(62vh,560px)] w-full min-h-[420px]"}
+        scrollWheelZoom={false}
+        className={bleed ? "h-full w-full min-h-[420px]" : "h-[min(52vh,480px)] w-full min-h-[360px]"}
         maxBounds={[
           [40.3, -3.9],
           [40.57, -3.5],
@@ -176,12 +200,15 @@ export default function MapCanvas({
         <InvalidateSize />
         <FitBarrio barrio={focus} />
         <ClickCatastro enabled={catastro} onSelect={setHit} />
+        <GestureLock live={live} />
       </MapContainer>
       <div className="pointer-events-none absolute inset-0 z-[400]">
         {chrome ? (
           <>
             <div className="pointer-events-auto absolute left-4 top-4 max-w-xs rounded-2xl bg-paper/95 px-3 py-2 text-xs leading-5 text-ink/80 shadow-float">
-              {hint || defaultHint}
+              {live
+                ? hint || defaultHint
+                : "El plano no mueve la página. Pulsa «Usar el mapa» cuando quieras panear; si no, entra por la lista."}
             </div>
             <div className="pointer-events-auto absolute right-4 top-4 space-y-1.5 rounded-2xl bg-paper/95 px-3 py-2 text-xs text-ink/75 shadow-float">
               <p className="flex items-center gap-2">
@@ -195,16 +222,36 @@ export default function MapCanvas({
             </div>
           </>
         ) : null}
-        <button
-          type="button"
-          aria-pressed={catastro}
-          onClick={() => setCatastro((value) => !value)}
-          className={`pointer-events-auto absolute bottom-4 left-4 rounded-full px-3 py-2 text-xs shadow-float transition ${
-            catastro ? "bg-gold text-ink" : "bg-ink/90 text-paper"
-          }`}
-        >
-          {catastro ? "Parcelas Catastro · activas" : "Activar parcelas del Catastro"}
-        </button>
+        {live ? (
+          <>
+            <button
+              type="button"
+              aria-pressed={catastro}
+              onClick={() => setCatastro((value) => !value)}
+              className={`pointer-events-auto absolute bottom-4 left-4 rounded-full px-3 py-2 text-xs shadow-float transition ${
+                catastro ? "bg-gold text-ink" : "bg-ink/90 text-paper"
+              }`}
+            >
+              {catastro ? "Parcelas Catastro · activas" : "Activar parcelas del Catastro"}
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setLive(false);
+                setCatastro(false);
+              }}
+              className="pointer-events-auto absolute bottom-4 right-4 rounded-full bg-paper/95 px-3 py-2 text-xs text-ink shadow-float"
+            >
+              Seguir con la página
+            </button>
+          </>
+        ) : (
+          <div className="absolute inset-x-0 bottom-0 flex justify-center bg-gradient-to-t from-paper/90 to-transparent pb-8 pt-16">
+            <button type="button" onClick={() => setLive(true)} className="pointer-events-auto btn btn-ink shadow-float">
+              Usar el mapa
+            </button>
+          </div>
+        )}
       </div>
       <ParcelSheet hit={hit} onClose={() => setHit(null)} />
     </div>

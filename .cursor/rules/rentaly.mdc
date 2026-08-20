@@ -16,7 +16,7 @@ Civic PWA for Madrid-capital tenants. Open data + crowdsourcing. Not a listings 
 
 ## Interaction
 
-- Home: editorial welcome (value, 3 visible steps, CTAs), then search by intent, then the map as a named invitation, then a short FAQ (mission, sources, resources). Do not use the map as a full-viewport wallpaper that hides the offer.
+- Home: editorial welcome, search, shortcuts (checklist / gestoras / barrio list) **before** the map so scroll is not trapped. The map stays locked until «Usar el mapa»; wheel never zooms the page away.
 - Map-first after that. Barrio click stays the default. **Activating Catastro parcels** (explicit) opens a **bottom sheet**, then `/inmueble/[rc]` for SERPAVI, IRAV and the written next step.
 - Scorecard tiles: Catastro m²/uso, VUT nearby, community memory, CIF/gestora, SERPAVI, IRAV. ITE stays on the full dossier as a sede link — never an invented outcome.
 - Rent reference is **SERPAVI + IRAV**, never IVIMA and never Idealista prices.
