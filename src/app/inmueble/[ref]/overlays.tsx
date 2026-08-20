@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import Link from "next/link";
-import type { LucideIcon } from "lucide-react";
-import { BarChart3, Briefcase, ClipboardCheck, KeyRound } from "lucide-react";
+import { ChartBarIcon, BriefcaseIcon, ClipboardTextIcon, KeyIcon } from "@phosphor-icons/react/ssr";
+import type { Icon } from "@phosphor-icons/react";
 import { touristLicensesOnParcel } from "@/clients/madrid/vut";
 import { censusSectionAt } from "@/clients/ine/atlas-renta";
 import { inspectionConsulta } from "@/clients/madrid/ite";
@@ -24,7 +24,7 @@ function OverlayCard({
   children,
 }: {
   tone: keyof typeof TONE;
-  icon: LucideIcon;
+  icon: Icon;
   kicker: string;
   title: string;
   children: ReactNode;
@@ -69,7 +69,7 @@ export async function VutPanel({
       : { onParcel: [], nearby: [] };
   const vutUnits = vut.onParcel.reduce((sum, item) => sum + item.units, 0);
   return (
-    <OverlayCard tone="sage" icon={KeyRound} kicker="Viviendas de uso turístico" title="Licencias VUT">
+    <OverlayCard tone="sage" icon={KeyIcon} kicker="Viviendas de uso turístico" title="Licencias VUT">
       <p className="mt-2 text-xs leading-5 text-ink/55">
         VUT es una vivienda con licencia para alquilar a turistas. Cruzamos el listado del Ayuntamiento con la
         referencia catastral de esta parcela. No implica que el piso del anuncio esté en esa lista.
@@ -127,7 +127,7 @@ export async function ContextPanel({
     : null;
   const ite = inspectionConsulta(address);
   return (
-    <OverlayCard tone="gold" icon={BarChart3} kicker="Sección censal · renta" title="Contexto de barrio estadístico">
+    <OverlayCard tone="gold" icon={ChartBarIcon} kicker="Sección censal · renta" title="Contexto de barrio estadístico">
       <p className="mt-2 text-xs leading-5 text-ink/55">
         La sección censal es un recorte del INE más pequeño que el barrio. La renta es la media de los hogares de esa
         pieza, no de este portal. SERPAVI abre el visor estatal de precios de alquiler de la zona. ITE es la inspección
@@ -158,7 +158,7 @@ export async function ContextPanel({
         target="_blank"
         rel="noreferrer"
       >
-        <UiIcon icon={ClipboardCheck} size="sm" className="text-paper" />
+        <UiIcon icon={ClipboardTextIcon} size="sm" className="text-paper" />
         Consultar ITE/IEE en la sede
       </a>
       <p className="mt-2 text-xs text-ink/50">No inventamos el resultado de la inspección.</p>
@@ -177,7 +177,7 @@ export async function OwnershipPanel({
   const taxIds = ownershipClaims.map((claim) => claim.legalEntity?.taxId).filter(Boolean) as string[];
   const counts = taxIds.length ? await parcelCountsByTaxId(taxIds) : {};
   return (
-    <OverlayCard tone="ink" icon={Briefcase} kicker="Titularidad" title="Personas jurídicas en esta finca">
+    <OverlayCard tone="ink" icon={BriefcaseIcon} kicker="Titularidad" title="Personas jurídicas en esta finca">
       <p className="mt-2 max-w-2xl text-sm text-ink/65">
         El Catastro no publica el nombre de dueños particulares y aquí tampoco. Solo se vincula un CIF (empresa, SOCIMI,
         fondo). Un aporte vecinal queda como baja confianza hasta que haya un enlace a BOE, BORM o registradores. Si el

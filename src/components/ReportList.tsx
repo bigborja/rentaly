@@ -6,12 +6,12 @@ import type { Report } from "@/lib/types";
 import { getBarrio } from "@/lib/barrios-data";
 import { EmptyStamp } from "@/components/illustrations";
 import { UiIcon } from "@/components/UiIcon";
-import { MessageSquare, TriangleAlert, Wrench } from "lucide-react";
+import { ChatTeardropTextIcon, WarningIcon, WrenchIcon } from "@phosphor-icons/react/ssr";
 
 const TYPE_ICON = {
-  experiencia: MessageSquare,
-  incidente: Wrench,
-  abuso: TriangleAlert,
+  experiencia: ChatTeardropTextIcon,
+  incidente: WrenchIcon,
+  abuso: WarningIcon,
 } as const;
 
 export function ReportList({ reports }: { reports: Report[] }) {

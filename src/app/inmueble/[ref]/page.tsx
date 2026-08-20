@@ -12,7 +12,7 @@ import { notFound } from "next/navigation";
 import { Guide } from "@/components/Guide";
 import { CadastralStamp } from "@/components/illustrations";
 import { UiIcon } from "@/components/UiIcon";
-import { Map, PenLine, Ruler } from "lucide-react";
+import { MapTrifoldIcon, PencilSimpleIcon, RulerIcon } from "@phosphor-icons/react/ssr";
 import { ContextPanel, OverlayFallback, OwnershipPanel, VutPanel } from "./overlays";
 
 export const dynamic = "force-dynamic";
@@ -73,7 +73,7 @@ export default async function InmueblePage({ params }: { params: Promise<{ ref: 
       <div className="relative mt-8 overflow-hidden rounded-3xl bg-ink px-5 py-6 text-paper shadow-lift">
         <CadastralStamp className="pointer-events-none absolute -right-2 -top-2 w-28 text-gold/25 sm:w-36" />
         <p className="flex items-center gap-2 text-xs uppercase tracking-[0.16em] text-gold">
-          <UiIcon icon={Ruler} size="sm" className="text-gold" />
+          <UiIcon icon={RulerIcon} size="sm" className="text-gold" />
           Contrasta el anuncio
         </p>
         <p className="mt-1 font-mono text-[11px] tracking-[0.14em] text-paper/45">RC · {property.ref}</p>
@@ -187,7 +187,7 @@ export default async function InmueblePage({ params }: { params: Promise<{ ref: 
             target="_blank"
             rel="noreferrer"
           >
-            <UiIcon icon={Map} size="sm" className="text-paper" />
+            <UiIcon icon={MapTrifoldIcon} size="sm" className="text-paper" />
             Cartografía oficial del Catastro
           </a>
         ) : null}
@@ -195,10 +195,16 @@ export default async function InmueblePage({ params }: { params: Promise<{ ref: 
           href={`/aportar?ref=${property.ref}${barrio ? `&barrio=${barrio.id}` : ""}`}
           className="inline-flex items-center gap-2 rounded-full bg-wine px-4 py-2 text-paper"
         >
-          <UiIcon icon={PenLine} size="sm" className="text-paper" />
+          <UiIcon icon={PencilSimpleIcon} size="sm" className="text-paper" />
           Dejar experiencia o aviso
         </Link>
       </div>
+      <Link
+        href={`/aportar?ref=${property.ref}${barrio ? `&barrio=${barrio.id}` : ""}`}
+        className="btn btn-primary fixed inset-x-4 bottom-[4.75rem] z-20 shadow-lift md:hidden"
+      >
+        Dejar experiencia o aviso
+      </Link>
 
       <section className="mt-14 grid gap-4 md:grid-cols-2">
         <Suspense fallback={<OverlayFallback title="Licencias VUT" />}>

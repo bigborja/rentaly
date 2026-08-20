@@ -27,6 +27,20 @@ function FitBarrio({ barrio }: { barrio?: Barrio }) {
   return null;
 }
 
+function InvalidateSize() {
+  const map = useMap();
+  useEffect(() => {
+    const refresh = () => map.invalidateSize();
+    const timer = window.setTimeout(refresh, 80);
+    window.addEventListener("resize", refresh);
+    return () => {
+      window.clearTimeout(timer);
+      window.removeEventListener("resize", refresh);
+    };
+  }, [map]);
+  return null;
+}
+
 function ClickCatastro({ enabled }: { enabled: boolean }) {
   const map = useMap();
   const router = useRouter();
@@ -52,10 +66,16 @@ export default function MapCanvas({
   statsByBarrio = {},
   focus,
   className,
+  frame = "card",
+  hint,
+  chrome = true,
 }: {
   statsByBarrio?: Stats;
   focus?: Barrio;
   className?: string;
+  frame?: "card" | "bleed";
+  hint?: string;
+  chrome?: boolean;
 }) {
   const router = useRouter();
   const [geo, setGeo] = useState<GeoJsonObject | null>(null);
@@ -64,6 +84,7 @@ export default function MapCanvas({
     () => Math.max(1, ...Object.values(statsByBarrio).map((item) => item.total)),
     [statsByBarrio],
   );
+  const bleed = frame === "bleed";
 
   useEffect(() => {
     fetch("/geo/barrios.geojson")
@@ -72,22 +93,32 @@ export default function MapCanvas({
       .catch(() => setGeo(null));
   }, []);
 
+  const defaultHint = catastro
+    ? "Parcelas del Catastro activas: pulsa un edificio para abrir su ficha (metros, uso y memoria)."
+    : "Pulsa un barrio para entrar. El verde se oscurece con más relatos; el vino marca avisos de abuso.";
+
   return (
-    <div className={`relative overflow-hidden rounded-[28px] border border-ink/10 shadow-lift ${className || ""}`}>
+    <div
+      className={
+        bleed
+          ? `relative h-full min-h-[420px] overflow-hidden ${className || ""}`
+          : `relative overflow-hidden rounded-[28px] border border-ink/10 shadow-lift ${className || ""}`
+      }
+    >
       <MapContainer
         center={[40.4168, -3.7038]}
         zoom={12}
         minZoom={11}
         maxZoom={18}
         scrollWheelZoom
-        className="h-[520px] w-full"
+        className={bleed ? "h-full w-full min-h-[420px]" : "h-[min(62vh,560px)] w-full min-h-[420px]"}
         maxBounds={[
           [40.3, -3.9],
           [40.57, -3.5],
         ]}
       >
         <TileLayer
-          attribution='&copy; OpenStreetMap · barrios Ayuntamiento de Madrid'
+          attribution="&copy; OpenStreetMap · barrios Ayuntamiento de Madrid"
           url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
         />
         {catastro ? (
@@ -128,36 +159,37 @@ export default function MapCanvas({
             }}
           />
         ) : null}
+        <InvalidateSize />
         <FitBarrio barrio={focus} />
         <ClickCatastro enabled={catastro} />
       </MapContainer>
-      <div className="absolute top-4 left-4 z-[400] max-w-xs rounded-2xl bg-paper/95 px-3 py-2 text-xs leading-5 text-ink/80 shadow-float">
-        {catastro
-          ? "Parcelas del Catastro activas: pulsa un edificio para abrir su ficha (metros, uso y memoria)."
-          : "Pulsa un barrio para entrar. El verde se oscurece con más relatos; el vino marca avisos de abuso."}
-      </div>
-      <div className="absolute bottom-4 right-4 z-[400] space-y-1.5 rounded-2xl bg-paper/95 px-3 py-2 text-xs text-ink/75 shadow-float">
-        <p className="flex items-center gap-2">
-          <span className="h-2.5 w-2.5 rounded-full bg-sage" />
-          Memoria vecinal
-        </p>
-        <p className="flex items-center gap-2">
-          <span className="h-2.5 w-2.5 rounded-full bg-wine" />
-          Avisos de abuso
-        </p>
-      </div>
-      <div className="absolute bottom-4 left-4 z-[400] flex flex-wrap gap-2">
-        <button
-          type="button"
-          aria-pressed={catastro}
-          onClick={() => setCatastro((value) => !value)}
-          className={`rounded-full px-3 py-2 text-xs shadow-float transition ${
-            catastro ? "bg-gold text-ink" : "bg-ink/90 text-paper"
-          }`}
-        >
-          {catastro ? "Parcelas Catastro · activas" : "Activar parcelas del Catastro"}
-        </button>
-      </div>
+      {chrome ? (
+        <div className="pointer-events-none absolute inset-0 z-[400]">
+          <div className="pointer-events-auto absolute left-4 top-4 max-w-xs rounded-2xl bg-paper/95 px-3 py-2 text-xs leading-5 text-ink/80 shadow-float">
+            {hint || defaultHint}
+          </div>
+          <div className="pointer-events-auto absolute right-4 top-4 space-y-1.5 rounded-2xl bg-paper/95 px-3 py-2 text-xs text-ink/75 shadow-float">
+            <p className="flex items-center gap-2">
+              <span className="h-2.5 w-2.5 rounded-full bg-sage" />
+              Memoria vecinal
+            </p>
+            <p className="flex items-center gap-2">
+              <span className="h-2.5 w-2.5 rounded-full bg-wine" />
+              Avisos de abuso
+            </p>
+          </div>
+          <button
+            type="button"
+            aria-pressed={catastro}
+            onClick={() => setCatastro((value) => !value)}
+            className={`pointer-events-auto absolute bottom-4 left-4 rounded-full px-3 py-2 text-xs shadow-float transition ${
+              catastro ? "bg-gold text-ink" : "bg-ink/90 text-paper"
+            }`}
+          >
+            {catastro ? "Parcelas Catastro · activas" : "Activar parcelas del Catastro"}
+          </button>
+        </div>
+      ) : null}
     </div>
   );
 }

@@ -7,7 +7,8 @@ import { ABUSE_LABELS } from "@/lib/format";
 import type { AbuseCategory, ReportType } from "@/lib/types";
 import { EvidenceCrop } from "@/components/EvidenceCrop";
 import { UiIcon } from "@/components/UiIcon";
-import { MessageSquare, TriangleAlert, Wrench } from "lucide-react";
+import { ChatTeardropTextIcon, WarningIcon, WrenchIcon } from "@phosphor-icons/react/ssr";
+import { toast } from "sonner";
 
 export function ReportForm({
   defaultBarrioId,
@@ -59,6 +60,7 @@ export function ReportForm({
       });
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || "No se ha podido publicar.");
+      toast.success("Publicado. Se ve tu apodo, no el correo.");
       if (payload.cadastralRef) router.push(`/inmueble/${payload.cadastralRef}`);
       else if (payload.barrioId) {
         const barrio = BARRIOS.find((item) => item.id === payload.barrioId);
@@ -83,9 +85,9 @@ export function ReportForm({
       <div className="grid gap-2 sm:grid-cols-3">
         {(
           [
-            ["experiencia", "Experiencia", MessageSquare],
-            ["incidente", "Incidente", Wrench],
-            ["abuso", "Aviso de abuso", TriangleAlert],
+            ["experiencia", "Experiencia", ChatTeardropTextIcon],
+            ["incidente", "Incidente", WrenchIcon],
+            ["abuso", "Aviso de abuso", WarningIcon],
           ] as const
         ).map(([value, label, icon]) => (
           <button

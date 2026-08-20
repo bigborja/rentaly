@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { officialLinks } from "@/lib/format";
 import { Guide, Steps } from "@/components/Guide";
 import { UiIcon } from "@/components/UiIcon";
-import { Scale } from "lucide-react";
+import { ScalesIcon } from "@phosphor-icons/react/ssr";
 
 export const metadata: Metadata = { title: "Derechos y recursos" };
 
@@ -37,7 +37,7 @@ export default function DerechosPage() {
   return (
     <div className="mx-auto max-w-3xl px-4 py-10">
       <p className="flex items-center gap-2 text-xs uppercase tracking-[0.18em] text-wine">
-        <UiIcon icon={Scale} size="sm" className="text-wine" />
+        <UiIcon icon={ScalesIcon} size="sm" className="text-wine" />
         No es asesoramiento jurídico
       </p>
       <h1 className="mt-2 font-display text-5xl">Derechos para no firmar a ciegas</h1>

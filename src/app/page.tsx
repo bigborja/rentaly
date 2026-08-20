@@ -2,10 +2,10 @@ import Link from "next/link";
 import { SearchPanel } from "@/components/SearchPanel";
 import { MadridMap } from "@/components/MadridMap";
 import { ReportList } from "@/components/ReportList";
-import { Guide, Steps } from "@/components/Guide";
-import { MadridCornice } from "@/components/illustrations";
-import { UiIcon } from "@/components/UiIcon";
-import { ClipboardList, Map, PenLine, type LucideIcon } from "lucide-react";
+import { Steps } from "@/components/Guide";
+import { CoachGuide } from "@/components/CoachGuide";
+import { UiIcon, type Icon } from "@/components/UiIcon";
+import { ListChecksIcon, MapTrifoldIcon, PencilSimpleIcon } from "@phosphor-icons/react/ssr";
 import { reportStats, listReports } from "@/lib/reports";
 import { BARRIOS } from "@/lib/barrios-data";
 import { getCurrentUser } from "@/lib/auth";
@@ -21,16 +21,25 @@ export default async function HomePage() {
 
   return (
     <div>
-      <section className="mx-auto max-w-6xl px-4 pb-6 pt-10">
-        <div className="grid items-end gap-6 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)]">
-          <div>
+      <section className="relative h-[min(82vh,780px)] min-h-[560px] w-full overflow-hidden">
+        <MadridMap frame="bleed" chrome={false} className="absolute inset-0" statsByBarrio={stats.byBarrio} />
+        <div className="pointer-events-none absolute right-4 top-4 z-10 space-y-1.5 rounded-2xl bg-paper/90 px-3 py-2 text-xs text-ink/75 shadow-float sm:right-8 sm:top-8">
+          <p className="flex items-center gap-2">
+            <span className="h-2.5 w-2.5 rounded-full bg-sage" />
+            Memoria
+          </p>
+          <p className="flex items-center gap-2">
+            <span className="h-2.5 w-2.5 rounded-full bg-wine" />
+            Abuso
+          </p>
+        </div>
+        <div className="relative z-10 mx-auto flex h-full max-w-6xl flex-col justify-between gap-6 px-4 pb-8 pt-8 sm:pt-12">
+          <div className="pointer-events-none max-w-2xl">
             <p className="kicker">Madrid capital · inquilinas e inquilinos</p>
-            <h1 className="mt-3 max-w-3xl font-display text-4xl leading-[1.05] sm:text-6xl">
-              Alquila con los ojos abiertos.
-            </h1>
-            <p className="mt-5 max-w-2xl text-lg leading-7 text-ink/75">
-              No listamos pisos. Contrastamos el Catastro (metros, uso, unidades), el barrio municipal y la memoria de
-              quien ya firmó, para que el siguiente contrato en Madrid capital no se negocie a ciegas.
+            <h1 className="mt-3 font-display text-5xl leading-[0.95] sm:text-7xl">Alquila con los ojos abiertos.</h1>
+            <p className="mt-5 max-w-xl text-base leading-7 text-ink/75 sm:text-lg">
+              No listamos pisos. Contrastamos el Catastro, el barrio municipal y la memoria de quien ya firmó. Pulsa el
+              mapa si conoces la ciudad; busca calle y número si tienes un anuncio.
             </p>
             {user ? (
               <p className="mt-4 text-sm text-sage">
@@ -39,7 +48,7 @@ export default async function HomePage() {
                   <>
                     {" "}
                     · tu barrio es{" "}
-                    <Link className="underline decoration-gold" href={`/barrios/${barrio.slug}`}>
+                    <Link className="pointer-events-auto underline decoration-gold" href={`/barrios/${barrio.slug}`}>
                       {barrio.name}
                     </Link>
                   </>
@@ -48,64 +57,65 @@ export default async function HomePage() {
             ) : (
               <p className="mt-4 text-sm text-ink/55">
                 Puedes explorar sin cuenta.{" "}
-                <Link href="/registro" className="underline decoration-gold">
+                <Link href="/registro" className="pointer-events-auto underline decoration-gold">
                   Crea una para publicar
                 </Link>
                 .
               </p>
             )}
           </div>
-          <MadridCornice className="w-full text-ink" />
+          <div className="pointer-events-auto mx-auto w-full max-w-2xl">
+            <SearchPanel overlay />
+          </div>
         </div>
-        <div className="mt-8">
-          <SearchPanel />
-        </div>
-        <div className="mt-8">
-          <Guide title="Si no sabes por dónde empezar">
-            <Steps
-              items={[
-                {
-                  title: "Escribe calle y número, o pega la referencia catastral",
-                  body: "El Catastro te devolverá el portal: viviendas, locales, trasteros y los metros oficiales. Si el anuncio infla la superficie, esa cifra manda.",
-                },
-                {
-                  title: "Entra en el barrio o en la ficha",
-                  body: "Ahí verás avisos de otras inquilinas, si hay viviendas turísticas en la parcela y un enlace para consultar la inspección del edificio.",
-                },
-                {
-                  title: "Usa la lista antes de firmar o deja memoria si ya vives ahí",
-                  body: "Leer no pide cuenta. Publicar sí, con apodo en público y correo privado.",
-                },
-              ]}
-            />
-            <p className="pt-1">
-              <Link href="/como-funciona" className="underline decoration-gold">
-                Guía completa y glosario (Catastro, VUT, CIF)
-              </Link>
-            </p>
-          </Guide>
-        </div>
+      </section>
+
+      <section className="mx-auto max-w-6xl px-4 py-12">
+        <CoachGuide title="Si no sabes por dónde empezar">
+          <Steps
+            items={[
+              {
+                title: "Escribe calle y número, o pega la referencia catastral",
+                body: "El Catastro te devolverá el portal: viviendas, locales, trasteros y los metros oficiales. Si el anuncio infla la superficie, esa cifra manda.",
+              },
+              {
+                title: "O entra por el mapa",
+                body: "Cada polígono es un barrio oficial. Si conoces la geografía de Madrid pero no el nombre, pulsa donde vives o donde estás mirando piso.",
+              },
+              {
+                title: "Usa la lista antes de firmar o deja memoria si ya vives ahí",
+                body: "Leer no pide cuenta. Publicar sí, con apodo en público y correo privado.",
+              },
+            ]}
+          />
+          <p>
+            <Link href="/como-funciona" className="underline decoration-gold">
+              Guía completa y glosario (Catastro, VUT, CIF)
+            </Link>
+          </p>
+        </CoachGuide>
+
         <div className="mt-8 grid gap-3 md:grid-cols-3">
           <Job
             href="/checklist"
             kicker="Tarea"
             title="Antes de firmar"
             body="Lista corta: metros del Catastro, fianza, contrato de vivienda, honorarios."
-            icon={ClipboardList}
+            icon={ListChecksIcon}
           />
           <Job
             href="/barrios"
             kicker="Mapa"
-            title="Memoria del barrio"
-            body={`${BARRIOS.length} barrios oficiales. Experiencias, incidentes y avisos.`}
-            icon={Map}
+            title="131 barrios"
+            body="Si conoces Madrid, entra por el plano. Si conoces el nombre, por la lista."
+            icon={MapTrifoldIcon}
           />
           <Job
             href={user ? "/aportar" : "/registro?next=/aportar"}
             kicker="Comunidad"
             title="Deja rastro"
-            body="Experiencia, incidente o aviso de abuso. Apodo en público, correo privado. Leer no pide cuenta."
-            icon={PenLine}
+            body="Experiencia, incidente o aviso de abuso. Apodo en público, correo privado."
+            icon={PencilSimpleIcon}
           />
         </div>
         <dl className="mt-8 grid gap-3 sm:grid-cols-4">
@@ -116,29 +126,12 @@ export default async function HomePage() {
         </dl>
       </section>
 
-      <section className="mx-auto max-w-6xl px-4 pb-16">
-        <div className="mb-4 flex items-end justify-between">
-          <div>
-            <h2 className="font-display text-3xl">Mapa de Madrid</h2>
-            <p className="text-sm text-ink/60">
-              Cada polígono es un barrio oficial. El verde se oscurece donde hay más relatos; el vino marca avisos de
-              abuso. Pulsa un barrio para entrar. El botón inferior activa las parcelas del Catastro: entonces un clic
-              abre la ficha de esa finca.
-            </p>
-          </div>
-          <Link href="/como-funciona" className="text-sm underline decoration-gold">
-            Cómo está pensado
-          </Link>
-        </div>
-        <MadridMap statsByBarrio={stats.byBarrio} />
-      </section>
-
       <section className="mx-auto grid max-w-6xl gap-10 px-4 pb-20 lg:grid-cols-[1.1fr_0.9fr]">
         <div>
           <h2 className="font-display text-3xl">Última memoria vecinal</h2>
           <p className="mb-5 mt-2 text-sm text-ink/60">
-            Experiencias de un alquiler, incidentes de finca y avisos de abuso. Son relatos de la comunidad, no
-            sentencias ni titularidad. Un solo texto no basta; un patrón en el mismo portal sí es una señal.
+            Experiencias de un alquiler, incidentes de finca y avisos de abuso. Un solo texto no basta; un patrón en el
+            mismo portal sí es una señal.
           </p>
           <ReportList reports={latest} />
         </div>
@@ -146,8 +139,7 @@ export default async function HomePage() {
           <article className="texture-ink rounded-3xl p-6 text-paper shadow-lift">
             <h3 className="font-display text-2xl text-gold">Si hay abuso ahora</h3>
             <p className="mt-3 text-sm leading-6 text-paper/80">
-              El rojo se reserva para esto. Documenta, deja aviso, y si hay delito o riesgo usa 112. El Sindicato de
-              Inquilinas recorre el resto del camino colectivo.
+              El rojo se reserva para esto. Documenta, deja aviso, y si hay delito o riesgo usa 112.
             </p>
             <div className="mt-5 flex flex-wrap gap-2">
               <Link href="/aportar?tipo=abuso" className="btn btn-primary">
@@ -161,8 +153,8 @@ export default async function HomePage() {
           <article className="card p-6">
             <h3 className="font-display text-2xl">Datos oficiales, no de portales</h3>
             <p className="mt-2 text-sm leading-6 text-ink/70">
-              La ficha sale de los servicios libres del Catastro: uso, superficie, antigüedad y unidades. No es un
-              anuncio ni un tasador. Si el portal infla metros o vende un local como piso, esa cifra es el ancla.
+              La ficha sale de los servicios libres del Catastro: uso, superficie, antigüedad y unidades. Si el portal
+              infla metros o vende un local como piso, esa cifra es el ancla.
             </p>
           </article>
         </aside>
@@ -182,7 +174,7 @@ function Job({
   kicker: string;
   title: string;
   body: string;
-  icon: LucideIcon;
+  icon: Icon;
 }) {
   return (
     <Link href={href} className="card block p-5 transition hover:border-wine/40 hover:shadow-lift">

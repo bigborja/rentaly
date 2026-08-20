@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import { portfolioForTaxId } from "@/lib/ownership-store";
 import { Guide } from "@/components/Guide";
 import { UiIcon } from "@/components/UiIcon";
-import { Briefcase } from "lucide-react";
+import { BriefcaseIcon } from "@phosphor-icons/react/ssr";
 
 export const dynamic = "force-dynamic";
 
@@ -29,7 +29,7 @@ export default async function EntidadPage({ params }: { params: Promise<{ taxId:
   return (
     <div className="mx-auto max-w-3xl px-4 py-10">
       <p className="flex items-center gap-2 text-xs uppercase tracking-[0.18em] text-wine">
-        <UiIcon icon={Briefcase} size="sm" className="text-wine" />
+        <UiIcon icon={BriefcaseIcon} size="sm" className="text-wine" />
         Persona jurídica
       </p>
       <h1 className="mt-2 font-display text-4xl">{entity.legalName}</h1>

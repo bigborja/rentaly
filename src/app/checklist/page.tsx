@@ -3,7 +3,7 @@ import { Checklist } from "@/components/Checklist";
 import { SearchPanel } from "@/components/SearchPanel";
 import { Guide, Steps } from "@/components/Guide";
 import { UiIcon } from "@/components/UiIcon";
-import { ListChecks } from "lucide-react";
+import { ListChecksIcon } from "@phosphor-icons/react/ssr";
 
 export const metadata: Metadata = { title: "Antes de firmar" };
 
@@ -11,7 +11,7 @@ export default function ChecklistPage() {
   return (
     <div className="mx-auto max-w-3xl px-4 py-10">
       <p className="kicker flex items-center gap-2">
-        <UiIcon icon={ListChecks} size="sm" className="text-wine" />
+        <UiIcon icon={ListChecksIcon} size="sm" className="text-wine" />
         Antes de firmar el contrato
       </p>
       <h1 className="mt-2 font-display text-5xl">Antes de firmar</h1>
