@@ -14,5 +14,5 @@ export interface ParcelPeek {
   abuse: number;
   legalEntities: Array<{ taxId: string; legalName: string }>;
   serpavi: { inScope: boolean; reasons: string[] };
-  iteUrl: string;
+  irav?: { label: string; ratePercent: number };
 }

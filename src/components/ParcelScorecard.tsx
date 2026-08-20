@@ -7,9 +7,9 @@ import {
   BriefcaseIcon,
   ChartBarIcon,
   ChatTeardropTextIcon,
-  ClipboardTextIcon,
   KeyIcon,
   RulerIcon,
+  ScalesIcon,
 } from "@phosphor-icons/react/ssr";
 import type { Icon } from "@phosphor-icons/react";
 
@@ -108,11 +108,15 @@ export function ParcelScorecard({ peek }: { peek: ParcelPeek }) {
         href={serpaviAppUrl(peek.parcelRef)}
       />
       <Tile
-        icon={ClipboardTextIcon}
-        label="ITE / IEE"
-        value="Sede"
-        hint="No inventamos el resultado. Ábrelo en el Ayuntamiento."
-        href={peek.iteUrl}
+        icon={ScalesIcon}
+        label="IRAV"
+        value={peek.irav ? `${peek.irav.ratePercent.toLocaleString("es-ES")} %` : "En la ficha"}
+        hint={
+          peek.irav
+            ? `Último INE (${peek.irav.label}). Techo de subida si el contrato es posterior al 26/05/2023.`
+            : "Techo de la actualización anual. El cálculo está en la ficha completa."
+        }
+        href={`/inmueble/${peek.parcelRef}`}
       />
     </div>
   );

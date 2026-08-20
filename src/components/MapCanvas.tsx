@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { GeoJSON, MapContainer, TileLayer, WMSTileLayer, useMap } from "react-leaflet";
 import type { Layer } from "leaflet";
 import type { Feature, GeoJsonObject } from "geojson";
@@ -43,20 +43,6 @@ function InvalidateSize() {
   return null;
 }
 
-function AutoParcels({ onEnable }: { onEnable: () => void }) {
-  const map = useMap();
-  useEffect(() => {
-    const sync = () => {
-      if (map.getZoom() >= 15) onEnable();
-    };
-    sync();
-    map.on("zoomend", sync);
-    return () => {
-      map.off("zoomend", sync);
-    };
-  }, [map, onEnable]);
-  return null;
-}
 
 function ClickCatastro({
   enabled,
@@ -113,7 +99,6 @@ export default function MapCanvas({
     () => Math.max(1, ...Object.values(statsByBarrio).map((item) => item.total)),
     [statsByBarrio],
   );
-  const enableParcels = useCallback(() => setCatastro(true), []);
   const bleed = frame === "bleed";
 
   useEffect(() => {
@@ -124,8 +109,8 @@ export default function MapCanvas({
   }, []);
 
   const defaultHint = catastro
-    ? "Parcelas del Catastro: pulsa un edificio para abrir su ficha en una hoja, sin salir del mapa."
-    : "Pulsa un barrio para entrar. Acerca el mapa (zoom 15+) o activa parcelas para pinchar un portal.";
+    ? "Parcelas del Catastro: pulsa un edificio. Sale una hoja; SERPAVI, IRAV y el escrito están en la ficha completa."
+    : "Pulsa un barrio para entrar. Para un portal concreto, activa parcelas del Catastro.";
 
   return (
     <div
@@ -191,7 +176,6 @@ export default function MapCanvas({
         ) : null}
         <InvalidateSize />
         <FitBarrio barrio={focus} />
-        <AutoParcels onEnable={enableParcels} />
         <ClickCatastro enabled={catastro} onSelect={setHit} />
       </MapContainer>
       <div className="pointer-events-none absolute inset-0 z-[400]">

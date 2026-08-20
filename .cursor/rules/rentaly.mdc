@@ -16,8 +16,8 @@ Civic PWA for Madrid-capital tenants. Open data + crowdsourcing. Not a listings 
 
 ## Interaction
 
-- Map-first. At street zoom, a parcel click opens a **bottom sheet** (scorecard), then the full `/inmueble/[rc]` dossier.
-- Scorecard tiles: Catastro m²/uso, VUT density, community memory, CIF/gestora, SERPAVI (official range, not a fake traffic light), ITE **sede link only**.
+- Map-first. Barrio click stays the default. **Activating Catastro parcels** (explicit) opens a **bottom sheet**, then `/inmueble/[rc]` for SERPAVI, IRAV and the written next step.
+- Scorecard tiles: Catastro m²/uso, VUT nearby, community memory, CIF/gestora, SERPAVI, IRAV. ITE stays on the full dossier as a sede link — never an invented outcome.
 - Rent reference is **SERPAVI + IRAV**, never IVIMA and never Idealista prices.
 
 ## Privacy and data (hard)

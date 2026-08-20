@@ -1,6 +1,6 @@
 import { lookupByRef, summarizeUses } from "@/clients/catastro/ovc";
 import { touristLicensesNear } from "@/clients/madrid/vut";
-import { inspectionConsulta } from "@/clients/madrid/ite";
+import { latestIrav } from "@/clients/ine/irav";
 import { barrioAt } from "@/lib/barrios";
 import { listReports } from "@/lib/reports";
 import { listOwnershipClaims } from "@/lib/ownership-store";
@@ -17,9 +17,10 @@ export async function loadFincaPeek(ref: string): Promise<ParcelPeek> {
     catastro.longitude != null && catastro.latitude != null
       ? await touristLicensesNear(catastro.longitude, catastro.latitude, 80)
       : [];
-  const [reports, claims] = await Promise.all([
+  const [reports, claims, irav] = await Promise.all([
     listReports({ ref: catastro.parcelRef }),
     listOwnershipClaims(catastro.parcelRef).catch(() => []),
+    latestIrav(),
   ]);
   const uses = summarizeUses(catastro);
   const primaryUse = catastro.use || uses[0]?.use;
@@ -45,6 +46,6 @@ export async function loadFincaPeek(ref: string): Promise<ParcelPeek> {
     abuse: reports.filter((report) => report.type === "abuso").length,
     legalEntities: unique,
     serpavi: serpaviScope({ areaM2: catastro.areaM2, year: catastro.year, use: primaryUse }),
-    iteUrl: inspectionConsulta(catastro.address).consultUrl,
+    irav: irav ? { label: irav.label, ratePercent: irav.ratePercent } : undefined,
   };
 }
