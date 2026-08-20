@@ -21,12 +21,66 @@ npm run dev
 
 Abre [http://localhost:3000](http://localhost:3000).
 
+Cuenta de ejemplo: `inquilina@rentaly.madrid` / `madrid131`.
+
+## Recorrido de producto
+
+Inspirado en **Reviu** (reseñas de piso + Catastro, apodo público), **JustFix / Who Owns What** (una tarea, datos oficiales) y **Shelter** (tono calmado, el rojo solo para urgencia):
+
+1. Explorar el mapa sin cuenta.
+2. Crear cuenta → onboarding (momento del alquiler, barrio, pacto).
+3. **Antes de firmar**: checklist + búsqueda catastral.
+4. Publicar experiencia, incidente o aviso (hace falta sesión; en público solo se ve el apodo).
+5. Cuenta con lo publicado.
+
+## Arquitectura
+
+Capas, de fuera hacia dentro:
+
+```
+src/app                presentación (App Router)
+src/components         UI / mapa
+src/lib                casos de uso (dossier, persistencia JSON, auth)
+src/domain             tipos, invariantes RGPD, fuentes oficiales
+src/clients            Catastro, Ayuntamiento, INE, MITMA
+src/cache              TTL en proceso (Redis más adelante)
+prisma/schema.prisma   modelo PostGIS de destino
+```
+
+El Catastro **no** publica titulares de personas físicas. Los “grandes tenedores” solo se modelan como personas jurídicas (BORM, CIF, SOCIMI) o como evidencia de usuaria ya anonimizada. Los aportes salen a la API sin `userId`.
+
+Hasta que haya `DATABASE_URL`, cuentas y relatos siguen en JSON (`data/` en local, `/tmp` en Vercel).
+
 ## Fuentes
 
 - Dirección General del Catastro, servicios web JSON (`Consulta_DNPLOC`, `Consulta_DNPRC`, `ObtenerCallejero`, `Consulta_RCCOOR`, `Consulta_CPMRC`) y WMS de parcelas.
-- Ayuntamiento de Madrid, capa de barrios del servicio de límites administrativos (WGS84).
+- Ayuntamiento de Madrid: barrios oficiales, Geoportal de **VUT con licencia**, consulta ITE/IEE por dirección (sin volcado masivo de titulares).
+- INE Atlas de distribución de renta de los hogares e índice estatal de alquiler (MITMA/MIVAU) por **sección censal**. El registro de fianzas no es un API nominativo abierto.
 - Aportes de ejemplo en `src/data/seed-reports.json` para que el mapa no arranque vacío.
+- Catálogo de endpoints en `src/domain/sources.ts`.
+
+## Despliegue en Vercel
+
+La URL de producción del proyecto es `https://rentaly-mibo1.vercel.app` (cada deploy también tiene un host único del estilo `https://rentaly-….vercel.app`). `https://rentaly.vercel.app` pertenece a **otro** proyecto y no es esta app.
+
+Si el navegador muestra la página genérica de Vercel:
+
+```
+404: NOT_FOUND
+Code: NOT_FOUND
+ID: cdg1::…
+```
+
+eso **no** es el 404 de Rentaly (el de la app dice «No está en el mapa»). Vercel Authentication está activo: la petición a `/` responde `302` a `https://vercel.com/sso-api?…`. Quien no pertenezca al equipo del proyecto acaba en `NOT_FOUND`.
+
+Para dejar la web pública:
+
+1. [Dashboard del proyecto](https://vercel.com) → **Settings** → **Deployment Protection**.
+2. Desactiva **Vercel Authentication** en Production (o déjala solo en Preview).
+3. Guarda. No hace falta redeploy: el host de producción debería servir la home en cuanto la protección caiga.
+
+En Vercel el sistema de archivos es de solo lectura. Cuentas, sesiones y aportes se escriben en `/tmp/rentaly-data` (se pierden al reciclar la instancia). En local siguen en `data/`.
 
 ## Límites actuales
 
-Los aportes se guardan en `data/reports.json` (archivo local). En un despliegue real haría falta base de datos, cuentas, moderación y, si se desea, el índice estatal de precios de alquiler por sección censal. El Catastro no publica un inventario masivo de todas las viviendas de cada barrio por estos servicios libres: la distribución de inmuebles se obtiene finca a finca, que es justo el momento en el que alguien está a punto de alquilar.
+Los aportes se guardan en JSON (archivo local, o `/tmp` en Vercel). En un despliegue duradero haría falta base de datos, moderación y, si se desea, el índice estatal de precios de alquiler por sección censal. El Catastro no publica un inventario masivo de todas las viviendas de cada barrio por estos servicios libres: la distribución de inmuebles se obtiene finca a finca, que es justo el momento en el que alguien está a punto de alquilar.

@@ -1,12 +1,12 @@
 import { randomUUID } from "crypto";
-import { mkdir, readFile, writeFile } from "fs/promises";
-import { join } from "path";
 import type { CreateReportInput, Report, ReportType } from "./types";
 import { compactRef, isCadastralRef } from "./parse";
 import { getBarrio } from "./barrios-data";
+import { readJsonFile, writeJsonFile } from "./fs-store";
+import { publicAuthor, sanitizeReportText } from "@/domain/privacy";
 import seedReports from "@/data/seed-reports.json";
 
-const REPORTS_PATH = join(process.cwd(), "data/reports.json");
+const REPORTS_FILE = "reports.json";
 
 const ABUSE_CATEGORIES = new Set([
   "fianza",
@@ -25,33 +25,27 @@ const ABUSE_CATEGORIES = new Set([
 let writeQueue: Promise<void> = Promise.resolve();
 
 async function readStore(): Promise<Report[]> {
-  try {
-    const raw = await readFile(REPORTS_PATH, "utf8");
-    const parsed = JSON.parse(raw) as Report[];
-    if (Array.isArray(parsed) && parsed.length) return parsed;
-  } catch {
-    // first run uses the committed seed
-  }
+  const parsed = await readJsonFile<Report[]>(REPORTS_FILE, seedReports as Report[]);
+  if (Array.isArray(parsed) && parsed.length) return parsed;
   return seedReports as Report[];
 }
 
 async function writeStore(reports: Report[]) {
-  await mkdir(join(process.cwd(), "data"), { recursive: true });
-  const temp = `${REPORTS_PATH}.${process.pid}.tmp`;
-  await writeFile(temp, JSON.stringify(reports, null, 2), "utf8");
-  await writeFile(REPORTS_PATH, JSON.stringify(reports, null, 2), "utf8");
+  await writeJsonFile(REPORTS_FILE, reports);
 }
 
 export async function listReports(filters?: {
   barrioId?: string;
   ref?: string;
   type?: ReportType;
+  userId?: string;
 }): Promise<Report[]> {
   const reports = await readStore();
   return reports
     .filter((report) => report.status === "published")
     .filter((report) => !filters?.barrioId || report.barrioId === filters.barrioId)
     .filter((report) => !filters?.type || report.type === filters.type)
+    .filter((report) => !filters?.userId || report.userId === filters.userId)
     .filter((report) => {
       if (!filters?.ref) return true;
       const needle = compactRef(filters.ref);
@@ -87,8 +81,8 @@ export async function createReport(input: CreateReportInput): Promise<Report> {
   if (!["experiencia", "incidente", "abuso"].includes(type)) {
     throw new Error("El tipo de aporte no es válido.");
   }
-  const title = String(input.title || "").trim();
-  const body = String(input.body || "").trim();
+  const title = sanitizeReportText(String(input.title || ""));
+  const body = sanitizeReportText(String(input.body || ""));
   if (title.length < 8 || title.length > 120) {
     throw new Error("El título debe tener entre 8 y 120 caracteres.");
   }
@@ -123,7 +117,9 @@ export async function createReport(input: CreateReportInput): Promise<Report> {
     rating: input.rating,
     abuseCategory: type === "abuso" ? input.abuseCategory : undefined,
     severity: input.severity,
-    author: (input.author || "Anónimo").trim().slice(0, 40) || "Anónimo",
+    author: publicAuthor(input.author),
+    userId: input.userId,
+    recommend: input.recommend,
     createdAt: new Date().toISOString(),
     status: "published",
   };

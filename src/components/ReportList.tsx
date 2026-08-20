@@ -23,7 +23,7 @@ export function ReportList({ reports }: { reports: Report[] }) {
       {reports.map((report) => {
         const barrio = report.barrioId ? getBarrio(report.barrioId) : undefined;
         return (
-          <li key={report.id} className="rounded-3xl border border-ink/10 bg-white/70 p-5 shadow-card">
+        <li key={report.id} className="card p-5">
             <div className="flex flex-wrap items-center gap-2 text-xs uppercase tracking-[0.14em]">
               <span
                 className={`rounded-full px-2 py-1 ${
@@ -52,6 +52,8 @@ export function ReportList({ reports }: { reports: Report[] }) {
               {report.addressLabel ? <span>{report.addressLabel}</span> : null}
               {report.rentEuros ? <span>{report.rentEuros} €/mes</span> : null}
               {report.rating ? <span>{"★".repeat(report.rating)}</span> : null}
+              {report.recommend === true ? <span>Lo recomendaría</span> : null}
+              {report.recommend === false ? <span>No lo recomendaría</span> : null}
               {report.cadastralRef ? (
                 <Link className="font-mono underline" href={`/inmueble/${report.cadastralRef}`}>
                   {report.cadastralRef}

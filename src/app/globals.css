@@ -4,6 +4,12 @@
 
 :root {
   color-scheme: light;
+  --paper: #f4efe4;
+  --ink: #1c1712;
+  --wine: #8f1d2c;
+  --gold: #c4a36a;
+  --sage: #3f5e54;
+  --mist: #e7e0d2;
 }
 
 html {
@@ -11,7 +17,10 @@ html {
 }
 
 body {
-  background: #f4efe4;
+  background:
+    radial-gradient(1200px 500px at 10% -10%, rgb(196 163 106 / 0.18), transparent 50%),
+    radial-gradient(900px 420px at 100% 0%, rgb(143 29 44 / 0.08), transparent 46%),
+    #f4efe4;
   color: #1c1712;
 }
 
@@ -38,4 +47,32 @@ body {
 
 .field-input {
   @apply w-full rounded-[0.9rem] border border-ink/15 bg-paper px-3 py-2.5 text-sm outline-none ring-wine/30 focus:ring-2;
+}
+
+.btn {
+  @apply inline-flex items-center justify-center gap-2 rounded-full px-5 py-2.5 text-sm font-medium transition disabled:opacity-60;
+}
+
+.btn-primary {
+  @apply bg-wine text-paper hover:bg-wine-dark;
+}
+
+.btn-ink {
+  @apply bg-ink text-paper hover:bg-ink/90;
+}
+
+.btn-ghost {
+  @apply border border-ink/15 bg-white/40 hover:bg-ink hover:text-paper;
+}
+
+.btn-gold {
+  @apply bg-gold text-ink hover:bg-gold/90;
+}
+
+.card {
+  @apply rounded-3xl border border-ink/10 bg-white/70 shadow-card;
+}
+
+.kicker {
+  @apply text-xs uppercase tracking-[0.18em] text-wine;
 }

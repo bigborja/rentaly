@@ -36,7 +36,7 @@ export function SearchPanel({ initialQuery = "", compact = false }: { initialQue
   }, [result]);
 
   return (
-    <section className={compact ? "" : "rounded-3xl border border-ink/10 bg-white/70 p-5 shadow-card"}>
+    <section className={compact ? "" : "card p-5"}>
       <form onSubmit={onSubmit} className="flex flex-col gap-3 sm:flex-row">
         <label className="sr-only" htmlFor="search-q">
           Buscar inmueble
