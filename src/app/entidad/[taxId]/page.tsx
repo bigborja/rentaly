@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { portfolioForTaxId } from "@/lib/ownership-store";
+import { listReports } from "@/lib/reports";
 import { Guide } from "@/components/Guide";
 import { UiIcon } from "@/components/UiIcon";
 import { BriefcaseIcon } from "@phosphor-icons/react/ssr";
@@ -25,6 +26,7 @@ export default async function EntidadPage({ params }: { params: Promise<{ taxId:
 
   const { entity, claims } = portfolio;
   const parcels = [...new Set(claims.map((claim) => claim.parcelRef))];
+  const managerReports = await listReports({ managerTaxId: entity.taxId });
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-10">
@@ -44,10 +46,28 @@ export default async function EntidadPage({ params }: { params: Promise<{ taxId:
           <p>
             Cada enlace abre la ficha de una parcela. La confianza es alta si hay URL a BOE, BORM o registradores; baja
             si es un aporte vecinal. «Gran tenedor» aquí significa forma jurídica (SOCIMI, fondo) o más de una finca con
-            el mismo CIF, no un censo oficial de viviendas.
+            el mismo CIF, no un censo oficial de viviendas. Si hay relatos que marcan este CIF como gestora, se leen en
+            la ficha de gestora: mismo identificador, otro recorte (trato del alquiler, no mapa de parcelas).
           </p>
         </Guide>
       </div>
+      {managerReports.length ? (
+        <p className="mt-3 rounded-2xl bg-mist px-4 py-3 text-sm">
+          {managerReports.length} relato{managerReports.length === 1 ? "" : "s"} marcan este CIF como gestora.{" "}
+          <Link className="underline decoration-gold" href={`/gestora/${entity.taxId}`}>
+            Abrir memoria de gestora
+          </Link>
+          .
+        </p>
+      ) : (
+        <p className="mt-3 text-sm text-ink/55">
+          Aún no hay experiencias ligadas a este CIF como gestora.{" "}
+          <Link className="underline decoration-gold" href={`/gestora/${entity.taxId}`}>
+            Ficha de gestora
+          </Link>
+          .
+        </p>
+      )}
       {parcels.length > 1 ? (
         <p className="mt-3 rounded-2xl bg-wine/10 px-4 py-3 text-sm">
           Esta persona jurídica aparece en más de una parcela: es el núcleo de una cartera, no un vecino.

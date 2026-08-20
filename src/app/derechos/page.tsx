@@ -27,10 +27,10 @@ const points = [
     title: "Metros y uso",
     body: "El Catastro no es un tasador, pero sí un ancla: uso (vivienda, comercio, oficina), superficie y año. Si el anuncio infla metros o vende un local como piso, salta la alarma.",
   },
-  {
-    title: "Actualización de renta",
-    body: "La cláusula de subida no puede ser un porcentaje caprichoso al margen de la normativa vigente. Conserva el contrato y los recibos.",
-  },
+    {
+      title: "Actualización de renta",
+      body: "El IRAV (INE) limita la subida anual de los contratos de vivienda habitual firmados desde el 26 de mayo de 2023, si hay cláusula de revisión. No es el precio de mercado: eso es SERPAVI. Los contratos anteriores se rigen por lo pactado, a menudo IPC. Conserva el contrato y pide el cálculo por escrito.",
+    },
 ];
 
 export default function DerechosPage() {
@@ -58,10 +58,10 @@ export default function DerechosPage() {
                 title: "Contrasta metros y uso",
                 body: "Abre la dirección en Rentaly o en la sede del Catastro. Si el anuncio infla metros o vende un local como piso, esa es una señal de alarma.",
               },
-              {
-                title: "Si hay riesgo o delito, canales oficiales",
-                body: "112 y denuncia. Un aviso en esta web no abre un procedimiento. El listado de abajo enlaza oficinas y normas.",
-              },
+            {
+              title: "Si hay riesgo o delito, canales oficiales",
+              body: "112 y denuncia. Un aviso en esta web no abre un procedimiento. SAV Madrid (900 814 815) asesora; el Sindicato de Inquilinas organiza. El listado de abajo enlaza oficinas y normas.",
+            },
             ]}
           />
         </Guide>

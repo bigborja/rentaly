@@ -13,7 +13,8 @@ import { Guide } from "@/components/Guide";
 import { CadastralStamp } from "@/components/illustrations";
 import { UiIcon } from "@/components/UiIcon";
 import { MapTrifoldIcon, PencilSimpleIcon, RulerIcon } from "@phosphor-icons/react/ssr";
-import { ContextPanel, OverlayFallback, OwnershipPanel, VutPanel } from "./overlays";
+import { ContextPanel, IravPanel, OverlayFallback, OwnershipPanel, SerpaviPanel, VutPanel } from "./overlays";
+import { ActPanel } from "@/components/ActPanel";
 
 export const dynamic = "force-dynamic";
 
@@ -63,9 +64,10 @@ export default async function InmueblePage({ params }: { params: Promise<{ ref: 
             firmar o de pagar una reserva.
           </p>
           <p>
-            Más abajo, si hay coordenadas, cruzamos licencias de vivienda turística, renta media de la sección censal (un
-            recorte estadístico más pequeño que el barrio) y un enlace a la inspección del edificio. Los CIF los aporta
-            la comunidad.
+            Más abajo están SERPAVI (rango oficial de renta de esta vivienda) e IRAV (techo de la subida anual del
+            contrato), separados a propósito. Si hay coordenadas, cruzamos licencias de vivienda turística y la renta
+            media de la sección censal. Los CIF los aporta la comunidad. Un modelo para pedir las cosas por escrito
+            está en la ficha; Rentaly no tramita la cita.
           </p>
         </Guide>
       </div>
@@ -205,6 +207,30 @@ export default async function InmueblePage({ params }: { params: Promise<{ ref: 
       >
         Dejar experiencia o aviso
       </Link>
+
+      <section className="mt-14 grid gap-4 md:grid-cols-2">
+        <Suspense fallback={<OverlayFallback title="SERPAVI" />}>
+          <SerpaviPanel
+            cadastralRef={property.ref}
+            longitude={property.longitude}
+            latitude={property.latitude}
+            areaM2={property.areaM2}
+            year={property.year}
+            use={property.use}
+          />
+        </Suspense>
+        <Suspense fallback={<OverlayFallback title="IRAV" />}>
+          <IravPanel />
+        </Suspense>
+      </section>
+
+      <ActPanel
+        cadastralRef={property.ref}
+        address={property.address}
+        areaM2={property.areaM2}
+        year={property.year}
+        use={property.use}
+      />
 
       <section className="mt-14 grid gap-4 md:grid-cols-2">
         <Suspense fallback={<OverlayFallback title="Licencias VUT" />}>

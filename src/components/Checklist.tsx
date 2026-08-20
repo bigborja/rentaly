@@ -33,6 +33,12 @@ const ITEMS = [
     href: "/barrios",
   },
   {
+    id: "serpavi",
+    title: "Rango SERPAVI y cláusula IRAV",
+    body: "En la ficha, abre SERPAVI con la referencia catastral: es el rango oficial de esa vivienda, no el precio del anuncio. Si ya alquilas, el IRAV (INE) es el techo de la subida anual en contratos posteriores al 26 de mayo de 2023.",
+    href: "/derechos",
+  },
+  {
     id: "entrada",
     title: "Inventario de entrada con fotos",
     body: "Fecha, estado de cada estancia, lecturas de suministros y fotos. Ese papel es tu mejor prueba si luego discuten la fianza.",

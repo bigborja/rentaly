@@ -103,9 +103,9 @@ export default function ComoFuncionaPage() {
                 "Vivienda de uso turístico con licencia urbanística de hospedaje en Madrid. Si hay licencias en la misma parcela, la ficha lo indica. No implica que tu piso concreto esté alquilado por noches.",
             },
             {
-              term: "CIF",
+              term: "Gestora / CIF",
               meaning:
-                "Identificador fiscal de una empresa o entidad (empieza por letra, no por número de DNI). Aquí solo se aceptan CIF, nunca DNI ni notas simples.",
+                "Identificador fiscal de una empresa o entidad (empieza por letra, no por número de DNI). La ficha de gestora agrupa relatos que citan ese CIF; la de entidad, las parcelas. Nunca DNI ni notas simples.",
             },
             {
               term: "ITE / IEE",
@@ -113,9 +113,19 @@ export default function ComoFuncionaPage() {
                 "Inspección técnica o informe de evaluación del edificio. Rentaly no inventa el resultado: te enlaza a la sede del Ayuntamiento para consultarlo.",
             },
             {
-              term: "SERPAVI / sección censal",
+              term: "SERPAVI",
               meaning:
-                "La sección censal es una pieza estadística del INE, más pequeña que un barrio. SERPAVI es el visor estatal de precios de alquiler para esa zona, no para tu piso concreto.",
+                "Aplicación del Ministerio de Vivienda: rango orientativo de renta para una vivienda a partir de su referencia catastral, superficie y extras. No es el precio de un anuncio. En la ficha de Rentaly te preparamos la RC; el rango lo calcula SERPAVI.",
+            },
+            {
+              term: "IRAV",
+              meaning:
+                "Índice del INE que limita la actualización anual de la renta en contratos de vivienda habitual posteriores al 26 de mayo de 2023. Distinto de SERPAVI: uno es «cuánto podría costar este piso», el otro es «cuánto puede subir el que ya tienes».",
+            },
+            {
+              term: "Sección censal",
+              meaning:
+                "Pieza estadística del INE, más pequeña que un barrio. La renta media de esa pieza no es la de tu portal. SERPAVI también la usa para localizar la vivienda.",
             },
             {
               term: "Gran tenedor",

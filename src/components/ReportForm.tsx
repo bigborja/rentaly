@@ -193,7 +193,7 @@ export function ReportForm({
       </div>
       <p className="-mt-3 text-xs text-ink/50">
         CIF es el identificador de una empresa (empieza por letra). Nunca un DNI. La razón social es el nombre de esa
-        sociedad, no el de un particular.
+        sociedad, no el de un particular. Si lo publicas, se agrupa en la ficha de gestora de ese CIF.
       </p>
       <div className="grid gap-4 sm:grid-cols-3">
         <Field label="Año">

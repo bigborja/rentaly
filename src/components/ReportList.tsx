@@ -74,6 +74,11 @@ export function ReportList({ reports }: { reports: Report[] }) {
                   {report.cadastralRef}
                 </Link>
               ) : null}
+              {report.managerTaxId ? (
+                <Link className="underline decoration-gold" href={`/gestora/${report.managerTaxId}`}>
+                  Gestora {report.managerLegalName || report.managerTaxId}
+                </Link>
+              ) : null}
               {report.trustBand ? (
                 <span>
                   {report.trustBand === "alto"
