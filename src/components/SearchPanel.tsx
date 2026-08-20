@@ -2,7 +2,8 @@
 
 import { FormEvent, useMemo, useState } from "react";
 import Link from "next/link";
-import { Search } from "lucide-react";
+import { Search, Building2, Ruler } from "lucide-react";
+import { UiIcon } from "@/components/UiIcon";
 import type { SearchResult } from "@/lib/types";
 import { formatM2, prettyUse } from "@/lib/format";
 
@@ -36,7 +37,7 @@ export function SearchPanel({ initialQuery = "", compact = false }: { initialQue
   }, [result]);
 
   return (
-    <section className={compact ? "" : "card p-5"}>
+    <section className={compact ? "" : "card-lift p-5"}>
       {compact ? (
         <p className="mb-3 text-sm leading-6 text-ink/65">
           Escribe calle y número de Madrid capital, o pega la referencia catastral (14 o 20 caracteres). Si el Catastro
@@ -53,7 +54,7 @@ export function SearchPanel({ initialQuery = "", compact = false }: { initialQue
           Buscar inmueble
         </label>
         <div className="relative flex-1">
-          <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-ink/40" />
+          <UiIcon icon={Search} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-ink/40" />
           <input
             id="search-q"
             value={query}
@@ -95,7 +96,10 @@ export function SearchPanel({ initialQuery = "", compact = false }: { initialQue
       {result?.property ? (
         <div className="mt-5 space-y-4">
           <div>
-            <p className="text-xs uppercase tracking-[0.16em] text-wine">Finca catastral</p>
+            <p className="flex items-center gap-1.5 text-xs uppercase tracking-[0.16em] text-wine">
+              <UiIcon icon={Building2} size="sm" className="text-wine" />
+              Finca catastral
+            </p>
             <h2 className="font-display text-2xl">{heading}</h2>
             <p className="text-sm text-ink/60">
               Parcela {result.property.parcelRef}
@@ -104,10 +108,11 @@ export function SearchPanel({ initialQuery = "", compact = false }: { initialQue
             </p>
           </div>
           <div className="grid gap-3 sm:grid-cols-3">
-            <Stat label="Inmuebles" value={String(units.length || 1)} />
+            <Stat label="Inmuebles" icon={Building2} value={String(units.length || 1)} />
             <Stat label="Uso principal" value={prettyUse(result.property.use || units[0]?.use)} />
             <Stat
               label="Superficie Catastro"
+              icon={Ruler}
               value={formatM2(result.property.areaM2 || units.reduce((sum, unit) => sum + (unit.areaM2 || 0), 0))}
             />
           </div>
@@ -117,7 +122,7 @@ export function SearchPanel({ initialQuery = "", compact = false }: { initialQue
           </p>
           {units.length > 1 ? (
             <div className="overflow-hidden rounded-2xl border border-ink/10">
-              <table className="w-full text-left text-sm">
+              <table className="data-table w-full text-left text-sm">
                 <thead className="bg-mist text-ink/60">
                   <tr>
                     <th className="px-3 py-2 font-medium">Ref.</th>
@@ -158,10 +163,21 @@ export function SearchPanel({ initialQuery = "", compact = false }: { initialQue
   );
 }
 
-function Stat({ label, value }: { label: string; value: string }) {
+function Stat({
+  label,
+  value,
+  icon,
+}: {
+  label: string;
+  value: string;
+  icon?: typeof Building2;
+}) {
   return (
     <div className="rounded-2xl bg-mist px-4 py-3">
-      <p className="text-xs uppercase tracking-[0.14em] text-ink/50">{label}</p>
+      <p className="flex items-center gap-1.5 text-xs uppercase tracking-[0.14em] text-ink/50">
+        {icon ? <UiIcon icon={icon} size="sm" /> : null}
+        {label}
+      </p>
       <p className="mt-1 font-display text-xl">{value}</p>
     </div>
   );

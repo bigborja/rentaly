@@ -8,7 +8,7 @@ export function Guide({
   children: React.ReactNode;
 }) {
   return (
-    <aside className="rounded-3xl border border-ink/10 bg-mist/55 px-5 py-5">
+    <aside className="texture-calco rounded-3xl border border-ink/10 px-5 py-5 shadow-rest">
       <p className="text-xs uppercase tracking-[0.16em] text-wine">{kicker}</p>
       {title ? <h2 className="mt-1 font-display text-2xl leading-tight">{title}</h2> : null}
       <div className={`space-y-3 text-sm leading-6 text-ink/75 ${title ? "mt-3" : "mt-2"}`}>{children}</div>

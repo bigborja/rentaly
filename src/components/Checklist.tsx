@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { CheckCircle2, Circle } from "lucide-react";
 
 const ITEMS = [
   {
@@ -79,11 +80,25 @@ export function Checklist() {
       </p>
       <ul className="mt-6 space-y-3">
         {ITEMS.map((item) => (
-          <li key={item.id} className="card p-5">
+          <li key={item.id} className={`card p-5 ${done[item.id] ? "opacity-80" : ""}`}>
             <label className="flex cursor-pointer items-start gap-3">
-              <input type="checkbox" checked={Boolean(done[item.id])} onChange={() => toggle(item.id)} className="mt-1.5" />
+              <span className="mt-1 text-ink/40">
+                {done[item.id] ? (
+                  <CheckCircle2 className="h-5 w-5 text-sage" strokeWidth={1.5} aria-hidden />
+                ) : (
+                  <Circle className="h-5 w-5" strokeWidth={1.5} aria-hidden />
+                )}
+              </span>
+              <input
+                type="checkbox"
+                checked={Boolean(done[item.id])}
+                onChange={() => toggle(item.id)}
+                className="sr-only"
+              />
               <span>
-                <span className="block font-display text-2xl">{item.title}</span>
+                <span className={`block font-display text-2xl ${done[item.id] ? "text-ink/45 line-through" : ""}`}>
+                  {item.title}
+                </span>
                 <span className="mt-1 block text-sm leading-6 text-ink/70">{item.body}</span>
                 {item.href ? (
                   <Link href={item.href} className="mt-2 inline-block text-sm underline decoration-gold">

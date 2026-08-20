@@ -10,6 +10,9 @@ import { getCurrentUser } from "@/lib/auth";
 import { compactRef, isCadastralRef } from "@/lib/parse";
 import { notFound } from "next/navigation";
 import { Guide } from "@/components/Guide";
+import { CadastralStamp } from "@/components/illustrations";
+import { UiIcon } from "@/components/UiIcon";
+import { Map, PenLine, Ruler } from "lucide-react";
 import { ContextPanel, OverlayFallback, OwnershipPanel, VutPanel } from "./overlays";
 
 export const dynamic = "force-dynamic";
@@ -67,13 +70,24 @@ export default async function InmueblePage({ params }: { params: Promise<{ ref: 
         </Guide>
       </div>
 
-      <div className="mt-8 rounded-3xl bg-ink px-5 py-5 text-paper">
-        <p className="text-xs uppercase tracking-[0.16em] text-gold">Contrasta el anuncio</p>
-        <p className="mt-2 font-display text-4xl">{formatM2(property.areaM2)}</p>
-        <p className="mt-2 max-w-xl text-sm text-paper/70">
-          Superficie construida que publica el Catastro
-          {property.use ? ` · uso ${prettyUse(property.use)}` : ""}
-          {property.year ? ` · hacia ${property.year}` : ""}. Si el anuncio dice más metros o un uso distinto, esta cifra
+      <div className="relative mt-8 overflow-hidden rounded-3xl bg-ink px-5 py-6 text-paper shadow-lift">
+        <CadastralStamp className="pointer-events-none absolute -right-2 -top-2 w-28 text-gold/25 sm:w-36" />
+        <p className="flex items-center gap-2 text-xs uppercase tracking-[0.16em] text-gold">
+          <UiIcon icon={Ruler} size="sm" className="text-gold" />
+          Contrasta el anuncio
+        </p>
+        <p className="mt-1 font-mono text-[11px] tracking-[0.14em] text-paper/45">RC · {property.ref}</p>
+        <p className="mt-3 font-display text-5xl">{formatM2(property.areaM2)}</p>
+        <div className="mt-3 flex flex-wrap gap-2 text-xs">
+          {property.use ? (
+            <span className="rounded-full border border-gold/40 px-3 py-1 text-gold">{prettyUse(property.use)}</span>
+          ) : null}
+          {property.year ? (
+            <span className="rounded-full border border-paper/20 px-3 py-1 text-paper/70">hacia {property.year}</span>
+          ) : null}
+        </div>
+        <p className="mt-3 max-w-xl text-sm text-paper/70">
+          Superficie construida que publica el Catastro. Si el anuncio dice más metros o un uso distinto, esta cifra
           manda: pregunta por escrito antes de reservar.
         </p>
       </div>
@@ -95,7 +109,7 @@ export default async function InmueblePage({ params }: { params: Promise<{ ref: 
         </p>
         <ul className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {uses.map((item) => (
-            <li key={item.use} className="rounded-2xl border border-ink/10 bg-white/70 px-4 py-3">
+            <li key={item.use} className="rounded-2xl border border-ink/10 bg-white/70 px-4 py-3 shadow-rest">
               <p className="font-medium">{prettyUse(item.use)}</p>
               <p className="text-sm text-ink/60">
                 {item.count} parte{item.count === 1 ? "" : "s"} · {formatM2(item.areaM2)}
@@ -106,12 +120,12 @@ export default async function InmueblePage({ params }: { params: Promise<{ ref: 
       </section>
 
       {units.length > 1 ? (
-        <section className="mt-10 overflow-hidden rounded-3xl border border-ink/10">
+        <section className="mt-10 overflow-hidden rounded-3xl border border-ink/10 shadow-rest">
           <p className="bg-mist px-4 py-3 text-sm text-ink/70">
             Cada fila es un inmueble con su propia referencia de 20 caracteres (piso, local, trastero). Pulsa una para
             abrirla. La de 14 caracteres de arriba es la parcela completa.
           </p>
-          <table className="w-full text-left text-sm">
+          <table className="data-table w-full text-left text-sm">
             <thead className="bg-mist">
               <tr>
                 <th className="px-4 py-3 font-medium">Referencia</th>
@@ -141,8 +155,8 @@ export default async function InmueblePage({ params }: { params: Promise<{ ref: 
       ) : null}
 
       {property.constructions.length > 0 && units.length <= 1 ? (
-        <section className="mt-8 overflow-hidden rounded-3xl border border-ink/10">
-          <table className="w-full text-left text-sm">
+        <section className="mt-8 overflow-hidden rounded-3xl border border-ink/10 shadow-rest">
+          <table className="data-table w-full text-left text-sm">
             <thead className="bg-mist">
               <tr>
                 <th className="px-4 py-3 font-medium">Unidad constructiva</th>
@@ -167,14 +181,21 @@ export default async function InmueblePage({ params }: { params: Promise<{ ref: 
 
       <div className="mt-8 flex flex-wrap gap-3 text-sm">
         {property.mapUrl ? (
-          <a className="rounded-full bg-ink px-4 py-2 text-paper" href={property.mapUrl} target="_blank" rel="noreferrer">
+          <a
+            className="inline-flex items-center gap-2 rounded-full bg-ink px-4 py-2 text-paper"
+            href={property.mapUrl}
+            target="_blank"
+            rel="noreferrer"
+          >
+            <UiIcon icon={Map} size="sm" className="text-paper" />
             Cartografía oficial del Catastro
           </a>
         ) : null}
         <Link
           href={`/aportar?ref=${property.ref}${barrio ? `&barrio=${barrio.id}` : ""}`}
-          className="rounded-full bg-wine px-4 py-2 text-paper"
+          className="inline-flex items-center gap-2 rounded-full bg-wine px-4 py-2 text-paper"
         >
+          <UiIcon icon={PenLine} size="sm" className="text-paper" />
           Dejar experiencia o aviso
         </Link>
       </div>
@@ -209,7 +230,7 @@ export default async function InmueblePage({ params }: { params: Promise<{ ref: 
 
 function Mini({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-2xl bg-white/70 px-4 py-3">
+    <div className="rounded-2xl border border-ink/10 bg-white/70 px-4 py-3 shadow-rest">
       <dt className="text-xs uppercase tracking-[0.14em] text-ink/50">{label}</dt>
       <dd className="font-display text-2xl">{value}</dd>
     </div>

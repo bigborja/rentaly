@@ -1,21 +1,24 @@
 import Link from "next/link";
+import { BookOpen, ListChecks, Map, PenLine, Scale, LogIn } from "lucide-react";
 import { BrandMark } from "./BrandMark";
 import { LogoutButton } from "./LogoutButton";
+import { HeaderShell } from "./HeaderShell";
+import { UiIcon } from "./UiIcon";
 import { getCurrentUser } from "@/lib/auth";
 
 const links = [
-  { href: "/como-funciona", label: "Cómo funciona" },
-  { href: "/checklist", label: "Antes de firmar" },
-  { href: "/barrios", label: "Barrios" },
-  { href: "/aportar", label: "Aportar" },
-  { href: "/derechos", label: "Derechos" },
+  { href: "/como-funciona", label: "Cómo funciona", icon: BookOpen },
+  { href: "/checklist", label: "Antes de firmar", icon: ListChecks },
+  { href: "/barrios", label: "Barrios", icon: Map },
+  { href: "/aportar", label: "Aportar", icon: PenLine },
+  { href: "/derechos", label: "Derechos", icon: Scale },
 ];
 
 export async function Header() {
   const user = await getCurrentUser();
 
   return (
-    <header className="sticky top-0 z-30 border-b border-ink/10 bg-paper/90 backdrop-blur">
+    <HeaderShell>
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3">
         <Link href="/" className="flex items-center gap-2">
           <BrandMark />
@@ -27,8 +30,9 @@ export async function Header() {
             <Link
               key={link.href}
               href={link.href}
-              className="rounded-full px-3 py-1.5 text-ink/80 transition hover:bg-ink hover:text-paper"
+              className="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-ink/80 transition hover:bg-ink hover:text-paper"
             >
+              <UiIcon icon={link.icon} size="sm" />
               {link.label}
             </Link>
           ))}
@@ -40,12 +44,16 @@ export async function Header() {
               <LogoutButton />
             </>
           ) : (
-            <Link href="/entrar" className="rounded-full bg-wine px-3 py-1.5 text-paper">
+            <Link
+              href="/entrar"
+              className="inline-flex items-center gap-1.5 rounded-full bg-wine px-3 py-1.5 text-paper"
+            >
+              <UiIcon icon={LogIn} size="sm" className="text-paper" />
               Entrar
             </Link>
           )}
         </nav>
       </div>
-    </header>
+    </HeaderShell>
   );
 }

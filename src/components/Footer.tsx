@@ -3,7 +3,8 @@ import { BrandMark } from "./BrandMark";
 
 export function Footer() {
   return (
-    <footer className="border-t border-ink/10 bg-ink text-paper">
+    <footer className="texture-ink border-t border-gold/20 text-paper">
+      <div className="folio-rule opacity-70" />
       <div className="mx-auto grid max-w-6xl gap-8 px-4 py-12 md:grid-cols-[1.4fr_1fr_1fr]">
         <div>
           <div className="flex items-center gap-2">

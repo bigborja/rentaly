@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ReportForm } from "@/components/ReportForm";
 import { Guide, Steps } from "@/components/Guide";
+import { NotebookMark } from "@/components/illustrations";
 import { getBarrio } from "@/lib/barrios-data";
 import { getCurrentUser } from "@/lib/auth";
 import type { ReportType } from "@/lib/types";
@@ -23,8 +24,13 @@ export default async function AportarPage({
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-10">
-      <p className="kicker">Memoria colectiva</p>
-      <h1 className="mt-2 font-display text-4xl sm:text-5xl">Deja rastro para quien venga detrás</h1>
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <p className="kicker">Memoria colectiva</p>
+          <h1 className="mt-2 font-display text-4xl sm:text-5xl">Deja rastro para quien venga detrás</h1>
+        </div>
+        <NotebookMark className="hidden w-28 shrink-0 text-ink sm:block" />
+      </div>
       <p className="mt-4 text-ink/75 leading-7">
         Experiencias de un alquiler razonable, incidentes de finca y avisos de abuso. El objetivo no es linchar: es que
         quien mire el mismo portal o el mismo barrio no negocie a ciegas. En público solo se ve tu apodo.

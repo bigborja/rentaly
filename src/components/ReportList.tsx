@@ -4,12 +4,22 @@ import Link from "next/link";
 import { ABUSE_LABELS, REPORT_TYPE_LABELS, formatDate } from "@/lib/format";
 import type { Report } from "@/lib/types";
 import { getBarrio } from "@/lib/barrios-data";
+import { EmptyStamp } from "@/components/illustrations";
+import { UiIcon } from "@/components/UiIcon";
+import { MessageSquare, TriangleAlert, Wrench } from "lucide-react";
+
+const TYPE_ICON = {
+  experiencia: MessageSquare,
+  incidente: Wrench,
+  abuso: TriangleAlert,
+} as const;
 
 export function ReportList({ reports }: { reports: Report[] }) {
   if (!reports.length) {
     return (
       <div className="rounded-3xl border border-dashed border-ink/20 bg-white/40 px-6 py-10 text-center">
-        <p className="font-display text-xl">Aún no hay memoria vecinal aquí</p>
+        <EmptyStamp className="mx-auto w-24 text-ink/40" />
+        <p className="mt-3 font-display text-xl">Aún no hay memoria vecinal aquí</p>
         <p className="mt-2 text-sm text-ink/60">
           Nadie ha publicado todavía una experiencia, un incidente o un aviso de abuso en este sitio. Si has alquilado
           aquí, un relato con fechas y cantidades ayuda a quien venga detrás. Hace falta cuenta; en público solo se ve el
@@ -30,7 +40,7 @@ export function ReportList({ reports }: { reports: Report[] }) {
         <li key={report.id} className="card p-5">
             <div className="flex flex-wrap items-center gap-2 text-xs uppercase tracking-[0.14em]">
               <span
-                className={`rounded-full px-2 py-1 ${
+                className={`inline-flex items-center gap-1.5 rounded-full px-2 py-1 ${
                   report.type === "abuso"
                     ? "bg-wine text-paper"
                     : report.type === "incidente"
@@ -38,6 +48,7 @@ export function ReportList({ reports }: { reports: Report[] }) {
                       : "bg-sage/15 text-sage"
                 }`}
               >
+                <UiIcon icon={TYPE_ICON[report.type]} size="sm" />
                 {REPORT_TYPE_LABELS[report.type]}
               </span>
               {report.abuseCategory ? <span className="text-wine">{ABUSE_LABELS[report.abuseCategory]}</span> : null}

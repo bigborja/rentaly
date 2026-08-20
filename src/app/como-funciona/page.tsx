@@ -1,14 +1,20 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Callout, Glossary, Guide, Steps } from "@/components/Guide";
+import { CadastralStamp } from "@/components/illustrations";
 
 export const metadata: Metadata = { title: "Cómo funciona" };
 
 export default function ComoFuncionaPage() {
   return (
     <div className="mx-auto max-w-3xl px-4 py-10">
-      <p className="kicker">Guía de uso</p>
-      <h1 className="mt-2 font-display text-5xl">Cómo usar Rentaly si es la primera vez</h1>
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <p className="kicker">Guía de uso</p>
+          <h1 className="mt-2 font-display text-5xl">Cómo usar Rentaly si es la primera vez</h1>
+        </div>
+        <CadastralStamp className="hidden w-28 shrink-0 text-ink sm:block" />
+      </div>
       <p className="mt-4 leading-7 text-ink/75">
         Rentaly no anuncia pisos ni intermedia contratos. Sirve para contrastar un anuncio de Madrid capital con datos
         públicos (Catastro, barrios, licencias turísticas) y con relatos de quien ya alquiló. Puedes leerlo todo sin

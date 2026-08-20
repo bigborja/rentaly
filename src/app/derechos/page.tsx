@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { officialLinks } from "@/lib/format";
 import { Guide, Steps } from "@/components/Guide";
+import { UiIcon } from "@/components/UiIcon";
+import { Scale } from "lucide-react";
 
 export const metadata: Metadata = { title: "Derechos y recursos" };
 
@@ -34,7 +36,10 @@ const points = [
 export default function DerechosPage() {
   return (
     <div className="mx-auto max-w-3xl px-4 py-10">
-      <p className="text-xs uppercase tracking-[0.18em] text-wine">No es asesoramiento jurídico</p>
+      <p className="flex items-center gap-2 text-xs uppercase tracking-[0.18em] text-wine">
+        <UiIcon icon={Scale} size="sm" className="text-wine" />
+        No es asesoramiento jurídico
+      </p>
       <h1 className="mt-2 font-display text-5xl">Derechos para no firmar a ciegas</h1>
       <p className="mt-4 leading-7 text-ink/75">
         Rentaly resume puntos que suelen aparecer en abusos de alquiler en Madrid. No es un despacho ni sustituye el

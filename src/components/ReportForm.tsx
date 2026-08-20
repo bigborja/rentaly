@@ -6,6 +6,8 @@ import { BARRIOS } from "@/lib/barrios-data";
 import { ABUSE_LABELS } from "@/lib/format";
 import type { AbuseCategory, ReportType } from "@/lib/types";
 import { EvidenceCrop } from "@/components/EvidenceCrop";
+import { UiIcon } from "@/components/UiIcon";
+import { MessageSquare, TriangleAlert, Wrench } from "lucide-react";
 
 export function ReportForm({
   defaultBarrioId,
@@ -79,12 +81,18 @@ export function ReportForm({
         fechas, cantidades, qué pedían, cómo se resolvió.
       </p>
       <div className="grid gap-2 sm:grid-cols-3">
-        {(["experiencia", "incidente", "abuso"] as ReportType[]).map((value) => (
+        {(
+          [
+            ["experiencia", "Experiencia", MessageSquare],
+            ["incidente", "Incidente", Wrench],
+            ["abuso", "Aviso de abuso", TriangleAlert],
+          ] as const
+        ).map(([value, label, icon]) => (
           <button
             key={value}
             type="button"
             onClick={() => setType(value)}
-            className={`rounded-2xl border px-3 py-3 text-sm ${
+            className={`inline-flex items-center justify-center gap-2 rounded-2xl border px-3 py-3 text-sm ${
               type === value
                 ? value === "abuso"
                   ? "border-wine bg-wine text-paper"
@@ -92,7 +100,8 @@ export function ReportForm({
                 : "border-ink/15 bg-paper"
             }`}
           >
-            {value === "experiencia" ? "Experiencia" : value === "incidente" ? "Incidente" : "Aviso de abuso"}
+            <UiIcon icon={icon} size="sm" />
+            {label}
           </button>
         ))}
       </div>
