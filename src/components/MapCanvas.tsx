@@ -6,6 +6,7 @@ import type { Layer } from "leaflet";
 import type { Feature, GeoJsonObject } from "geojson";
 import "leaflet/dist/leaflet.css";
 import { useRouter } from "next/navigation";
+import { CATASTRO_WMS } from "@/clients/catastro/wms";
 import type { Barrio } from "@/lib/types";
 
 type Stats = Record<string, { total: number; abuso: number }>;
@@ -91,12 +92,12 @@ export default function MapCanvas({
         />
         {catastro ? (
           <WMSTileLayer
-            url="https://ovc.catastro.meh.es/Cartografia/WMS/ServidorWMS.aspx"
-            layers="Catastro"
-            format="image/png"
+            url={CATASTRO_WMS.url}
+            layers={CATASTRO_WMS.layers}
+            format={CATASTRO_WMS.format}
             transparent
             opacity={0.55}
-            attribution="Dirección General del Catastro"
+            attribution={CATASTRO_WMS.attribution}
           />
         ) : null}
         {geo ? (

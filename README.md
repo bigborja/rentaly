@@ -33,11 +33,31 @@ Inspirado en **Reviu** (reseñas de piso + Catastro, apodo público), **JustFix 
 4. Publicar experiencia, incidente o aviso (hace falta sesión; en público solo se ve el apodo).
 5. Cuenta con lo publicado.
 
+## Arquitectura
+
+Capas, de fuera hacia dentro:
+
+```
+src/app                presentación (App Router)
+src/components         UI / mapa
+src/lib                casos de uso (dossier, persistencia JSON, auth)
+src/domain             tipos, invariantes RGPD, fuentes oficiales
+src/clients            Catastro, Ayuntamiento, INE, MITMA
+src/cache              TTL en proceso (Redis más adelante)
+prisma/schema.prisma   modelo PostGIS de destino
+```
+
+El Catastro **no** publica titulares de personas físicas. Los “grandes tenedores” solo se modelan como personas jurídicas (BORM, CIF, SOCIMI) o como evidencia de usuaria ya anonimizada. Los aportes salen a la API sin `userId`.
+
+Hasta que haya `DATABASE_URL`, cuentas y relatos siguen en JSON (`data/` en local, `/tmp` en Vercel).
+
 ## Fuentes
 
 - Dirección General del Catastro, servicios web JSON (`Consulta_DNPLOC`, `Consulta_DNPRC`, `ObtenerCallejero`, `Consulta_RCCOOR`, `Consulta_CPMRC`) y WMS de parcelas.
-- Ayuntamiento de Madrid, capa de barrios del servicio de límites administrativos (WGS84).
+- Ayuntamiento de Madrid: barrios oficiales, Geoportal de **VUT con licencia**, consulta ITE/IEE por dirección (sin volcado masivo de titulares).
+- INE Atlas de distribución de renta de los hogares e índice estatal de alquiler (MITMA/MIVAU) por **sección censal**. El registro de fianzas no es un API nominativo abierto.
 - Aportes de ejemplo en `src/data/seed-reports.json` para que el mapa no arranque vacío.
+- Catálogo de endpoints en `src/domain/sources.ts`.
 
 ## Despliegue en Vercel
 

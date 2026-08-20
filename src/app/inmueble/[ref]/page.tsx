@@ -1,8 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
-import { lookupByRef, summarizeUses } from "@/lib/catastro";
-import { barrioAt } from "@/lib/barrios";
-import { listReports } from "@/lib/reports";
+import { summarizeUses } from "@/lib/catastro";
+import { loadFincaDossier } from "@/lib/dossier";
 import { formatM2, prettyUse } from "@/lib/format";
 import { ReportList } from "@/components/ReportList";
 import { compactRef, isCadastralRef } from "@/lib/parse";
@@ -20,20 +19,18 @@ export default async function InmueblePage({ params }: { params: Promise<{ ref: 
   const ref = compactRef(raw);
   if (!isCadastralRef(ref)) notFound();
 
-  let property;
+  let dossier;
   try {
-    property = await lookupByRef(ref);
+    dossier = await loadFincaDossier(ref);
   } catch {
     notFound();
   }
 
-  const barrio =
-    property.longitude != null && property.latitude != null
-      ? await barrioAt(property.longitude, property.latitude)
-      : undefined;
-  const reports = await listReports({ ref: property.parcelRef });
+  const { catastro: property, barrio, touristLicenses, inspections, reports } = dossier;
   const uses = summarizeUses(property);
   const units = property.units;
+  const vutUnits = touristLicenses.reduce((sum, item) => sum + item.units, 0);
+  const ite = inspections[0];
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-10">
@@ -146,6 +143,62 @@ export default async function InmueblePage({ params }: { params: Promise<{ ref: 
           Dejar experiencia o aviso
         </Link>
       </div>
+
+      <section className="mt-14 grid gap-4 md:grid-cols-2">
+        <div className="rounded-3xl border border-ink/10 bg-white/70 px-5 py-5">
+          <p className="text-xs uppercase tracking-[0.14em] text-ink/50">Viviendas de uso turístico</p>
+          <h2 className="mt-1 font-display text-2xl">Licencias VUT en el entorno</h2>
+          {touristLicenses.length ? (
+            <>
+              <p className="mt-2 text-sm text-ink/65">
+                {vutUnits} unidad{vutUnits === 1 ? "" : "es"} con licencia urbanística de hospedaje a menos de 60&nbsp;m
+                (Geoportal del Ayuntamiento). No implica quién es el titular.
+              </p>
+              <ul className="mt-3 space-y-2 text-sm">
+                {touristLicenses.slice(0, 6).map((license) => (
+                  <li key={`${license.expedienteLu}-${license.address}-${license.floor}`}>
+                    <span className="font-medium">{license.address || "Dirección no informada"}</span>
+                    {license.floor ? ` · planta ${license.floor.toLowerCase()}` : ""}
+                    {license.expedienteLu ? (
+                      <span className="block font-mono text-xs text-ink/50">{license.expedienteLu}</span>
+                    ) : null}
+                  </li>
+                ))}
+              </ul>
+            </>
+          ) : (
+            <p className="mt-2 text-sm text-ink/65">
+              En este radio el Geoportal no muestra licencias VUT, o el servicio municipal no ha respondido.
+            </p>
+          )}
+          <a
+            className="mt-3 inline-block text-sm underline decoration-gold"
+            href="https://datos.madrid.es/dataset/300694-0-viviendas-turisticas-geoportal"
+            target="_blank"
+            rel="noreferrer"
+          >
+            Fuente: datos.madrid.es
+          </a>
+        </div>
+        <div className="rounded-3xl border border-ink/10 bg-white/70 px-5 py-5">
+          <p className="text-xs uppercase tracking-[0.14em] text-ink/50">Conservación del edificio</p>
+          <h2 className="mt-1 font-display text-2xl">ITE / IEE</h2>
+          <p className="mt-2 text-sm text-ink/65">
+            El Ayuntamiento no publica un volcado masivo con titulares ni inspectores. La consulta oficial es por
+            dirección o expediente en el Registro de Edificios y Construcciones.
+          </p>
+          {ite ? (
+            <a
+              className="mt-4 inline-flex rounded-full bg-ink px-4 py-2 text-sm text-paper"
+              href={ite.consultUrl}
+              target="_blank"
+              rel="noreferrer"
+            >
+              Consultar ITE/IEE en la sede
+            </a>
+          ) : null}
+        </div>
+      </section>
 
       <section className="mt-14">
         <h2 className="font-display text-3xl">Memoria de esta finca</h2>
