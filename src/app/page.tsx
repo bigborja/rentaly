@@ -3,7 +3,6 @@ import { MadridMap } from "@/components/MadridMap";
 import { ReportList } from "@/components/ReportList";
 import { WelcomeSearch } from "@/components/WelcomeSearch";
 import { FaqList } from "@/components/FaqList";
-import { ActionCard } from "@/components/ActionCard";
 import { MadridCornice } from "@/components/illustrations";
 import { UiIcon, type Icon } from "@/components/UiIcon";
 import {
@@ -215,7 +214,6 @@ export default async function HomePage() {
           <ReportList reports={latest} />
         </div>
         <aside className="space-y-4">
-          <ActionCard distrito={barrio?.district ?? "Madrid"} />
           <article className="texture-ink rounded-3xl p-6 text-paper shadow-lift">
             <h3 className="font-display text-2xl text-gold">Si hay abuso ahora</h3>
             <p className="mt-3 text-sm leading-6 text-paper/80">
