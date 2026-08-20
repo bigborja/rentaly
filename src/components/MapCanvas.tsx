@@ -43,7 +43,6 @@ function InvalidateSize() {
   return null;
 }
 
-
 function ClickCatastro({
   enabled,
   onSelect,
