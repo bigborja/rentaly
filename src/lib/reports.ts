@@ -89,13 +89,16 @@ export async function listReports(filters?: {
   ref?: string;
   type?: ReportType;
   userId?: string;
+  managerTaxId?: string;
 }): Promise<Report[]> {
   const reports = await readStore();
+  const managerNeedle = filters?.managerTaxId?.trim().toUpperCase();
   const filtered = reports
     .filter((report) => report.status === "published")
     .filter((report) => !filters?.barrioId || report.barrioId === filters.barrioId)
     .filter((report) => !filters?.type || report.type === filters.type)
     .filter((report) => !filters?.userId || report.userId === filters.userId)
+    .filter((report) => !managerNeedle || (report.managerTaxId || "").toUpperCase() === managerNeedle)
     .filter((report) => {
       if (!filters?.ref) return true;
       const needle = compactRef(filters.ref);

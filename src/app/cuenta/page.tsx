@@ -24,6 +24,10 @@ export default async function CuentaPage() {
 
   const barrio = user.barrioId ? getBarrio(user.barrioId) : undefined;
   const mine = await listReports({ userId: user.id });
+  const barrioReports = barrio ? await listReports({ barrioId: barrio.id }) : [];
+  const pulseCutoff = Date.now() - 14 * 24 * 60 * 60 * 1000;
+  const barrioRecent = barrioReports.filter((report) => new Date(report.createdAt).getTime() >= pulseCutoff);
+  const barrioAbuse = barrioRecent.filter((report) => report.type === "abuso").length;
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-10">
@@ -64,6 +68,30 @@ export default async function CuentaPage() {
           </dd>
         </div>
       </dl>
+
+      {barrio ? (
+        <div className="mt-6 rounded-3xl border border-ink/10 bg-white/80 px-5 py-5 shadow-rest">
+          <p className="text-xs uppercase tracking-[0.14em] text-ink/50">Avisos de tu barrio</p>
+          <h2 className="mt-1 font-display text-2xl">{barrio.name}, últimos 14 días</h2>
+          <p className="mt-2 text-sm leading-6 text-ink/70">
+            {barrioRecent.length
+              ? `${barrioRecent.length} relato${barrioRecent.length === 1 ? "" : "s"} nuevo${barrioRecent.length === 1 ? "" : "s"}${barrioAbuse ? ` · ${barrioAbuse} aviso${barrioAbuse === 1 ? "" : "s"} de abuso` : ""}. No es un correo: aparece aquí cuando entras.`
+              : "Nadie ha publicado en este barrio en dos semanas. Si alquilas aquí, un relato corto ayuda a quien busca ahora."}
+          </p>
+          <div className="mt-3 flex flex-wrap gap-3 text-sm">
+            <Link className="underline decoration-gold" href={`/barrios/${barrio.slug}`}>
+              Abrir {barrio.name}
+            </Link>
+            <Link className="underline decoration-gold" href={`/aportar?barrio=${barrio.id}`}>
+              Dejar memoria
+            </Link>
+          </div>
+        </div>
+      ) : (
+        <p className="mt-6 text-sm text-ink/60">
+          Ancla un barrio en el recorte de la cuenta para ver aquí si hay relatos nuevos. No enviamos correos.
+        </p>
+      )}
 
       <div className="mt-6 flex flex-wrap gap-3">
         <Link href="/checklist" className="btn btn-ink">

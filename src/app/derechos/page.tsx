@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { officialLinks } from "@/lib/format";
 import { Guide, Steps } from "@/components/Guide";
 import { UiIcon } from "@/components/UiIcon";
-import { Scale } from "lucide-react";
+import { ScalesIcon } from "@phosphor-icons/react/ssr";
 
 export const metadata: Metadata = { title: "Derechos y recursos" };
 
@@ -27,17 +27,17 @@ const points = [
     title: "Metros y uso",
     body: "El Catastro no es un tasador, pero sí un ancla: uso (vivienda, comercio, oficina), superficie y año. Si el anuncio infla metros o vende un local como piso, salta la alarma.",
   },
-  {
-    title: "Actualización de renta",
-    body: "La cláusula de subida no puede ser un porcentaje caprichoso al margen de la normativa vigente. Conserva el contrato y los recibos.",
-  },
+    {
+      title: "Actualización de renta",
+      body: "El IRAV (INE) limita la subida anual de los contratos de vivienda habitual firmados desde el 26 de mayo de 2023, si hay cláusula de revisión. No es el precio de mercado: eso es SERPAVI. Los contratos anteriores se rigen por lo pactado, a menudo IPC. Conserva el contrato y pide el cálculo por escrito.",
+    },
 ];
 
 export default function DerechosPage() {
   return (
     <div className="mx-auto max-w-3xl px-4 py-10">
       <p className="flex items-center gap-2 text-xs uppercase tracking-[0.18em] text-wine">
-        <UiIcon icon={Scale} size="sm" className="text-wine" />
+        <UiIcon icon={ScalesIcon} size="sm" className="text-wine" />
         No es asesoramiento jurídico
       </p>
       <h1 className="mt-2 font-display text-5xl">Derechos para no firmar a ciegas</h1>
@@ -58,10 +58,10 @@ export default function DerechosPage() {
                 title: "Contrasta metros y uso",
                 body: "Abre la dirección en Rentaly o en la sede del Catastro. Si el anuncio infla metros o vende un local como piso, esa es una señal de alarma.",
               },
-              {
-                title: "Si hay riesgo o delito, canales oficiales",
-                body: "112 y denuncia. Un aviso en esta web no abre un procedimiento. El listado de abajo enlaza oficinas y normas.",
-              },
+            {
+              title: "Si hay riesgo o delito, canales oficiales",
+              body: "112 y denuncia. Un aviso en esta web no abre un procedimiento. SAV Madrid (900 814 815) asesora; el Sindicato de Inquilinas organiza. El listado de abajo enlaza oficinas y normas.",
+            },
             ]}
           />
         </Guide>

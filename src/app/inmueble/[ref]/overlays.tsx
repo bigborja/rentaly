@@ -1,13 +1,24 @@
 import type { ReactNode } from "react";
 import Link from "next/link";
-import type { LucideIcon } from "lucide-react";
-import { BarChart3, Briefcase, ClipboardCheck, KeyRound } from "lucide-react";
-import { touristLicensesOnParcel } from "@/clients/madrid/vut";
+import {
+  ChartBarIcon,
+  BriefcaseIcon,
+  ClipboardTextIcon,
+  KeyIcon,
+  ScalesIcon,
+} from "@phosphor-icons/react/ssr";
+import type { Icon } from "@phosphor-icons/react";
+import { touristLicensesNear, touristLicensesOnParcel } from "@/clients/madrid/vut";
 import { censusSectionAt } from "@/clients/ine/atlas-renta";
+import { latestIrav } from "@/clients/ine/irav";
 import { inspectionConsulta } from "@/clients/madrid/ite";
-import { serpaviUrlForSection } from "@/clients/mitma/indice-alquiler";
+import { serpaviAppUrl, serpaviUrlForSection } from "@/clients/mitma/indice-alquiler";
 import { listOwnershipClaims, parcelCountsByTaxId } from "@/lib/ownership-store";
+import { formatM2, prettyUse } from "@/lib/format";
+import { SERPAVI_FAQS, SERPAVI_INFO, serpaviScope } from "@/lib/official";
 import { OwnershipForm } from "@/components/OwnershipForm";
+import { IravCalculator } from "@/components/IravCalculator";
+import { CopyText } from "@/components/CopyText";
 import { UiIcon } from "@/components/UiIcon";
 
 const TONE = {
@@ -24,7 +35,7 @@ function OverlayCard({
   children,
 }: {
   tone: keyof typeof TONE;
-  icon: LucideIcon;
+  icon: Icon;
   kicker: string;
   title: string;
   children: ReactNode;
@@ -67,12 +78,17 @@ export async function VutPanel({
     longitude != null && latitude != null
       ? await touristLicensesOnParcel(parcelRef, longitude, latitude)
       : { onParcel: [], nearby: [] };
+  const block =
+    longitude != null && latitude != null ? await touristLicensesNear(longitude, latitude, 250) : [];
   const vutUnits = vut.onParcel.reduce((sum, item) => sum + item.units, 0);
+  const nearbyUnits = vut.nearby.reduce((sum, item) => sum + item.units, 0);
+  const blockUnits = block.reduce((sum, item) => sum + item.units, 0);
   return (
-    <OverlayCard tone="sage" icon={KeyRound} kicker="Viviendas de uso turístico" title="Licencias VUT">
+    <OverlayCard tone="sage" icon={KeyIcon} kicker="Viviendas de uso turístico" title="Licencias VUT">
       <p className="mt-2 text-xs leading-5 text-ink/55">
         VUT es una vivienda con licencia para alquilar a turistas. Cruzamos el listado del Ayuntamiento con la
-        referencia catastral de esta parcela. No implica que el piso del anuncio esté en esa lista.
+        referencia catastral de esta parcela. No implica que el piso del anuncio esté en esa lista. La presión de
+        manzana cuenta licencias en 80&nbsp;m y 250&nbsp;m, no anuncios de Airbnb.
       </p>
       {vut.onParcel.length ? (
         <p className="mt-2 text-sm text-ink/65">
@@ -94,9 +110,11 @@ export async function VutPanel({
           ))}
         </ul>
       ) : null}
-      {vut.nearby.length ? (
-        <p className="mt-3 text-xs text-ink/50">
-          {vut.nearby.length} licencia{vut.nearby.length === 1 ? "" : "s"} más en 80&nbsp;m sin cruzar a esta RC.
+      {longitude != null ? (
+        <p className="mt-3 text-sm text-ink/65">
+          Presión alrededor: {vut.nearby.length} licencia{vut.nearby.length === 1 ? "" : "s"}
+          {nearbyUnits ? ` (${nearbyUnits} ud.)` : ""} en 80&nbsp;m sin cruzar a esta RC
+          {block.length ? ` · ${block.length} en 250 m (${blockUnits} ud.)` : ""}.
         </p>
       ) : null}
       <a
@@ -107,6 +125,131 @@ export async function VutPanel({
       >
         Fuente: datos.madrid.es
       </a>
+    </OverlayCard>
+  );
+}
+
+export async function SerpaviPanel({
+  cadastralRef,
+  longitude,
+  latitude,
+  areaM2,
+  year,
+  use,
+}: {
+  cadastralRef: string;
+  longitude?: number;
+  latitude?: number;
+  areaM2?: number;
+  year?: number;
+  use?: string;
+}) {
+  const rentContext =
+    longitude != null && latitude != null ? await censusSectionAt(longitude, latitude) : null;
+  const scope = serpaviScope({ areaM2, year, use });
+  return (
+    <OverlayCard tone="gold" icon={ChartBarIcon} kicker="SERPAVI · MIVAU" title="Rango oficial de este alquiler">
+      <p className="mt-2 text-xs leading-5 text-ink/55">
+        SERPAVI calcula un rango de renta para <strong>esta vivienda</strong> (localización, m² y extras). No es el
+        precio de un anuncio ni la subida anual del contrato: eso es el IRAV, al lado. Rentaly no inventa el rango: abre
+        la aplicación del Ministerio con la referencia catastral.
+      </p>
+      <dl className="mt-3 grid gap-2 text-sm sm:grid-cols-3">
+        <div className="rounded-2xl bg-mist/80 px-3 py-2">
+          <dt className="text-xs uppercase tracking-[0.12em] text-ink/45">Catastro</dt>
+          <dd className="font-mono text-xs">{cadastralRef}</dd>
+        </div>
+        <div className="rounded-2xl bg-mist/80 px-3 py-2">
+          <dt className="text-xs uppercase tracking-[0.12em] text-ink/45">Superficie</dt>
+          <dd>{formatM2(areaM2)}</dd>
+        </div>
+        <div className="rounded-2xl bg-mist/80 px-3 py-2">
+          <dt className="text-xs uppercase tracking-[0.12em] text-ink/45">Uso / año</dt>
+          <dd>
+            {prettyUse(use)}
+            {year ? ` · ${year}` : ""}
+          </dd>
+        </div>
+      </dl>
+      {rentContext ? (
+        <p className="mt-3 text-sm text-ink/65">
+          Sección censal <span className="font-mono">{rentContext.censusSectionCode}</span>. SERPAVI también te dirá si
+          esa sección está en zona tensionada; Rentaly no lo afirma por su cuenta.
+        </p>
+      ) : (
+        <p className="mt-3 text-sm text-ink/65">Sin coordenadas no asignamos sección censal; la RC basta en SERPAVI.</p>
+      )}
+      {scope.inScope ? (
+        <p className="mt-2 text-xs text-ink/50">
+          Esta ficha entra en el ámbito habitual de la aplicación (vivienda colectiva, 30–150 m², más de cinco años). El
+          Ministerio confirma el rango al pegar la RC.
+        </p>
+      ) : (
+        <p className="mt-2 text-xs text-ink/55">
+          Puede quedar fuera del rango individualizado ({scope.reasons.join("; ")}). Igual conviene abrir SERPAVI: el
+          visor de sección sigue siendo útil.
+        </p>
+      )}
+      <div className="mt-4 flex flex-wrap gap-2">
+        <a
+          className="inline-flex items-center rounded-full bg-ink px-4 py-2 text-sm text-paper"
+          href={serpaviAppUrl(cadastralRef)}
+          target="_blank"
+          rel="noreferrer"
+        >
+          Abrir SERPAVI con esta RC
+        </a>
+        <CopyText text={cadastralRef} label="Copiar RC" className="rounded-full border border-ink/15 px-4 py-2 text-sm" />
+        {rentContext ? (
+          <a
+            className="inline-flex items-center rounded-full border border-ink/15 px-4 py-2 text-sm"
+            href={serpaviUrlForSection(rentContext.censusSectionCode)}
+            target="_blank"
+            rel="noreferrer"
+          >
+            Visor de la sección
+          </a>
+        ) : (
+          <a
+            className="inline-flex items-center rounded-full border border-ink/15 px-4 py-2 text-sm"
+            href={SERPAVI_INFO}
+            target="_blank"
+            rel="noreferrer"
+          >
+            Qué es SERPAVI
+          </a>
+        )}
+      </div>
+      <p className="mt-3 text-xs text-ink/45">
+        <a className="underline decoration-gold" href={SERPAVI_FAQS} target="_blank" rel="noreferrer">
+          Preguntas frecuentes del Ministerio
+        </a>
+        . Pega la RC si la aplicación no la rellena sola.
+      </p>
+    </OverlayCard>
+  );
+}
+
+export async function IravPanel() {
+  const latest = await latestIrav();
+  return (
+    <OverlayCard tone="sage" icon={ScalesIcon} kicker="IRAV · INE" title="Techo de la subida anual">
+      <p className="mt-2 text-xs leading-5 text-ink/55">
+        El IRAV limita cuánto puede subir la renta de un contrato de vivienda habitual firmado desde el 26 de mayo de
+        2023, si hay cláusula de revisión. No dice cuánto debería costar el piso (eso es SERPAVI) ni sustituye lo
+        pactado en contratos anteriores.
+      </p>
+      {latest ? (
+        <p className="mt-3 text-sm text-ink/70">
+          Último dato INE ({latest.label}): <strong>{latest.ratePercent.toLocaleString("es-ES")} %</strong>. Contrástalo
+          en la tabla oficial antes de aceptarlo.
+        </p>
+      ) : (
+        <p className="mt-3 text-sm text-ink/65">
+          No hemos podido leer el INE ahora. Usa la tabla o la calculadora del Ministerio; no inventamos el porcentaje.
+        </p>
+      )}
+      <IravCalculator latest={latest} />
     </OverlayCard>
   );
 }
@@ -127,10 +270,9 @@ export async function ContextPanel({
     : null;
   const ite = inspectionConsulta(address);
   return (
-    <OverlayCard tone="gold" icon={BarChart3} kicker="Sección censal · renta" title="Contexto de barrio estadístico">
+    <OverlayCard tone="gold" icon={ClipboardTextIcon} kicker="INE · ITE" title="Renta de la sección e inspección">
       <p className="mt-2 text-xs leading-5 text-ink/55">
-        La sección censal es un recorte del INE más pequeño que el barrio. La renta es la media de los hogares de esa
-        pieza, no de este portal. SERPAVI abre el visor estatal de precios de alquiler de la zona. ITE es la inspección
+        La renta del INE es la media de los hogares de la sección censal, no de este portal. ITE/IEE es la inspección
         técnica del edificio: el resultado solo lo da el Ayuntamiento.
       </p>
       {rentContext ? (
@@ -140,14 +282,6 @@ export async function ContextPanel({
             Renta neta media por hogar ({rentContext.year}): <strong>{income ? `${income} €` : "no publicada"}</strong>.
             Agregado INE, no de esta finca.
           </p>
-          <a
-            className="mt-3 inline-block text-sm underline decoration-gold"
-            href={serpaviUrlForSection(rentContext.censusSectionCode)}
-            target="_blank"
-            rel="noreferrer"
-          >
-            Consultar SERPAVI para esta sección
-          </a>
         </>
       ) : (
         <p className="mt-2 text-sm text-ink/65">Sin coordenadas no se asigna sección censal.</p>
@@ -158,7 +292,7 @@ export async function ContextPanel({
         target="_blank"
         rel="noreferrer"
       >
-        <UiIcon icon={ClipboardCheck} size="sm" className="text-paper" />
+        <UiIcon icon={ClipboardTextIcon} size="sm" className="text-paper" />
         Consultar ITE/IEE en la sede
       </a>
       <p className="mt-2 text-xs text-ink/50">No inventamos el resultado de la inspección.</p>
@@ -177,11 +311,12 @@ export async function OwnershipPanel({
   const taxIds = ownershipClaims.map((claim) => claim.legalEntity?.taxId).filter(Boolean) as string[];
   const counts = taxIds.length ? await parcelCountsByTaxId(taxIds) : {};
   return (
-    <OverlayCard tone="ink" icon={Briefcase} kicker="Titularidad" title="Personas jurídicas en esta finca">
+    <OverlayCard tone="ink" icon={BriefcaseIcon} kicker="Titularidad" title="Personas jurídicas en esta finca">
       <p className="mt-2 max-w-2xl text-sm text-ink/65">
         El Catastro no publica el nombre de dueños particulares y aquí tampoco. Solo se vincula un CIF (empresa, SOCIMI,
-        fondo). Un aporte vecinal queda como baja confianza hasta que haya un enlace a BOE, BORM o registradores. Si el
-        mismo CIF aparece en más de una finca, es el núcleo de una cartera, no un vecino.
+        fondo o gestora). Un aporte vecinal queda como baja confianza hasta que haya un enlace a BOE, BORM o
+        registradores. La cartera de parcelas está en la entidad; las experiencias de quien gestiona el alquiler, en la
+        ficha de gestora.
       </p>
       {ownershipClaims.length ? (
         <ul className="mt-4 space-y-2 text-sm">
@@ -200,6 +335,14 @@ export async function OwnershipPanel({
                   {n > 1 ? ` · ${n} fincas con este CIF` : ""}
                   {claim.largeHolderCandidate || n > 1 ? " · gran tenedor (forma o cartera)" : ""}
                 </span>
+                {taxId ? (
+                  <>
+                    {" · "}
+                    <Link className="underline decoration-gold" href={`/gestora/${taxId}`}>
+                      memoria de gestora
+                    </Link>
+                  </>
+                ) : null}
               </li>
             );
           })}

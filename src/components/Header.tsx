@@ -1,5 +1,12 @@
 import Link from "next/link";
-import { BookOpen, ListChecks, Map, PenLine, Scale, LogIn } from "lucide-react";
+import {
+  BookOpenIcon,
+  ListChecksIcon,
+  MapTrifoldIcon,
+  PencilSimpleIcon,
+  ScalesIcon,
+  SignInIcon,
+} from "@phosphor-icons/react/ssr";
 import { BrandMark } from "./BrandMark";
 import { LogoutButton } from "./LogoutButton";
 import { HeaderShell } from "./HeaderShell";
@@ -7,11 +14,11 @@ import { UiIcon } from "./UiIcon";
 import { getCurrentUser } from "@/lib/auth";
 
 const links = [
-  { href: "/como-funciona", label: "Cómo funciona", icon: BookOpen },
-  { href: "/checklist", label: "Antes de firmar", icon: ListChecks },
-  { href: "/barrios", label: "Barrios", icon: Map },
-  { href: "/aportar", label: "Aportar", icon: PenLine },
-  { href: "/derechos", label: "Derechos", icon: Scale },
+  { href: "/como-funciona", label: "Cómo funciona", icon: BookOpenIcon, hideOnMobile: true },
+  { href: "/checklist", label: "Antes de firmar", icon: ListChecksIcon, hideOnMobile: false },
+  { href: "/barrios", label: "Barrios", icon: MapTrifoldIcon, hideOnMobile: true },
+  { href: "/aportar", label: "Aportar", icon: PencilSimpleIcon, hideOnMobile: true },
+  { href: "/derechos", label: "Derechos", icon: ScalesIcon, hideOnMobile: true },
 ];
 
 export async function Header() {
@@ -30,7 +37,9 @@ export async function Header() {
             <Link
               key={link.href}
               href={link.href}
-              className="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-ink/80 transition hover:bg-ink hover:text-paper"
+              className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-ink/80 transition hover:bg-ink hover:text-paper ${
+                link.hideOnMobile ? "hidden md:inline-flex" : ""
+              }`}
             >
               <UiIcon icon={link.icon} size="sm" />
               {link.label}
@@ -38,17 +47,17 @@ export async function Header() {
           ))}
           {user ? (
             <>
-              <Link href="/cuenta" className="rounded-full bg-ink px-3 py-1.5 text-paper">
+              <Link href="/cuenta" className="hidden rounded-full bg-ink px-3 py-1.5 text-paper md:inline">
                 {user.nickname}
               </Link>
-              <LogoutButton />
+              <LogoutButton className="hidden md:inline" />
             </>
           ) : (
             <Link
               href="/entrar"
-              className="inline-flex items-center gap-1.5 rounded-full bg-wine px-3 py-1.5 text-paper"
+              className="hidden items-center gap-1.5 rounded-full bg-wine px-3 py-1.5 text-paper md:inline-flex"
             >
-              <UiIcon icon={LogIn} size="sm" className="text-paper" />
+              <UiIcon icon={SignInIcon} size="sm" className="text-paper" />
               Entrar
             </Link>
           )}

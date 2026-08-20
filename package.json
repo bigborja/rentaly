@@ -9,22 +9,25 @@
     "start": "next start --hostname 0.0.0.0 --port 3000",
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
-    "test": "node --experimental-strip-types --test scripts/parse.test.mjs src/domain/privacy.test.ts src/lib/supabase-rest.test.ts src/lib/client-ip.test.ts src/lib/civic-trust.test.ts",
+    "test": "node --experimental-strip-types --test scripts/parse.test.mjs src/domain/privacy.test.ts src/lib/supabase-rest.test.ts src/lib/client-ip.test.ts src/lib/civic-trust.test.ts src/lib/civic-rent.test.ts",
     "postinstall": "prisma generate",
     "db:generate": "prisma generate",
     "db:sql": "prisma migrate diff --from-empty --to-schema-datamodel prisma/schema.prisma --script"
   },
   "dependencies": {
+    "@phosphor-icons/react": "^2.1.10",
     "@prisma/client": "^6.19.0",
     "@upstash/ratelimit": "^2.0.8",
     "@upstash/redis": "^1.38.2",
     "leaflet": "^1.9.4",
-    "lucide-react": "^0.503.0",
+    "motion": "^13.1.1",
     "next": "^15.3.2",
     "prisma": "^6.19.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
-    "react-leaflet": "^5.0.0"
+    "react-leaflet": "^5.0.0",
+    "sonner": "^2.0.8",
+    "vaul": "^1.1.2"
   },
   "devDependencies": {
     "@types/leaflet": "^1.9.17",

@@ -55,14 +55,24 @@ export function officialLinks() {
       detail: "Datos no protegidos del inmueble, cartografía y referencia catastral.",
     },
     {
-      title: "Índice de precios de alquiler",
-      href: "https://www.mivau.gob.es/vivienda/alquila-con-seguridad/index-alquiler",
-      detail: "Referencia estatal de precios del Ministerio de Vivienda y Agenda Urbana.",
+      title: "SERPAVI · rango de precios de alquiler",
+      href: "https://serpavi.mivau.gob.es/",
+      detail: "Aplicación del Ministerio: rango orientativo para una vivienda a partir de su referencia catastral.",
     },
     {
-      title: "Oficina de Vivienda de Madrid",
-      href: "https://www.madrid.es/portales/munimadrid/es/Inicio/Vivienda/",
-      detail: "Información municipal, ayudas y atención a inquilinos.",
+      title: "IRAV · actualización anual de renta",
+      href: "https://www.ine.es/jaxiT3/Tabla.htm?t=72975",
+      detail: "Índice del INE que limita la subida anual en contratos de vivienda habitual posteriores al 26 de mayo de 2023.",
+    },
+    {
+      title: "SAV Madrid · asesoramiento de vivienda",
+      href: "https://www.madrid.es/portales/munimadrid/es/Inicio/Vivienda-urbanismo-y-obras/Vivienda/Puntos-de-informacion-y-asesoramiento-para-los-ciudadanos-en-materia-de-vivienda/",
+      detail: "Cita gratuita (900 814 815). Rentaly no tramita la cita ni sustituye al letrado.",
+    },
+    {
+      title: "Sindicato de Inquilinas de Madrid",
+      href: "https://inquilinato.org/defiendete/",
+      detail: "Organización colectiva. La ficha investiga; el sindicato actúa.",
     },
     {
       title: "Ley de Arrendamientos Urbanos",

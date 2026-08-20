@@ -2,12 +2,21 @@
 
 import { FormEvent, useMemo, useState } from "react";
 import Link from "next/link";
-import { Search, Building2, Ruler } from "lucide-react";
-import { UiIcon } from "@/components/UiIcon";
+import { AnimatePresence, m } from "motion/react";
+import { BuildingsIcon, MagnifyingGlassIcon, RulerIcon } from "@phosphor-icons/react/ssr";
+import { UiIcon, type Icon } from "@/components/UiIcon";
 import type { SearchResult } from "@/lib/types";
 import { formatM2, prettyUse } from "@/lib/format";
 
-export function SearchPanel({ initialQuery = "", compact = false }: { initialQuery?: string; compact?: boolean }) {
+export function SearchPanel({
+  initialQuery = "",
+  compact = false,
+  overlay = false,
+}: {
+  initialQuery?: string;
+  compact?: boolean;
+  overlay?: boolean;
+}) {
   const [query, setQuery] = useState(initialQuery);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -35,10 +44,19 @@ export function SearchPanel({ initialQuery = "", compact = false }: { initialQue
     if (!result?.property) return null;
     return result.property.address || result.property.ref;
   }, [result]);
+  const open = Boolean(result?.property || result?.streets?.length || error);
 
   return (
-    <section className={compact ? "" : "card-lift p-5"}>
-      {compact ? (
+    <section
+      className={
+        compact ? "" : overlay ? "card-lift max-h-[min(52vh,440px)] overflow-y-auto p-4 sm:p-5" : "card-lift p-5"
+      }
+    >
+      {overlay ? (
+        <p className="mb-3 text-xs leading-5 text-ink/60">
+          No buscamos anuncios: consultamos el Catastro. Calle y número, o la referencia de 14/20 caracteres.
+        </p>
+      ) : compact ? (
         <p className="mb-3 text-sm leading-6 text-ink/65">
           Escribe calle y número de Madrid capital, o pega la referencia catastral (14 o 20 caracteres). Si el Catastro
           no distingue la vía, te pedirá que elijas el tipo (calle, avenida…) y añadas el portal.
@@ -54,7 +72,10 @@ export function SearchPanel({ initialQuery = "", compact = false }: { initialQue
           Buscar inmueble
         </label>
         <div className="relative flex-1">
-          <UiIcon icon={Search} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-ink/40" />
+          <UiIcon
+            icon={MagnifyingGlassIcon}
+            className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-ink/40"
+          />
           <input
             id="search-q"
             value={query}
@@ -74,104 +95,107 @@ export function SearchPanel({ initialQuery = "", compact = false }: { initialQue
       {error ? <p className="mt-3 text-sm text-wine">{error}</p> : null}
       {result?.warning ? <p className="mt-3 text-sm text-sage">{result.warning}</p> : null}
 
-      {result?.streets?.length ? (
-        <ul className="mt-4 divide-y divide-ink/10 rounded-2xl border border-ink/10 bg-paper">
-          {result.streets.map((street) => (
-            <li key={`${street.type}-${street.name}-${street.code}`}>
-              <button
-                type="button"
-                className="w-full px-4 py-3 text-left text-sm hover:bg-mist"
-                onClick={() => setQuery(`${street.type} ${street.name} `)}
-              >
-                <span className="font-medium">
-                  {street.type} {street.name}
-                </span>
-                <span className="ml-2 text-ink/50">pulsa y añade el número de portal</span>
-              </button>
-            </li>
-          ))}
-        </ul>
-      ) : null}
-
-      {result?.property ? (
-        <div className="mt-5 space-y-4">
-          <div>
-            <p className="flex items-center gap-1.5 text-xs uppercase tracking-[0.16em] text-wine">
-              <UiIcon icon={Building2} size="sm" className="text-wine" />
-              Finca catastral
-            </p>
-            <h2 className="font-display text-2xl">{heading}</h2>
-            <p className="text-sm text-ink/60">
-              Parcela {result.property.parcelRef}
-              {result.property.year ? ` · construida hacia ${result.property.year}` : ""}
-              {result.property.parcelKind ? ` · ${result.property.parcelKind}` : ""}
-            </p>
-          </div>
-          <div className="grid gap-3 sm:grid-cols-3">
-            <Stat label="Inmuebles" icon={Building2} value={String(units.length || 1)} />
-            <Stat label="Uso principal" value={prettyUse(result.property.use || units[0]?.use)} />
-            <Stat
-              label="Superficie Catastro"
-              icon={Ruler}
-              value={formatM2(result.property.areaM2 || units.reduce((sum, unit) => sum + (unit.areaM2 || 0), 0))}
-            />
-          </div>
-          <p className="text-sm leading-6 text-ink/70">
-            Superficie y uso oficiales. Si el anuncio dice más metros o vende un local como piso, fíate de esta cifra: el
-            Catastro no cuenta terraza ni trastero como vivienda. Abre la ficha para ver unidades, VUT y memoria vecinal.
-          </p>
-          {units.length > 1 ? (
-            <div className="overflow-hidden rounded-2xl border border-ink/10">
-              <table className="data-table w-full text-left text-sm">
-                <thead className="bg-mist text-ink/60">
-                  <tr>
-                    <th className="px-3 py-2 font-medium">Ref.</th>
-                    <th className="px-3 py-2 font-medium">Uso</th>
-                    <th className="px-3 py-2 font-medium">Planta</th>
-                    <th className="px-3 py-2 font-medium">m²</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {units.slice(0, 12).map((unit) => (
-                    <tr key={unit.ref} className="border-t border-ink/10">
-                      <td className="px-3 py-2 font-mono text-xs">
-                        <Link className="underline decoration-gold" href={`/inmueble/${unit.ref}`}>
-                          {unit.ref}
-                        </Link>
-                      </td>
-                      <td className="px-3 py-2">{prettyUse(unit.use)}</td>
-                      <td className="px-3 py-2">{[unit.floor, unit.door].filter(Boolean).join(" · ") || "—"}</td>
-                      <td className="px-3 py-2">{formatM2(unit.areaM2)}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-              {units.length > 12 ? (
-                <p className="bg-mist px-3 py-2 text-xs text-ink/60">Mostrando 12 de {units.length} inmuebles.</p>
-              ) : null}
-            </div>
-          ) : null}
-          <Link
-            href={`/inmueble/${result.property.ref}`}
-            className="inline-flex rounded-full bg-ink px-4 py-2 text-sm text-paper"
+      <AnimatePresence>
+        {open ? (
+          <m.div
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 8 }}
+            transition={{ duration: 0.22 }}
           >
-            Abrir ficha y memoria vecinal
-          </Link>
-        </div>
-      ) : null}
+            {result?.streets?.length ? (
+              <ul className="mt-4 divide-y divide-ink/10 rounded-2xl border border-ink/10 bg-paper">
+                {result.streets.map((street) => (
+                  <li key={`${street.type}-${street.name}-${street.code}`}>
+                    <button
+                      type="button"
+                      className="w-full px-4 py-3 text-left text-sm hover:bg-mist"
+                      onClick={() => setQuery(`${street.type} ${street.name} `)}
+                    >
+                      <span className="font-medium">
+                        {street.type} {street.name}
+                      </span>
+                      <span className="ml-2 text-ink/50">pulsa y añade el número de portal</span>
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            ) : null}
+
+            {result?.property ? (
+              <div className="mt-5 space-y-4">
+                <div>
+                  <p className="flex items-center gap-1.5 text-xs uppercase tracking-[0.16em] text-wine">
+                    <UiIcon icon={BuildingsIcon} size="sm" className="text-wine" />
+                    Finca catastral
+                  </p>
+                  <h2 className="font-display text-2xl">{heading}</h2>
+                  <p className="text-sm text-ink/60">
+                    Parcela {result.property.parcelRef}
+                    {result.property.year ? ` · construida hacia ${result.property.year}` : ""}
+                    {result.property.parcelKind ? ` · ${result.property.parcelKind}` : ""}
+                  </p>
+                </div>
+                <div className="grid gap-3 sm:grid-cols-3">
+                  <Stat label="Inmuebles" icon={BuildingsIcon} value={String(units.length || 1)} />
+                  <Stat label="Uso principal" value={prettyUse(result.property.use || units[0]?.use)} />
+                  <Stat
+                    label="Superficie Catastro"
+                    icon={RulerIcon}
+                    value={formatM2(result.property.areaM2 || units.reduce((sum, unit) => sum + (unit.areaM2 || 0), 0))}
+                  />
+                </div>
+                <p className="text-sm leading-6 text-ink/70">
+                  Superficie y uso oficiales. Si el anuncio dice más metros o vende un local como piso, fíate de esta
+                  cifra: el Catastro no cuenta terraza ni trastero como vivienda.
+                </p>
+                {units.length > 1 ? (
+                  <div className="overflow-hidden rounded-2xl border border-ink/10">
+                    <table className="data-table w-full text-left text-sm">
+                      <thead className="bg-mist text-ink/60">
+                        <tr>
+                          <th className="px-3 py-2 font-medium">Ref.</th>
+                          <th className="px-3 py-2 font-medium">Uso</th>
+                          <th className="px-3 py-2 font-medium">Planta</th>
+                          <th className="px-3 py-2 font-medium">m²</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {units.slice(0, 12).map((unit) => (
+                          <tr key={unit.ref} className="border-t border-ink/10">
+                            <td className="px-3 py-2 font-mono text-xs">
+                              <Link className="underline decoration-gold" href={`/inmueble/${unit.ref}`}>
+                                {unit.ref}
+                              </Link>
+                            </td>
+                            <td className="px-3 py-2">{prettyUse(unit.use)}</td>
+                            <td className="px-3 py-2">{[unit.floor, unit.door].filter(Boolean).join(" · ") || "—"}</td>
+                            <td className="px-3 py-2">{formatM2(unit.areaM2)}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                    {units.length > 12 ? (
+                      <p className="bg-mist px-3 py-2 text-xs text-ink/60">Mostrando 12 de {units.length} inmuebles.</p>
+                    ) : null}
+                  </div>
+                ) : null}
+                <Link
+                  href={`/inmueble/${result.property.ref}`}
+                  className="inline-flex rounded-full bg-ink px-4 py-2 text-sm text-paper"
+                >
+                  Abrir ficha y memoria vecinal
+                </Link>
+              </div>
+            ) : null}
+          </m.div>
+        ) : null}
+      </AnimatePresence>
     </section>
   );
 }
 
-function Stat({
-  label,
-  value,
-  icon,
-}: {
-  label: string;
-  value: string;
-  icon?: typeof Building2;
-}) {
+function Stat({ label, value, icon }: { label: string; value: string; icon?: Icon }) {
   return (
     <div className="rounded-2xl bg-mist px-4 py-3">
       <p className="flex items-center gap-1.5 text-xs uppercase tracking-[0.14em] text-ink/50">

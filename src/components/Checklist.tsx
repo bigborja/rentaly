@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { CheckCircle2, Circle } from "lucide-react";
+import { CheckCircleIcon, CircleIcon } from "@phosphor-icons/react/ssr";
 
 const ITEMS = [
   {
@@ -31,6 +31,12 @@ const ITEMS = [
     title: "Memoria del barrio y de la finca",
     body: "Lee experiencias e incidentes del barrio y, si puedes, de la finca. Una sola reseña no es una sentencia; varias sobre la misma gestora o el mismo portal sí son una señal.",
     href: "/barrios",
+  },
+  {
+    id: "serpavi",
+    title: "Rango SERPAVI y cláusula IRAV",
+    body: "En la ficha, abre SERPAVI con la referencia catastral: es el rango oficial de esa vivienda, no el precio del anuncio. Si ya alquilas, el IRAV (INE) es el techo de la subida anual en contratos posteriores al 26 de mayo de 2023.",
+    href: "/derechos",
   },
   {
     id: "entrada",
@@ -84,9 +90,9 @@ export function Checklist() {
             <label className="flex cursor-pointer items-start gap-3">
               <span className="mt-1 text-ink/40">
                 {done[item.id] ? (
-                  <CheckCircle2 className="h-5 w-5 text-sage" strokeWidth={1.5} aria-hidden />
+                  <CheckCircleIcon size={20} weight="fill" className="h-5 w-5 text-sage" aria-hidden />
                 ) : (
-                  <Circle className="h-5 w-5" strokeWidth={1.5} aria-hidden />
+                  <CircleIcon size={20} weight="duotone" className="h-5 w-5" aria-hidden />
                 )}
               </span>
               <input

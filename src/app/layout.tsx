@@ -3,6 +3,8 @@ import { Fraunces, Outfit } from "next/font/google";
 import "./globals.css";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
+import { TabBar } from "@/components/TabBar";
+import { Providers } from "@/components/Providers";
 
 const display = Fraunces({
   subsets: ["latin"],
@@ -27,9 +29,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="es">
       <body className={`${display.variable} ${sans.variable} font-sans min-h-screen antialiased`}>
-        <Header />
-        <main>{children}</main>
-        <Footer />
+        <Providers>
+          <div className="pb-24 md:pb-0">
+            <Header />
+            <main>{children}</main>
+            <Footer />
+          </div>
+          <TabBar />
+        </Providers>
       </body>
     </html>
   );
