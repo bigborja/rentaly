@@ -5,6 +5,7 @@ import { reportStats } from "@/lib/reports";
 import { Steps } from "@/components/Guide";
 import { CoachGuide } from "@/components/CoachGuide";
 import { MadridMap } from "@/components/MadridMap";
+import { ActionCard } from "@/components/ActionCard";
 
 export const metadata: Metadata = { title: "Barrios de Madrid" };
 export const dynamic = "force-dynamic";
@@ -50,6 +51,9 @@ export default async function BarriosPage() {
               ]}
             />
           </CoachGuide>
+        </div>
+        <div className="mt-8 max-w-3xl">
+          <ActionCard distrito="Madrid" />
         </div>
         <div className="mt-10 space-y-10">
           {groups.map((district) => (

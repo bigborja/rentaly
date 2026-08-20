@@ -3,6 +3,8 @@ import { officialLinks } from "@/lib/format";
 import { Guide, Steps } from "@/components/Guide";
 import { UiIcon } from "@/components/UiIcon";
 import { ScalesIcon } from "@phosphor-icons/react/ssr";
+import { ActionCard } from "@/components/ActionCard";
+import Link from "next/link";
 
 export const metadata: Metadata = { title: "Derechos y recursos" };
 
@@ -73,6 +75,17 @@ export default function DerechosPage() {
             <p className="mt-2 text-sm leading-6 text-ink/75">{point.body}</p>
           </article>
         ))}
+      </div>
+      <h2 className="mt-12 font-display text-3xl">Apoyo vecinal</h2>
+      <p className="mt-2 text-sm text-ink/65">
+        Rentaly no tramita el caso. Si el contrato se tuerce, una asamblea de barrio suele ser el siguiente paso.{" "}
+        <Link href="/barrios" className="underline decoration-gold">
+          Abre tu barrio
+        </Link>{" "}
+        para ver el nodo más cercano; aquí va la puerta de entrada de toda la capital.
+      </p>
+      <div className="mt-5">
+        <ActionCard distrito="Madrid" />
       </div>
       <h2 className="mt-12 font-display text-3xl">Canales oficiales</h2>
       <p className="mt-2 text-sm text-ink/65">

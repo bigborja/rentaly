@@ -36,7 +36,7 @@ export function Footer() {
               <Link href="/registro">Crear cuenta</Link>
             </li>
             <li>
-              <Link href="/derechos">Derechos y 112</Link>
+              <Link href="/derechos">Derechos, 112 y apoyo vecinal</Link>
             </li>
           </ul>
         </div>

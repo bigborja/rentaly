@@ -15,6 +15,7 @@ import { UiIcon } from "@/components/UiIcon";
 import { MapTrifoldIcon, PencilSimpleIcon, RulerIcon } from "@phosphor-icons/react/ssr";
 import { ContextPanel, IravPanel, OverlayFallback, OwnershipPanel, SerpaviPanel, VutPanel } from "./overlays";
 import { ActPanel } from "@/components/ActPanel";
+import { ActionCard } from "@/components/ActionCard";
 
 export const dynamic = "force-dynamic";
 
@@ -231,6 +232,12 @@ export default async function InmueblePage({ params }: { params: Promise<{ ref: 
         year={property.year}
         use={property.use}
       />
+
+      {barrio ? (
+        <div className="mt-8 max-w-3xl">
+          <ActionCard distrito={barrio.district} />
+        </div>
+      ) : null}
 
       <section className="mt-14 grid gap-4 md:grid-cols-2">
         <Suspense fallback={<OverlayFallback title="Licencias VUT" />}>

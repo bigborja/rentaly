@@ -33,7 +33,9 @@ export default function AvisoLegalPage() {
           Comunidad de Madrid (CC BY): solo personas jurídicas con CIF; se descartan NIF/NIE y nombres de particulares.
           Los buscadores de colegiados del CAF Madrid y del COAPI Madrid se enlazan como fuente oficial: no copiamos
           esos censos (el CAF indica que los datos personales de su listado no pueden usarse con fines comerciales). No
-          ingerimos OpenCorporates, Infocif, Idealista, Fotocasa ni Google Places.
+          ingerimos OpenCorporates, Infocif, Idealista, Fotocasa ni Google Places. El módulo de apoyo vecinal es una
+          lista estática de asambleas públicas (sindicato, PAH, asambleas de barrio): enlazamos su Telegram o su ficha
+          de contacto; no las representamos ni tomamos el caso.
         </p>
         <p>
           Los aportes (experiencias, incidentes, avisos de abuso) son opiniones o relatos de usuarias y usuarios. No

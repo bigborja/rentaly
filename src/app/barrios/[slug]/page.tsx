@@ -7,6 +7,7 @@ import { MadridMap } from "@/components/MadridMap";
 import { SearchPanel } from "@/components/SearchPanel";
 import { ReportList } from "@/components/ReportList";
 import { Guide } from "@/components/Guide";
+import { ActionCard } from "@/components/ActionCard";
 
 export const dynamic = "force-dynamic";
 
@@ -52,6 +53,10 @@ export default async function BarrioPage({ params }: { params: Promise<{ slug: s
         <Mini label="Incidentes" value={String(local.incidente)} />
         <Mini label="Avisos de abuso" value={String(local.abuso)} />
       </dl>
+
+      <div className="mt-8 max-w-3xl">
+        <ActionCard distrito={barrio.district} />
+      </div>
 
       <div className="mt-8">
         <MadridMap statsByBarrio={stats.byBarrio} focus={barrio} />
