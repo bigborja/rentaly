@@ -56,11 +56,11 @@ export const PLATFORM_FAQS: FaqItem[] = [
   {
     question: "¿Dónde pido ayuda de verdad?",
     answer:
-      "Si hay delito o riesgo, 112. SAV Madrid (900 814 815) asesora sobre contrato y vivienda. En cada ficha de barrio sugerimos un nodo o asamblea (Sindicato de Inquilinas, PAH Vallekas, Asamblea de Carabanchel…). SERPAVI calcula un rango de alquiler; el IRAV limita la subida anual en ciertos contratos. Rentaly enlaza esas sedes: no tramitamos ayudas ni denuncias.",
+      "Si hay delito o riesgo, 112. SAV Madrid (900 814 815) asesora sobre contrato y vivienda. En Derechos hay un listado de asambleas, PAH y nodos del sindicato, más la FRAVM para encontrar tu asociación vecinal. SERPAVI calcula un rango de alquiler; el IRAV limita la subida anual en ciertos contratos. Rentaly enlaza esas sedes: no tramitamos ayudas ni denuncias.",
     links: [
       { href: "/derechos", label: "Derechos y 112" },
       { href: "https://serpavi.mivau.gob.es/", label: "SERPAVI" },
-      { href: "/barrios", label: "Asamblea de tu barrio" },
+      { href: "/derechos#apoyo-vecinal", label: "Asambleas y asociaciones" },
       { href: "https://inquilinato.org/defiendete/", label: "Sindicato de Inquilinas" },
     ],
   },

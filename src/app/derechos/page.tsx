@@ -3,7 +3,7 @@ import { officialLinks } from "@/lib/format";
 import { Guide, Steps } from "@/components/Guide";
 import { UiIcon } from "@/components/UiIcon";
 import { ScalesIcon } from "@phosphor-icons/react/ssr";
-import { ActionCard } from "@/components/ActionCard";
+import { AsociacionList } from "@/components/AsociacionList";
 import Link from "next/link";
 
 export const metadata: Metadata = { title: "Derechos y recursos" };
@@ -76,16 +76,21 @@ export default function DerechosPage() {
           </article>
         ))}
       </div>
-      <h2 className="mt-12 font-display text-3xl">Apoyo vecinal</h2>
-      <p className="mt-2 text-sm text-ink/65">
-        Rentaly no tramita el caso. Si el contrato se tuerce, una asamblea de barrio suele ser el siguiente paso.{" "}
+      <h2 id="apoyo-vecinal" className="mt-12 scroll-mt-24 font-display text-3xl">
+        Apoyo vecinal
+      </h2>
+      <p className="mt-2 text-sm leading-6 text-ink/65">
+        No es un ranking ni un servicio de Rentaly. Son colectivos públicos de Madrid capital (asambleas, PAH, nodos del
+        sindicato) y dos puertas de entrada más anchas: la Coordinadora de Vivienda y el directorio de la FRAVM, que
+        agrupa asociaciones de vecinos. Horarios y locales cambian; confirma en su página. Fuera de la capital no
+        listamos (Alcorcón, Móstoles, Parla…).{" "}
         <Link href="/barrios" className="underline decoration-gold">
-          Abre tu barrio
+          En la ficha de barrio
         </Link>{" "}
-        para ver el nodo más cercano; aquí va la puerta de entrada de toda la capital.
+        sugerimos una asamblea según el distrito.
       </p>
-      <div className="mt-5">
-        <ActionCard distrito="Madrid" />
+      <div className="mt-6">
+        <AsociacionList />
       </div>
       <h2 className="mt-12 font-display text-3xl">Canales oficiales</h2>
       <p className="mt-2 text-sm text-ink/65">

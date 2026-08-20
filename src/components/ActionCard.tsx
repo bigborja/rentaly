@@ -1,4 +1,5 @@
 import { MegaphoneIcon, UsersThreeIcon } from "@phosphor-icons/react/ssr";
+import Link from "next/link";
 import { UiIcon } from "@/components/UiIcon";
 import { findAsociacionByDistrito, type Asociacion } from "@/lib/getAsociacion";
 
@@ -40,7 +41,12 @@ export function ActionCard({
             Contactar / Unirse al grupo
           </a>
           <p className="mt-3 text-xs leading-5 text-ink/50">
-            Rentaly no gestiona ese grupo ni toma el caso. {telegram ? "El enlace abre Telegram." : "El enlace abre su página de contacto."} Horarios y local pueden cambiar: confírmalos ahí.
+            Rentaly no gestiona ese grupo ni toma el caso. {telegram ? "El enlace abre Telegram." : "El enlace abre su página de contacto."}{" "}
+            Horarios y local pueden cambiar: confírmalos ahí. Hay más colectivos en{" "}
+            <Link className="underline decoration-gold" href="/derechos#apoyo-vecinal">
+              Derechos
+            </Link>
+            .
           </p>
         </div>
       </div>

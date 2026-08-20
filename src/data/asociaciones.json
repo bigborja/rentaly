@@ -1,31 +1,83 @@
 [
   {
-    "id": "sindicato-nodo-centro",
-    "nombre": "Sindicato de Inquilinas · Nodo Centro",
-    "distritos_cubiertos": ["Centro", "Arganzuela", "Retiro", "Chamberí"],
-    "codigo_postal": ["28001", "28004", "28005", "28012", "28013", "28014", "28015", "28045", "28007", "28009", "28003", "28010"],
-    "canal_telegram": "https://t.me/inquilinatoMad",
-    "horario_reunion": "Asamblea en CSO La Rosa (C/ Bastero 1). Si es la primera vez: viernes 18:30, Ateneo La Maliciosa (C/ Peñuelas 12). El local puede cambiar: confirma en su canal."
+    "id": "asamblea-carabanchel",
+    "nombre": "Asamblea de Vivienda de Carabanchel",
+    "tipo": "asamblea",
+    "distritos_cubiertos": ["Carabanchel"],
+    "codigo_postal": ["28019", "28025", "28044", "28047"],
+    "canal_telegram": "https://t.me/viviendacarabanchel",
+    "horario_reunion": "Jueves 19:00, ESLA EKO (C/ Ánade 10). Confirma hora en su canal: ha rotado."
+  },
+  {
+    "id": "asamblea-tetuan",
+    "nombre": "Asamblea de Vivienda de Tetuán",
+    "tipo": "asamblea",
+    "distritos_cubiertos": ["Tetuán"],
+    "canal_telegram": "https://www.laenre.net/",
+    "horario_reunion": "Jueves 19:00, CS La Enredadera (C/ Coruña 5, Estrecho). Confirma en Coordinadora de Vivienda o en La Enredadera."
+  },
+  {
+    "id": "asamblea-usera",
+    "nombre": "Asamblea de Vivienda de Usera",
+    "tipo": "asamblea",
+    "distritos_cubiertos": ["Usera"],
+    "canal_telegram": "https://coordinadoraviviendamadrid.com/cuando-y-donde-nos-reunimos/",
+    "horario_reunion": "Viernes 18:30, AAVV Orcasur (Avda. Orcasur 24). Correo público: viviendaasambleausera@gmail.com."
+  },
+  {
+    "id": "asamblea-san-blas",
+    "nombre": "Asamblea de Vivienda San Blas–Canillejas",
+    "tipo": "asamblea",
+    "distritos_cubiertos": ["San Blas - Canillejas"],
+    "canal_telegram": "https://coordinadoraviviendamadrid.com/cuando-y-donde-nos-reunimos/",
+    "horario_reunion": "Miércoles 18:30–20:30, Espacio Vecinal Montamarta (C/ Montamarta 7). Correo público: asambleasanblas@gmail.com."
+  },
+  {
+    "id": "sindicato-hortaleza",
+    "nombre": "Sindicato del Barrio de Hortaleza",
+    "tipo": "asamblea",
+    "distritos_cubiertos": ["Hortaleza"],
+    "canal_telegram": "https://coordinadoraviviendamadrid.com/cuando-y-donde-nos-reunimos/",
+    "horario_reunion": "Lunes 18:30, AAVV Manoteras (C/ Cuevas de Almanzora 46). Correo público: sindicatodelbarriodehortaleza@gmail.com."
+  },
+  {
+    "id": "sindicato-moratalaz",
+    "nombre": "Sindicato del Barrio de Moratalaz",
+    "tipo": "asamblea",
+    "distritos_cubiertos": ["Moratalaz"],
+    "canal_telegram": "https://coordinadoraviviendamadrid.com/cuando-y-donde-nos-reunimos/",
+    "horario_reunion": "CPK La Bankarrota (C/ Encomienda de Palacios 46). Confirma día y hora en Coordinadora de Vivienda: no publican un canal abierto."
+  },
+  {
+    "id": "stop-desahucios-vicalvaro",
+    "nombre": "Stop Desahucios Vicálvaro",
+    "tipo": "asamblea",
+    "distritos_cubiertos": ["Vicálvaro"],
+    "canal_telegram": "https://coordinadoraviviendamadrid.com/cuando-y-donde-nos-reunimos/",
+    "horario_reunion": "Domingos 18:00 (invierno) o 19:30 (verano), C/ Villablanca 35. Correo público: vicalvarostopdesahucios@gmail.com."
   },
   {
     "id": "pah-vallekas",
     "nombre": "PAH Vallekas",
+    "tipo": "pah",
     "distritos_cubiertos": ["Puente de Vallecas", "Villa de Vallecas"],
     "codigo_postal": ["28018", "28031", "28038", "28051", "28053"],
     "canal_telegram": "https://pah-vallekas.org/blog/contacto",
     "horario_reunion": "Miércoles 18:30, asamblea general en La Villana (C/ Sierra de Alquife 12). Viernes 11:00, asamblea de mañana en Entrepatios (C/ Nuestra Señora de la Torre 16)."
   },
   {
-    "id": "asamblea-carabanchel",
-    "nombre": "Asamblea de Vivienda de Carabanchel",
-    "distritos_cubiertos": ["Carabanchel"],
-    "codigo_postal": ["28019", "28025", "28044", "28047"],
-    "canal_telegram": "https://t.me/viviendacarabanchel",
-    "horario_reunion": "Jueves, ESLA EKO (C/ Ánade 10). La hora ha rotado entre las 19:00 y las 20:00: confirma en su canal antes de ir."
+    "id": "sindicato-nodo-centro",
+    "nombre": "Sindicato de Inquilinas · Nodo Centro",
+    "tipo": "sindicato",
+    "distritos_cubiertos": ["Centro", "Arganzuela", "Retiro", "Chamberí"],
+    "codigo_postal": ["28001", "28004", "28005", "28012", "28013", "28014", "28015", "28045", "28007", "28009", "28003", "28010"],
+    "canal_telegram": "https://t.me/inquilinatoMad",
+    "horario_reunion": "Asamblea en CSO La Rosa (C/ Bastero 1). Si es la primera vez: viernes 18:30, Ateneo La Maliciosa (C/ Peñuelas 12)."
   },
   {
     "id": "sindicato-nodo-latina",
     "nombre": "Sindicato de Inquilinas · Nodo Latina",
+    "tipo": "sindicato",
     "distritos_cubiertos": ["Latina"],
     "codigo_postal": ["28011", "28024"],
     "canal_telegram": "https://t.me/inquilinatoMad",
@@ -34,17 +86,62 @@
   {
     "id": "sindicato-nodo-este",
     "nombre": "Sindicato de Inquilinas · Nodo Este",
-    "distritos_cubiertos": ["Ciudad Lineal", "Moratalaz"],
-    "codigo_postal": ["28017", "28027", "28030", "28032", "28033", "28043"],
+    "tipo": "sindicato",
+    "distritos_cubiertos": ["Ciudad Lineal"],
+    "codigo_postal": ["28017", "28027", "28033", "28043"],
     "canal_telegram": "https://t.me/inquilinatoMad",
     "horario_reunion": "Asamblea en AAVV La Vecinal (C/ Pedro Antonio de Alarcón 63). Primera vez: viernes 18:30, Ateneo La Maliciosa (C/ Peñuelas 12)."
   },
   {
+    "id": "sindicato-nodo-carabanchel",
+    "nombre": "Sindicato de Inquilinas · Nodo Carabanchel",
+    "tipo": "sindicato",
+    "distritos_cubiertos": ["Carabanchel"],
+    "canal_telegram": "https://t.me/inquilinatoMad",
+    "horario_reunion": "Asamblea en El Sanky (C/ José del Río 23D). Primera vez: viernes 18:30, Ateneo La Maliciosa (C/ Peñuelas 12)."
+  },
+  {
     "id": "sindicato-general",
     "nombre": "Sindicato de Inquilinas de Madrid",
+    "tipo": "sindicato",
     "distritos_cubiertos": [],
     "canal_telegram": "https://t.me/inquilinatoMad",
-    "horario_reunion": "Asamblea de bienvenida: viernes 18:30, Ateneo La Maliciosa (C/ Peñuelas 12). Desde ahí te orientan al nodo de tu zona. Confirma en el calendario de inquilinato.org.",
+    "horario_reunion": "Asamblea de bienvenida: viernes 18:30, Ateneo La Maliciosa (C/ Peñuelas 12). Desde ahí te orientan al nodo de tu zona. Confirma en inquilinato.org.",
     "generico": true
+  },
+  {
+    "id": "pah-madrid",
+    "nombre": "PAH Madrid",
+    "tipo": "pah",
+    "distritos_cubiertos": ["Chamartín"],
+    "canal_telegram": "https://www.afectadosporlahipotecamadrid.net/",
+    "horario_reunion": "Viernes 18:00–20:30, Escuela Popular La Prospe (C/ Luis Cabrera 19). Martes 11:00–13:00, atención en el mismo local. Teléfono público en su web: 610 694 634."
+  },
+  {
+    "id": "pavps-madrid",
+    "nombre": "PAVPS Madrid (vivienda pública y social)",
+    "tipo": "plataforma",
+    "distritos_cubiertos": [],
+    "canal_telegram": "https://pavpsmadrid.wordpress.com/que-es-pavpsmadrid/",
+    "horario_reunion": "Según su web: jueves 19:00 (acogida 18:30), C/ San Cosme y San Damián 24. Si tu casero es EMVS, Agencia de Vivienda Social o un fondo sobre vivienda pública, este es el sitio. Confirma local: ha rotado.",
+    "solo_directorio": true
+  },
+  {
+    "id": "coordinadora-vivienda",
+    "nombre": "Coordinadora de Vivienda de Madrid",
+    "tipo": "coordinadora",
+    "distritos_cubiertos": [],
+    "canal_telegram": "https://coordinadoraviviendamadrid.com/cuando-y-donde-nos-reunimos/",
+    "horario_reunion": "No es un barrio: agrupa PAH y asambleas de la Comunidad. Su página de «dónde nos reunimos» es la fuente de varios horarios de este listado.",
+    "solo_directorio": true
+  },
+  {
+    "id": "fravm",
+    "nombre": "FRAVM · asociaciones vecinales",
+    "tipo": "federacion",
+    "distritos_cubiertos": [],
+    "canal_telegram": "https://fravm.org/quienes-somos/directorio/",
+    "horario_reunion": "Federación de cientos de AAVV. No copiamos sus nombres: filtra por distrito de Madrid capital en su directorio.",
+    "solo_directorio": true
   }
 ]
