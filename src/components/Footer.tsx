@@ -30,6 +30,9 @@ export function Footer() {
               <Link href="/gestoras">Gestoras y agencias</Link>
             </li>
             <li>
+              <Link href="/#preguntas">Preguntas frecuentes</Link>
+            </li>
+            <li>
               <Link href="/registro">Crear cuenta</Link>
             </li>
             <li>

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Callout, Glossary, Guide, Steps } from "@/components/Guide";
+import { FaqList } from "@/components/FaqList";
 import { CadastralStamp } from "@/components/illustrations";
 
 export const metadata: Metadata = { title: "Cómo funciona" };
@@ -154,6 +155,10 @@ export default function ComoFuncionaPage() {
           <li>No sustituimos denuncia, sindicato ni asesoría jurídica.</li>
           <li>Los relatos vecinales son opiniones: no certificamos cada frase.</li>
         </ul>
+      </div>
+
+      <div className="mt-14">
+        <FaqList />
       </div>
 
       <div className="mt-8 flex flex-wrap gap-3">

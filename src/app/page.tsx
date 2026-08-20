@@ -2,6 +2,7 @@ import Link from "next/link";
 import { MadridMap } from "@/components/MadridMap";
 import { ReportList } from "@/components/ReportList";
 import { WelcomeSearch } from "@/components/WelcomeSearch";
+import { FaqList } from "@/components/FaqList";
 import { MadridCornice } from "@/components/illustrations";
 import { UiIcon, type Icon } from "@/components/UiIcon";
 import {
@@ -48,6 +49,9 @@ export default async function HomePage() {
               <Link href="/checklist" className="btn btn-ghost">
                 Antes de firmar
               </Link>
+              <a href="#preguntas" className="inline-flex items-center text-sm text-ink/55 underline decoration-gold">
+                Preguntas frecuentes
+              </a>
             </div>
             {user ? (
               <p className="mt-4 text-sm text-sage">
@@ -202,6 +206,10 @@ export default async function HomePage() {
             </p>
           </article>
         </aside>
+      </section>
+
+      <section className="mx-auto max-w-6xl px-4 pb-20">
+        <FaqList />
       </section>
     </div>
   );
