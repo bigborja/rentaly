@@ -12,10 +12,12 @@ export function SearchPanel({
   initialQuery = "",
   compact = false,
   overlay = false,
+  quiet = false,
 }: {
   initialQuery?: string;
   compact?: boolean;
   overlay?: boolean;
+  quiet?: boolean;
 }) {
   const [query, setQuery] = useState(initialQuery);
   const [loading, setLoading] = useState(false);
@@ -52,7 +54,7 @@ export function SearchPanel({
         compact ? "" : overlay ? "card-lift max-h-[min(52vh,440px)] overflow-y-auto p-4 sm:p-5" : "card-lift p-5"
       }
     >
-      {overlay ? (
+      {quiet ? null : overlay ? (
         <p className="mb-3 text-xs leading-5 text-ink/60">
           No buscamos anuncios: consultamos el Catastro. Calle y número, o la referencia de 14/20 caracteres.
         </p>
@@ -92,13 +94,15 @@ export function SearchPanel({
           {loading ? "Consultando Catastro…" : "Buscar en Madrid"}
         </button>
       </form>
-      <p className={`${overlay ? "mt-2 text-[11px]" : "mt-3 text-xs"} leading-5 text-ink/50`}>
-        Si ya tienes el CIF o el nombre de la agencia,{" "}
-        <Link className="underline decoration-gold" href="/gestoras">
-          busca la gestora
-        </Link>
-        : memoria vecinal más sociedades del RAIN. Nunca un DNI ni un colegiado.
-      </p>
+      {quiet ? null : (
+        <p className={`${overlay ? "mt-2 text-[11px]" : "mt-3 text-xs"} leading-5 text-ink/50`}>
+          Si ya tienes el CIF o el nombre de la agencia,{" "}
+          <Link className="underline decoration-gold" href="/gestoras">
+            busca la gestora
+          </Link>
+          : memoria vecinal más sociedades del RAIN. Nunca un DNI ni un colegiado.
+        </p>
+      )}
       {error ? <p className="mt-3 text-sm text-wine">{error}</p> : null}
       {result?.warning ? <p className="mt-3 text-sm text-sage">{result.warning}</p> : null}
 
