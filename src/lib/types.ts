@@ -1,4 +1,5 @@
 export type ReportType = "experiencia" | "incidente" | "abuso";
+export type Intent = "buscar" | "alquilar" | "avisar";
 
 export type AbuseCategory =
   | "fianza"
@@ -40,6 +41,8 @@ export interface Report {
   abuseCategory?: AbuseCategory;
   severity?: Severity;
   author: string;
+  userId?: string;
+  recommend?: boolean;
   createdAt: string;
   status: "published";
 }
@@ -127,4 +130,6 @@ export interface CreateReportInput {
   abuseCategory?: AbuseCategory;
   severity?: Severity;
   author?: string;
+  userId?: string;
+  recommend?: boolean;
 }

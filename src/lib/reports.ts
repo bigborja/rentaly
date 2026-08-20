@@ -46,12 +46,14 @@ export async function listReports(filters?: {
   barrioId?: string;
   ref?: string;
   type?: ReportType;
+  userId?: string;
 }): Promise<Report[]> {
   const reports = await readStore();
   return reports
     .filter((report) => report.status === "published")
     .filter((report) => !filters?.barrioId || report.barrioId === filters.barrioId)
     .filter((report) => !filters?.type || report.type === filters.type)
+    .filter((report) => !filters?.userId || report.userId === filters.userId)
     .filter((report) => {
       if (!filters?.ref) return true;
       const needle = compactRef(filters.ref);
@@ -124,6 +126,8 @@ export async function createReport(input: CreateReportInput): Promise<Report> {
     abuseCategory: type === "abuso" ? input.abuseCategory : undefined,
     severity: input.severity,
     author: (input.author || "Anónimo").trim().slice(0, 40) || "Anónimo",
+    userId: input.userId,
+    recommend: input.recommend,
     createdAt: new Date().toISOString(),
     status: "published",
   };

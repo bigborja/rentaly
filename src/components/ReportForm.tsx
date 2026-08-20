@@ -10,13 +10,18 @@ export function ReportForm({
   defaultBarrioId,
   defaultRef,
   defaultAddress,
+  defaultType = "experiencia",
+  nickname,
 }: {
   defaultBarrioId?: string;
   defaultRef?: string;
   defaultAddress?: string;
+  defaultType?: ReportType;
+  nickname: string;
 }) {
   const router = useRouter();
-  const [type, setType] = useState<ReportType>("experiencia");
+  const [type, setType] = useState<ReportType>(defaultType);
+  const [recommend, setRecommend] = useState<string>("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -32,12 +37,12 @@ export function ReportForm({
       barrioId: String(form.get("barrioId") || "") || undefined,
       cadastralRef: String(form.get("cadastralRef") || "") || undefined,
       addressLabel: String(form.get("addressLabel") || "") || undefined,
-      author: String(form.get("author") || "") || "Anónimo",
       yearFrom: form.get("yearFrom") ? Number(form.get("yearFrom")) : undefined,
       rentEuros: form.get("rentEuros") ? Number(form.get("rentEuros")) : undefined,
       rating: form.get("rating") ? Number(form.get("rating")) : undefined,
       abuseCategory: (form.get("abuseCategory") || undefined) as AbuseCategory | undefined,
       severity: (form.get("severity") || undefined) as "baja" | "media" | "alta" | undefined,
+      recommend: recommend === "" ? undefined : recommend === "si",
     };
     try {
       const response = await fetch("/api/reports", {
@@ -50,9 +55,9 @@ export function ReportForm({
       if (payload.cadastralRef) router.push(`/inmueble/${payload.cadastralRef}`);
       else if (payload.barrioId) {
         const barrio = BARRIOS.find((item) => item.id === payload.barrioId);
-        router.push(barrio ? `/barrios/${barrio.slug}` : "/");
+        router.push(barrio ? `/barrios/${barrio.slug}` : "/cuenta");
       } else {
-        router.push("/");
+        router.push("/cuenta");
       }
       router.refresh();
     } catch (err) {
@@ -63,7 +68,10 @@ export function ReportForm({
   }
 
   return (
-    <form onSubmit={onSubmit} className="space-y-5 rounded-3xl border border-ink/10 bg-white/70 p-6 shadow-card">
+    <form onSubmit={onSubmit} className="card space-y-5 p-6">
+      <p className="text-sm text-ink/60">
+        Se publicará como <strong>{nickname}</strong>. El correo de la cuenta no aparece.
+      </p>
       <div className="grid gap-2 sm:grid-cols-3">
         {(["experiencia", "incidente", "abuso"] as ReportType[]).map((value) => (
           <button
@@ -71,7 +79,11 @@ export function ReportForm({
             type="button"
             onClick={() => setType(value)}
             className={`rounded-2xl border px-3 py-3 text-sm ${
-              type === value ? "border-wine bg-wine text-paper" : "border-ink/15 bg-paper"
+              type === value
+                ? value === "abuso"
+                  ? "border-wine bg-wine text-paper"
+                  : "border-ink bg-ink text-paper"
+                : "border-ink/15 bg-paper"
             }`}
           >
             {value === "experiencia" ? "Experiencia" : value === "incidente" ? "Incidente" : "Aviso de abuso"}
@@ -90,9 +102,29 @@ export function ReportForm({
           maxLength={4000}
           rows={7}
           className="field-input"
-          placeholder="Hechos, fechas, qué pedían, cómo se resolvió. Sin nombres de terceros ni datos médicos."
+          placeholder="Hechos, fechas, qué pedían, ruido, trato, fianza, cómo se resolvió. Sin nombres de terceros."
         />
       </Field>
+      {type === "experiencia" ? (
+        <fieldset>
+          <legend className="mb-2 text-sm text-ink/70">¿Se lo recomendarías a una amiga?</legend>
+          <div className="flex gap-2">
+            {[
+              ["si", "Sí"],
+              ["no", "No"],
+            ].map(([value, label]) => (
+              <button
+                key={value}
+                type="button"
+                onClick={() => setRecommend(value)}
+                className={`rounded-full px-4 py-2 text-sm ${recommend === value ? "bg-sage text-paper" : "bg-mist"}`}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+        </fieldset>
+      ) : null}
       <div className="grid gap-4 sm:grid-cols-2">
         <Field label="Barrio">
           <select name="barrioId" defaultValue={defaultBarrioId || ""} className="field-input">
@@ -150,19 +182,11 @@ export function ReportForm({
           </select>
         </Field>
       ) : null}
-      <Field label="Firma (o déjalo en Anónimo)">
-        <input name="author" className="field-input" placeholder="Anónimo" />
-      </Field>
       <p className="text-xs leading-5 text-ink/55">
-        No publiques DNI, cuentas bancarias ni el nombre de menores. Un aviso en Rentaly no es una denuncia: si hay
-        delito o riesgo, acude a Policía/Guardia Civil o al 112.
+        No publiques DNI, cuentas bancarias ni el nombre de menores. Si hay delito o riesgo, 112.
       </p>
       {error ? <p className="text-sm text-wine">{error}</p> : null}
-      <button
-        type="submit"
-        disabled={loading}
-        className="rounded-full bg-wine px-5 py-3 text-sm font-medium text-paper disabled:opacity-60"
-      >
+      <button type="submit" disabled={loading} className="btn btn-primary">
         {loading ? "Publicando…" : "Publicar en la memoria vecinal"}
       </button>
     </form>

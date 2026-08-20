@@ -6,5 +6,7 @@ out
 .env
 .env*.local
 data/reports.json
+data/users.json
+data/sessions.json
 *.tmp
 tsconfig.tsbuildinfo

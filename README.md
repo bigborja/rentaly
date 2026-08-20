@@ -21,6 +21,18 @@ npm run dev
 
 Abre [http://localhost:3000](http://localhost:3000).
 
+Cuenta de ejemplo: `inquilina@rentaly.madrid` / `madrid131`.
+
+## Recorrido de producto
+
+Inspirado en **Reviu** (reseñas de piso + Catastro, apodo público), **JustFix / Who Owns What** (una tarea, datos oficiales) y **Shelter** (tono calmado, el rojo solo para urgencia):
+
+1. Explorar el mapa sin cuenta.
+2. Crear cuenta → onboarding (momento del alquiler, barrio, pacto).
+3. **Antes de firmar**: checklist + búsqueda catastral.
+4. Publicar experiencia, incidente o aviso (hace falta sesión; en público solo se ve el apodo).
+5. Cuenta con lo publicado.
+
 ## Fuentes
 
 - Dirección General del Catastro, servicios web JSON (`Consulta_DNPLOC`, `Consulta_DNPRC`, `ObtenerCallejero`, `Consulta_RCCOOR`, `Consulta_CPMRC`) y WMS de parcelas.

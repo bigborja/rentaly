@@ -1,22 +1,35 @@
 import Link from "next/link";
+import { BrandMark } from "./BrandMark";
 
 export function Footer() {
   return (
     <footer className="border-t border-ink/10 bg-ink text-paper">
       <div className="mx-auto grid max-w-6xl gap-8 px-4 py-12 md:grid-cols-[1.4fr_1fr_1fr]">
         <div>
-          <p className="font-display text-2xl text-gold">Rentaly</p>
+          <div className="flex items-center gap-2">
+            <BrandMark className="h-7 w-7" />
+            <p className="font-display text-2xl text-gold">Rentaly</p>
+          </div>
           <p className="mt-3 max-w-md text-sm leading-6 text-paper/75">
             Transparencia para inquilinas e inquilinos de Madrid capital. Cruzamos el Catastro, los barrios
-            municipales y la memoria colectiva del alquiler.
+            municipales y la memoria colectiva del alquiler. No somos un portal de anuncios.
           </p>
         </div>
         <div className="text-sm">
-          <p className="mb-2 uppercase tracking-[0.16em] text-gold/80">Fuentes</p>
+          <p className="mb-2 uppercase tracking-[0.16em] text-gold/80">Recorrido</p>
           <ul className="space-y-2 text-paper/75">
-            <li>Dirección General del Catastro</li>
-            <li>Ayuntamiento de Madrid · límites de barrios</li>
-            <li>Aportes de la comunidad, no verificados uno a uno</li>
+            <li>
+              <Link href="/como-funciona">Cómo funciona</Link>
+            </li>
+            <li>
+              <Link href="/checklist">Antes de firmar</Link>
+            </li>
+            <li>
+              <Link href="/registro">Crear cuenta</Link>
+            </li>
+            <li>
+              <Link href="/derechos">Derechos y 112</Link>
+            </li>
           </ul>
         </div>
         <div className="text-sm">
