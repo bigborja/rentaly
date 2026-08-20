@@ -1,0 +1,337 @@
+// Target store: PostgreSQL + PostGIS (Supabase or a managed Postgres).
+// The app still uses JSON files until DATABASE_URL is wired.
+// Cadastre open data never includes private owner names; do not add such columns.
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["postgresqlExtensions"]
+}
+
+datasource db {
+  provider   = "postgresql"
+  url        = env("DATABASE_URL")
+  extensions = [postgis]
+}
+
+enum ReportType {
+  experiencia
+  incidente
+  abuso
+}
+
+enum ReportStatus {
+  published
+  pending
+  removed
+}
+
+enum AbuseCategory {
+  fianza
+  honorarios
+  clausulas
+  acoso
+  entrada
+  suministros
+  obras
+  discriminacion
+  sin_contrato
+  precio
+  otro
+}
+
+enum Severity {
+  baja
+  media
+  alta
+}
+
+enum ConservationState {
+  bueno
+  regular
+  deficiente
+  ruinoso
+}
+
+enum LegalEntityKind {
+  socimi
+  fondo
+  sa
+  sl
+  cooperativa
+  administracion
+  otra_juridica
+}
+
+enum OwnershipSource {
+  borm
+  registro_mercantil
+  nota_simple_redactada
+  user_verified
+}
+
+enum EvidenceKind {
+  nota_simple_redactada
+  borm
+  contrato_fragmento
+  foto
+  otro
+}
+
+model Neighborhood {
+  id         String   @id
+  slug       String   @unique
+  name       String
+  districtId String
+  district   String
+  parcels    Parcel[]
+  reports    Report[]
+
+  @@map("neighborhoods")
+}
+
+model CensusSection {
+  code                    String           @id
+  municipalityCode        String
+  districtCode            String
+  year                    Int
+  parcels                 Parcel[]
+  rentStats               CensusRentStat[]
+
+  @@map("census_sections")
+}
+
+/// Finca / parcela catastral (14 characters: PC1+PC2).
+model Parcel {
+  parcelRef         String            @id
+  address           String?
+  postalCode        String?
+  barrioId          String?
+  barrio            Neighborhood?     @relation(fields: [barrioId], references: [id])
+  censusSectionCode String?
+  censusSection     CensusSection?    @relation(fields: [censusSectionCode], references: [code])
+  longitude         Float?
+  latitude          Float?
+  /// Optional PostGIS point; populate with ST_SetSRID(ST_MakePoint(longitude, latitude), 4326).
+  geom              Unsupported("geometry(Point, 4326)")?
+  parcelAreaM2      Float?
+  parcelKind        String?
+  yearBuilt         Int?
+  fetchedAt         DateTime
+  units             CadastralUnit[]
+  constructions     Construction[]
+  snapshots         CadastralSnapshot[]
+  touristLicenses   TouristLicense[]
+  inspections       BuildingInspection[]
+  worksLicenses     WorksLicense[]
+  ownershipClaims   OwnershipClaim[]
+
+  @@index([barrioId])
+  @@index([censusSectionCode])
+  @@map("parcels")
+}
+
+/// Inmueble catastral (up to 20 characters when the OVC returns a full RC).
+model CadastralUnit {
+  ref           String   @id
+  parcelRef     String
+  parcel        Parcel   @relation(fields: [parcelRef], references: [parcelRef])
+  use           String?
+  areaM2        Float?
+  year          Int?
+  participation Float?
+  stair         String?
+  floor         String?
+  door          String?
+
+  @@index([parcelRef])
+  @@map("cadastral_units")
+}
+
+model Construction {
+  id        String  @id @default(cuid())
+  parcelRef String
+  parcel    Parcel  @relation(fields: [parcelRef], references: [parcelRef])
+  use       String?
+  typology  String?
+  floor     String?
+  door      String?
+  stair     String?
+  areaM2    Float?
+
+  @@index([parcelRef])
+  @@map("constructions")
+}
+
+/// Aggressive cache of OVC JSON so we do not hammer the Cadastre.
+model CadastralSnapshot {
+  id        String   @id @default(cuid())
+  cacheKey  String   @unique
+  parcelRef String?
+  parcel    Parcel?  @relation(fields: [parcelRef], references: [parcelRef])
+  payload   Json
+  fetchedAt DateTime
+  expiresAt DateTime
+
+  @@index([expiresAt])
+  @@map("cadastral_snapshots")
+}
+
+model TouristLicense {
+  id           String   @id @default(cuid())
+  parcelRef    String?
+  parcel       Parcel?  @relation(fields: [parcelRef], references: [parcelRef])
+  expedienteLu String?
+  decretoLu    String?
+  resolvedAt   DateTime?
+  address      String?
+  floor        String?
+  units        Int      @default(1)
+  longitude    Float?
+  latitude     Float?
+  source       String   @default("ayuntamiento_madrid_vut")
+
+  @@index([parcelRef])
+  @@index([address])
+  @@map("tourist_licenses")
+}
+
+model BuildingInspection {
+  id           String   @id @default(cuid())
+  parcelRef    String?
+  parcel       Parcel?  @relation(fields: [parcelRef], references: [parcelRef])
+  address      String?
+  kind         String
+  outcome      String?
+  consultedAt  DateTime
+  consultUrl   String
+  publicRecord Boolean  @default(false)
+
+  @@index([parcelRef])
+  @@map("building_inspections")
+}
+
+model WorksLicense {
+  id          String  @id @default(cuid())
+  parcelRef   String?
+  parcel      Parcel? @relation(fields: [parcelRef], references: [parcelRef])
+  expediente  String?
+  address     String?
+  description String?
+  year        Int?
+  source      String  @default("ayuntamiento_madrid")
+
+  @@index([parcelRef])
+  @@map("works_licenses")
+}
+
+/// Aggregated rent / income. Never a named tenancy from the deposit registry.
+model CensusRentStat {
+  id                       String        @id @default(cuid())
+  censusSectionCode        String
+  censusSection            CensusSection @relation(fields: [censusSectionCode], references: [code])
+  year                     Int
+  referenceRentEurosM2     Float?
+  meanHouseholdIncomeEuros Float?
+  medianHouseholdIncomeEuros Float?
+  source                   String
+
+  @@unique([censusSectionCode, year, source])
+  @@map("census_rent_stats")
+}
+
+model LegalEntity {
+  id              String           @id @default(cuid())
+  taxId           String           @unique
+  legalName       String
+  kind            LegalEntityKind
+  ownershipClaims OwnershipClaim[]
+
+  @@map("legal_entities")
+}
+
+model OwnershipClaim {
+  id                    String          @id @default(cuid())
+  parcelRef             String
+  parcel                Parcel          @relation(fields: [parcelRef], references: [parcelRef])
+  unitRef               String?
+  legalEntityId         String
+  legalEntity           LegalEntity     @relation(fields: [legalEntityId], references: [id])
+  source                OwnershipSource
+  sourceUrl             String?
+  observedAt            DateTime
+  confidence            String
+  largeHolderCandidate  Boolean         @default(false)
+
+  @@index([parcelRef])
+  @@index([legalEntityId])
+  @@map("ownership_claims")
+}
+
+model User {
+  id                  String    @id @default(cuid())
+  email               String    @unique
+  nickname            String
+  passwordHash        String
+  createdAt           DateTime
+  onboardingComplete  Boolean   @default(false)
+  intent              String?
+  barrioId            String?
+  reports             Report[]
+  sessions            Session[]
+
+  @@map("users")
+}
+
+model Session {
+  token     String   @id
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime
+
+  @@index([userId])
+  @@map("sessions")
+}
+
+model Report {
+  id                 String              @id @default(cuid())
+  type               ReportType
+  title              String
+  body               String
+  barrioId           String?
+  barrio             Neighborhood?       @relation(fields: [barrioId], references: [id])
+  cadastralRef       String?
+  addressLabel       String?
+  yearFrom           Int?
+  yearTo             Int?
+  rentEuros          Int?
+  rating             Int?
+  abuseCategory      AbuseCategory?
+  severity           Severity?
+  conservationState  ConservationState?
+  author             String
+  userId             String?
+  user               User?               @relation(fields: [userId], references: [id])
+  recommend          Boolean?
+  createdAt          DateTime
+  status             ReportStatus        @default(published)
+  evidence           ReportEvidence[]
+
+  @@index([barrioId])
+  @@index([cadastralRef])
+  @@index([userId])
+  @@map("reports")
+}
+
+model ReportEvidence {
+  id          String       @id @default(cuid())
+  reportId    String
+  report      Report       @relation(fields: [reportId], references: [id], onDelete: Cascade)
+  kind        EvidenceKind
+  storageKey  String
+  contentType String
+  redacted    Boolean      @default(true)
+  createdAt   DateTime     @default(now())
+
+  @@index([reportId])
+  @@map("report_evidence")
+}

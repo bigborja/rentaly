@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createReport, listReports } from "@/lib/reports";
-import type { ReportType } from "@/lib/types";
+import { toPublicReport, type ReportType } from "@/domain";
 import { SESSION_COOKIE, userFromToken } from "@/lib/auth";
 
 export async function GET(request: NextRequest) {
@@ -19,7 +19,9 @@ export async function GET(request: NextRequest) {
     type,
     userId: mine ? user?.id : undefined,
   });
-  return NextResponse.json({ reports });
+  return NextResponse.json({
+    reports: mine ? reports : reports.map(toPublicReport),
+  });
 }
 
 export async function POST(request: NextRequest) {

@@ -3,6 +3,7 @@ import type { CreateReportInput, Report, ReportType } from "./types";
 import { compactRef, isCadastralRef } from "./parse";
 import { getBarrio } from "./barrios-data";
 import { readJsonFile, writeJsonFile } from "./fs-store";
+import { publicAuthor, sanitizeReportText } from "@/domain/privacy";
 import seedReports from "@/data/seed-reports.json";
 
 const REPORTS_FILE = "reports.json";
@@ -80,8 +81,8 @@ export async function createReport(input: CreateReportInput): Promise<Report> {
   if (!["experiencia", "incidente", "abuso"].includes(type)) {
     throw new Error("El tipo de aporte no es válido.");
   }
-  const title = String(input.title || "").trim();
-  const body = String(input.body || "").trim();
+  const title = sanitizeReportText(String(input.title || ""));
+  const body = sanitizeReportText(String(input.body || ""));
   if (title.length < 8 || title.length > 120) {
     throw new Error("El título debe tener entre 8 y 120 caracteres.");
   }
@@ -116,7 +117,7 @@ export async function createReport(input: CreateReportInput): Promise<Report> {
     rating: input.rating,
     abuseCategory: type === "abuso" ? input.abuseCategory : undefined,
     severity: input.severity,
-    author: (input.author || "Anónimo").trim().slice(0, 40) || "Anónimo",
+    author: publicAuthor(input.author),
     userId: input.userId,
     recommend: input.recommend,
     createdAt: new Date().toISOString(),
