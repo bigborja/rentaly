@@ -1,6 +1,7 @@
 import Link from "next/link";
 import {
   BookOpenIcon,
+  BuildingsIcon,
   ListChecksIcon,
   MapTrifoldIcon,
   PencilSimpleIcon,
@@ -16,6 +17,7 @@ import { getCurrentUser } from "@/lib/auth";
 const links = [
   { href: "/como-funciona", label: "Cómo funciona", icon: BookOpenIcon, hideOnMobile: true },
   { href: "/checklist", label: "Antes de firmar", icon: ListChecksIcon, hideOnMobile: false },
+  { href: "/gestoras", label: "Gestoras", icon: BuildingsIcon, hideOnMobile: true },
   { href: "/barrios", label: "Barrios", icon: MapTrifoldIcon, hideOnMobile: true },
   { href: "/aportar", label: "Aportar", icon: PencilSimpleIcon, hideOnMobile: true },
   { href: "/derechos", label: "Derechos", icon: ScalesIcon, hideOnMobile: true },

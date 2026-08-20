@@ -49,7 +49,7 @@ export default async function AportarPage({
               },
               {
                 title: "Ancla el relato si puedes",
-                body: "Barrio, calle o referencia catastral. Un CIF de la gestora (nunca un DNI) ayuda a quien busque la misma entidad. Si hay delito o riesgo, 112 además de este aviso.",
+                body: "Barrio, calle o referencia catastral. Un CIF de la gestora (nunca un DNI) ayuda a quien busque la misma entidad en el directorio. Si hay delito o riesgo, 112 además de este aviso.",
               },
             ]}
           />
@@ -60,6 +60,13 @@ export default async function AportarPage({
           Vas a publicar en {barrio.name} ({barrio.district}).
         </p>
       ) : null}
+      <p className="mt-4 text-sm text-ink/60">
+        Si conoces el CIF de la inmobiliaria,{" "}
+        <Link className="underline decoration-gold" href="/gestoras">
+          míralo antes en el directorio
+        </Link>{" "}
+        por si ya hay relatos.
+      </p>
       {!user ? (
         <div className="card mt-6 bg-ink p-5 text-paper">
           <p className="font-display text-2xl text-gold">Primero una cuenta</p>

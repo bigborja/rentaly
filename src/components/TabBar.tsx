@@ -11,7 +11,13 @@ import {
 import { UiIcon } from "./UiIcon";
 
 const tabs = [
-  { href: "/", label: "Buscar", icon: MagnifyingGlassIcon, match: (path: string) => path === "/" },
+  {
+    href: "/",
+    label: "Buscar",
+    icon: MagnifyingGlassIcon,
+    match: (path: string) =>
+      path === "/" || path.startsWith("/gestoras") || path.startsWith("/gestora") || path.startsWith("/entidad"),
+  },
   {
     href: "/barrios",
     label: "Mapa",

@@ -32,9 +32,20 @@ export interface OwnershipClaim {
   largeHolderCandidate: boolean;
 }
 
+/**
+ * AEAT letters for personas jurídicas / entidades. Excludes DNI (digits), NIE (X/Y/Z)
+ * and the old natural-person prefixes K/L/M.
+ */
+export const LEGAL_PERSON_TAX_ID = /^[ABCDEFGHJNPQRSUVW]\d{7}[0-9A-J]$/;
+
+export function tryLegalPersonTaxId(taxId: string): string | null {
+  const compact = taxId.trim().toUpperCase().replace(/[\s.-]/g, "");
+  return LEGAL_PERSON_TAX_ID.test(compact) ? compact : null;
+}
+
 export function assertLegalPersonTaxId(taxId: string): string {
-  const compact = taxId.trim().toUpperCase();
-  if (!/^[A-WYZ]\d{7}[0-9A-J]$/.test(compact)) {
+  const compact = tryLegalPersonTaxId(taxId);
+  if (!compact) {
     throw new Error("Solo se pueden registrar identificadores de persona jurídica (CIF), nunca un DNI/NIE.");
   }
   return compact;

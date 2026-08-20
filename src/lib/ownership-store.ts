@@ -173,6 +173,50 @@ export async function createOwnershipClaim(input: {
   throw new Error("Hace falta SUPABASE_SECRET_KEY o DATABASE_URL para guardar personas jurídicas.");
 }
 
+export async function listLegalEntities(): Promise<Array<LegalEntity & { parcelCount: number }>> {
+  const db = prisma();
+  if (db) {
+    await ensureDatabase();
+    const rows = await db.legalEntity.findMany({
+      orderBy: { legalName: "asc" },
+      take: 800,
+      include: { ownershipClaims: { select: { parcelRef: true } } },
+    });
+    return rows.map((row) => ({
+      id: row.id,
+      taxId: row.taxId,
+      legalName: row.legalName,
+      kind: row.kind,
+      parcelCount: new Set(row.ownershipClaims.map((claim) => claim.parcelRef)).size,
+    }));
+  }
+  if (hasSupabase()) {
+    await ensureDatabase();
+    const rows = await sbSelect<EntityRow>("legal_entities", "select=*&order=legalName.asc&limit=800");
+    const ids = rows.map((row) => row.id);
+    const claims = ids.length
+      ? await sbSelect<{ legalEntityId: string; parcelRef: string }>(
+          "ownership_claims",
+          `${sbIn("legalEntityId", ids)}&select=legalEntityId,parcelRef`,
+        )
+      : [];
+    const parcels = new Map<string, Set<string>>();
+    for (const claim of claims) {
+      const set = parcels.get(claim.legalEntityId) || new Set<string>();
+      set.add(claim.parcelRef);
+      parcels.set(claim.legalEntityId, set);
+    }
+    return rows.map((row) => ({
+      id: row.id,
+      taxId: row.taxId,
+      legalName: row.legalName,
+      kind: row.kind,
+      parcelCount: parcels.get(row.id)?.size || 0,
+    }));
+  }
+  return [];
+}
+
 export async function parcelCountsByTaxId(taxIds: string[]): Promise<Record<string, number>> {
   const unique = [...new Set(taxIds.map((id) => id.trim().toUpperCase()).filter(Boolean))];
   const counts: Record<string, number> = {};

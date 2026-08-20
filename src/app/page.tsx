@@ -5,7 +5,7 @@ import { ReportList } from "@/components/ReportList";
 import { Steps } from "@/components/Guide";
 import { CoachGuide } from "@/components/CoachGuide";
 import { UiIcon, type Icon } from "@/components/UiIcon";
-import { ListChecksIcon, MapTrifoldIcon, PencilSimpleIcon } from "@phosphor-icons/react/ssr";
+import { ListChecksIcon, MapTrifoldIcon, PencilSimpleIcon, BuildingsIcon } from "@phosphor-icons/react/ssr";
 import { reportStats, listReports } from "@/lib/reports";
 import { BARRIOS } from "@/lib/barrios-data";
 import { getCurrentUser } from "@/lib/auth";
@@ -95,13 +95,20 @@ export default async function HomePage() {
           </p>
         </CoachGuide>
 
-        <div className="mt-8 grid gap-3 md:grid-cols-3">
+        <div className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           <Job
             href="/checklist"
             kicker="Tarea"
             title="Antes de firmar"
             body="Lista corta: metros del Catastro, fianza, contrato de vivienda, honorarios."
             icon={ListChecksIcon}
+          />
+          <Job
+            href="/gestoras"
+            kicker="Directorio"
+            title="Gestoras"
+            body="CIF o razón social. Memoria vecinal y sociedades inscritas en el RAIN. Nunca un particular."
+            icon={BuildingsIcon}
           />
           <Job
             href="/barrios"

@@ -27,6 +27,9 @@ export function Footer() {
               <Link href="/checklist">Antes de firmar</Link>
             </li>
             <li>
+              <Link href="/gestoras">Gestoras y agencias</Link>
+            </li>
+            <li>
               <Link href="/registro">Crear cuenta</Link>
             </li>
             <li>

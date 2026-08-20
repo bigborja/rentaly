@@ -93,4 +93,16 @@ export const DATA_SOURCES = {
     grain: "mensual, estatal",
     notes: "Techo de actualización anual de contratos de vivienda habitual posteriores al 26/05/2023. No es un precio de mercado.",
   },
+  madridRain: {
+    id: "cam-rain",
+    publisher: "comunidad_madrid",
+    title: "Registro de Agentes Inmobiliarios de la Comunidad de Madrid (RAIN)",
+    homepage: "https://datos.comunidad.madrid/dataset/registro_agentes_inmobiliarios",
+    endpoint:
+      "https://datos.comunidad.madrid/dataset/4c426a78-87bd-4767-aafa-4b90aa8485ba/resource/ec5bce1c-a8c6-41cc-a008-df02a2dec4cd/download/registro_agentes_inmobiliarios.csv",
+    license: "CC BY 4.0",
+    grain: "agente inscrito (adhesión voluntaria), Comunidad de Madrid",
+    notes:
+      "Solo personas jurídicas (CIF). Se descartan NIF/NIE y nombres de particulares. No es un censo de colegiados CAF/COAPI ni un scraping de portales.",
+  },
 } as const satisfies Record<string, DataSource>;

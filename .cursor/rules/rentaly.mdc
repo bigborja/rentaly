@@ -19,12 +19,14 @@ Civic PWA for Madrid-capital tenants. Open data + crowdsourcing. Not a listings 
 - Map-first. Barrio click stays the default. **Activating Catastro parcels** (explicit) opens a **bottom sheet**, then `/inmueble/[rc]` for SERPAVI, IRAV and the written next step.
 - Scorecard tiles: Catastro m²/uso, VUT nearby, community memory, CIF/gestora, SERPAVI, IRAV. ITE stays on the full dossier as a sede link — never an invented outcome.
 - Rent reference is **SERPAVI + IRAV**, never IVIMA and never Idealista prices.
+- `/gestoras` is the agency search: CIF or razón social → `/gestora/[taxId]`. Community memory first; RAIN overlay is CIF-only.
 
 ## Privacy and data (hard)
 
 - Never store or show DNI, natural-person owner names, or notas simples PDFs.
 - Legal persons only (`assertLegalPersonTaxId`). Portfolios are CIF → parcels (`/entidad`) and CIF → reports (`/gestora`).
-- Do not scrape ITE sede, BORM, RAIN, or Idealista. Do not fetch user-supplied URLs (SSRF). Source URLs must be allowlisted (BOE, BORM, registradores, CNMV, datos.gob.es, madrid.es, comunidad.madrid).
+- RAIN (Comunidad de Madrid open data, CC BY): ingest the official CSV, **CIF-only**. Drop NIF/NIE and natural-person names. Do not scrape the RAIN HTML portal, CAF Madrid, COAPI, Idealista, Fotocasa, Google Places, Infocif/eInforma/Axesor, or OpenCorporates officer lists.
+- Do not scrape ITE sede or BORM. Do not fetch user-supplied URLs (SSRF). Source URLs must be allowlisted (BOE, BORM, registradores, CNMV, datos.gob.es, madrid.es, comunidad.madrid).
 - JPEG evidence: hash a crop and discard pixels (stronger than EXIF strip). No PII in storage.
 - Trust bands: anónimo < cuenta < evidencia.
 - Public `/api/*` stays behind Upstash rate limit (fail-open).

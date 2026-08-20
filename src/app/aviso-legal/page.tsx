@@ -28,7 +28,10 @@ export default function AvisoLegalPage() {
           Los datos de inmuebles proceden de los servicios web libres de la Dirección General del Catastro (datos
           catastrales no protegidos): no se muestra titularidad ni otra información protegida. Los límites de barrio
           proceden del geoportal del Ayuntamiento de Madrid. Las licencias de vivienda de uso turístico salen del
-          conjunto de datos municipales. La renta de sección censal es un agregado del INE, no de una finca.
+          conjunto de datos municipales. La renta de sección censal es un agregado del INE, no de una finca. El
+          directorio de gestoras cruza la memoria vecinal con el Registro de Agentes Inmobiliarios (RAIN) de la
+          Comunidad de Madrid (CC BY): solo personas jurídicas con CIF; se descartan NIF/NIE y nombres de particulares.
+          No ingerimos CAF Madrid, COAPI, OpenCorporates, Infocif, Idealista, Fotocasa ni Google Places.
         </p>
         <p>
           Los aportes (experiencias, incidentes, avisos de abuso) son opiniones o relatos de usuarias y usuarios. No

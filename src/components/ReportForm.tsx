@@ -1,6 +1,7 @@
 "use client";
 
 import { FormEvent, useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { BARRIOS } from "@/lib/barrios-data";
 import { ABUSE_LABELS } from "@/lib/format";
@@ -193,7 +194,11 @@ export function ReportForm({
       </div>
       <p className="-mt-3 text-xs text-ink/50">
         CIF es el identificador de una empresa (empieza por letra). Nunca un DNI. La razón social es el nombre de esa
-        sociedad, no el de un particular. Si lo publicas, se agrupa en la ficha de gestora de ese CIF.
+        sociedad, no el de un particular. Si lo publicas, se agrupa en la ficha de gestora de ese CIF. Puedes{" "}
+        <Link className="underline decoration-gold" href="/gestoras">
+          comprobar si ya hay memoria
+        </Link>
+        .
       </p>
       <div className="grid gap-4 sm:grid-cols-3">
         <Field label="Año">

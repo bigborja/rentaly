@@ -22,7 +22,7 @@ export default function ComoFuncionaPage() {
       </p>
 
       <div className="mt-8">
-        <Guide title="En tres pasos">
+        <Guide title="En cuatro pasos">
           <Steps
             items={[
               {
@@ -36,6 +36,10 @@ export default function ComoFuncionaPage() {
               {
                 title: "Deja rastro si ya has vivido el contrato",
                 body: "Experiencia, incidente o aviso de abuso. En público solo se ve tu apodo. Si hay delito o riesgo, llama al 112: esto no es una denuncia.",
+              },
+              {
+                title: "Si conoces la agencia, busca su CIF",
+                body: "El directorio de gestoras cruza la memoria vecinal con las sociedades inscritas en el RAIN. No indexamos agentes particulares ni reseñas de Google.",
               },
             ]}
           />
@@ -105,7 +109,12 @@ export default function ComoFuncionaPage() {
             {
               term: "Gestora / CIF",
               meaning:
-                "Identificador fiscal de una empresa o entidad (empieza por letra, no por número de DNI). La ficha de gestora agrupa relatos que citan ese CIF; la de entidad, las parcelas. Nunca DNI ni notas simples.",
+                "Identificador fiscal de una empresa o entidad (empieza por letra, no por número de DNI). El buscador de gestoras agrupa relatos que citan ese CIF; la ficha de entidad, las parcelas. Nunca DNI ni notas simples.",
+            },
+            {
+              term: "RAIN",
+              meaning:
+                "Registro de Agentes Inmobiliarios de la Comunidad de Madrid (datos abiertos, adhesión voluntaria). En Rentaly solo entran las sociedades con CIF. No es un listado de colegiados CAF/COAPI ni de anunciantes de portales.",
             },
             {
               term: "ITE / IEE",
@@ -141,6 +150,7 @@ export default function ComoFuncionaPage() {
         <ul className="mt-3 list-disc space-y-2 pl-5 text-sm leading-6 text-paper/75">
           <li>No listamos pisos ni cobramos comisión.</li>
           <li>No mostramos titularidad de personas físicas ni almacenamos DNI.</li>
+          <li>No scrapamos Idealista, Fotocasa, Google Places ni directorios de colegiados.</li>
           <li>No sustituimos denuncia, sindicato ni asesoría jurídica.</li>
           <li>Los relatos vecinales son opiniones: no certificamos cada frase.</li>
         </ul>
@@ -149,6 +159,9 @@ export default function ComoFuncionaPage() {
       <div className="mt-8 flex flex-wrap gap-3">
         <Link href="/" className="btn btn-primary">
           Buscar una dirección
+        </Link>
+        <Link href="/gestoras" className="btn btn-ghost">
+          Buscar una gestora
         </Link>
         <Link href="/checklist" className="btn btn-ghost">
           Abrir la lista de firma

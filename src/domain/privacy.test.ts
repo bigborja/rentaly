@@ -31,5 +31,6 @@ describe("legal entities", () => {
   it("accepts a CIF and rejects a DNI", () => {
     assert.equal(assertLegalPersonTaxId("A28012345"), "A28012345");
     assert.throws(() => assertLegalPersonTaxId("12345678Z"), /persona jurídica/);
+    assert.throws(() => assertLegalPersonTaxId("Y1234567A"), /persona jurídica/);
   });
 });

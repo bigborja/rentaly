@@ -92,6 +92,13 @@ export function SearchPanel({
           {loading ? "Consultando Catastro…" : "Buscar en Madrid"}
         </button>
       </form>
+      <p className={`${overlay ? "mt-2 text-[11px]" : "mt-3 text-xs"} leading-5 text-ink/50`}>
+        Si ya tienes el CIF o el nombre de la agencia,{" "}
+        <Link className="underline decoration-gold" href="/gestoras">
+          busca la gestora
+        </Link>
+        : memoria vecinal más sociedades del RAIN. Nunca un DNI ni un colegiado.
+      </p>
       {error ? <p className="mt-3 text-sm text-wine">{error}</p> : null}
       {result?.warning ? <p className="mt-3 text-sm text-sage">{result.warning}</p> : null}
 

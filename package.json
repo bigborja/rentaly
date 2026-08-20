@@ -9,7 +9,7 @@
     "start": "next start --hostname 0.0.0.0 --port 3000",
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
-    "test": "node --experimental-strip-types --test scripts/parse.test.mjs src/domain/privacy.test.ts src/lib/supabase-rest.test.ts src/lib/client-ip.test.ts src/lib/civic-trust.test.ts src/lib/civic-rent.test.ts",
+    "test": "node --experimental-strip-types --test scripts/parse.test.mjs src/domain/privacy.test.ts src/lib/supabase-rest.test.ts src/lib/client-ip.test.ts src/lib/civic-trust.test.ts src/lib/civic-rent.test.ts src/clients/madrid/rain-parse.test.ts",
     "postinstall": "prisma generate",
     "db:generate": "prisma generate",
     "db:sql": "prisma migrate diff --from-empty --to-schema-datamodel prisma/schema.prisma --script"
