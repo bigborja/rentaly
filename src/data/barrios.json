@@ -1,0 +1,2229 @@
+[
+  {
+    "id": "011",
+    "slug": "palacio",
+    "name": "Palacio",
+    "districtId": "01",
+    "district": "Centro",
+    "centroid": [
+      -3.71407,
+      40.41542
+    ],
+    "bbox": [
+      -3.72295,
+      40.40666,
+      -3.70593,
+      40.42343
+    ]
+  },
+  {
+    "id": "012",
+    "slug": "embajadores",
+    "name": "Embajadores",
+    "districtId": "01",
+    "district": "Centro",
+    "centroid": [
+      -3.70246,
+      40.40924
+    ],
+    "bbox": [
+      -3.71168,
+      40.40506,
+      -3.69186,
+      40.41431
+    ]
+  },
+  {
+    "id": "013",
+    "slug": "cortes",
+    "name": "Cortes",
+    "districtId": "01",
+    "district": "Centro",
+    "centroid": [
+      -3.69683,
+      40.41485
+    ],
+    "bbox": [
+      -3.70393,
+      40.40908,
+      -3.69194,
+      40.41976
+    ]
+  },
+  {
+    "id": "014",
+    "slug": "justicia",
+    "name": "Justicia",
+    "districtId": "01",
+    "district": "Centro",
+    "centroid": [
+      -3.69668,
+      40.42366
+    ],
+    "bbox": [
+      -3.70241,
+      40.41874,
+      -3.69046,
+      40.42906
+    ]
+  },
+  {
+    "id": "015",
+    "slug": "universidad",
+    "name": "Universidad",
+    "districtId": "01",
+    "district": "Centro",
+    "centroid": [
+      -3.70707,
+      40.42567
+    ],
+    "bbox": [
+      -3.71623,
+      40.42001,
+      -3.70065,
+      40.43065
+    ]
+  },
+  {
+    "id": "016",
+    "slug": "sol",
+    "name": "Sol",
+    "districtId": "01",
+    "district": "Centro",
+    "centroid": [
+      -3.70456,
+      40.41731
+    ],
+    "bbox": [
+      -3.70881,
+      40.41352,
+      -3.69931,
+      40.4203
+    ]
+  },
+  {
+    "id": "021",
+    "slug": "imperial",
+    "name": "Imperial",
+    "districtId": "02",
+    "district": "Arganzuela",
+    "centroid": [
+      -3.71836,
+      40.40619
+    ],
+    "bbox": [
+      -3.72295,
+      40.39967,
+      -3.71168,
+      40.41399
+    ]
+  },
+  {
+    "id": "022",
+    "slug": "acacias",
+    "name": "Acacias",
+    "districtId": "02",
+    "district": "Arganzuela",
+    "centroid": [
+      -3.70726,
+      40.40107
+    ],
+    "bbox": [
+      -3.7149,
+      40.39523,
+      -3.69934,
+      40.40666
+    ]
+  },
+  {
+    "id": "023",
+    "slug": "chopera",
+    "name": "Chopera",
+    "districtId": "02",
+    "district": "Arganzuela",
+    "centroid": [
+      -3.69907,
+      40.39477
+    ],
+    "bbox": [
+      -3.70464,
+      40.3891,
+      -3.69475,
+      40.40103
+    ]
+  },
+  {
+    "id": "024",
+    "slug": "legazpi",
+    "name": "Legazpi",
+    "districtId": "02",
+    "district": "Arganzuela",
+    "centroid": [
+      -3.6871,
+      40.38892
+    ],
+    "bbox": [
+      -3.69809,
+      40.38233,
+      -3.67644,
+      40.39515
+    ]
+  },
+  {
+    "id": "025",
+    "slug": "delicias",
+    "name": "Delicias",
+    "districtId": "02",
+    "district": "Arganzuela",
+    "centroid": [
+      -3.68989,
+      40.3968
+    ],
+    "bbox": [
+      -3.69934,
+      40.39115,
+      -3.67965,
+      40.40103
+    ]
+  },
+  {
+    "id": "026",
+    "slug": "palos-de-la-frontera",
+    "name": "Palos de la Frontera",
+    "districtId": "02",
+    "district": "Arganzuela",
+    "centroid": [
+      -3.69462,
+      40.40349
+    ],
+    "bbox": [
+      -3.70255,
+      40.4004,
+      -3.68548,
+      40.40757
+    ]
+  },
+  {
+    "id": "027",
+    "slug": "atocha",
+    "name": "Atocha",
+    "districtId": "02",
+    "district": "Arganzuela",
+    "centroid": [
+      -3.68193,
+      40.39978
+    ],
+    "bbox": [
+      -3.69301,
+      40.39233,
+      -3.67352,
+      40.40844
+    ]
+  },
+  {
+    "id": "031",
+    "slug": "pacifico",
+    "name": "Pacífico",
+    "districtId": "03",
+    "district": "Retiro",
+    "centroid": [
+      -3.67872,
+      40.40435
+    ],
+    "bbox": [
+      -3.68887,
+      40.39895,
+      -3.67021,
+      40.4075
+    ]
+  },
+  {
+    "id": "032",
+    "slug": "adelfas",
+    "name": "Adelfas",
+    "districtId": "03",
+    "district": "Retiro",
+    "centroid": [
+      -3.67097,
+      40.40112
+    ],
+    "bbox": [
+      -3.6768,
+      40.39431,
+      -3.66521,
+      40.40666
+    ]
+  },
+  {
+    "id": "033",
+    "slug": "estrella",
+    "name": "Estrella",
+    "districtId": "03",
+    "district": "Retiro",
+    "centroid": [
+      -3.66553,
+      40.41409
+    ],
+    "bbox": [
+      -3.67021,
+      40.40634,
+      -3.6587,
+      40.42119
+    ]
+  },
+  {
+    "id": "034",
+    "slug": "ibiza",
+    "name": "Ibiza",
+    "districtId": "03",
+    "district": "Retiro",
+    "centroid": [
+      -3.67434,
+      40.41888
+    ],
+    "bbox": [
+      -3.67996,
+      40.41546,
+      -3.669,
+      40.42168
+    ]
+  },
+  {
+    "id": "035",
+    "slug": "los-jeronimos",
+    "name": "Los Jerónimos",
+    "districtId": "03",
+    "district": "Retiro",
+    "centroid": [
+      -3.68514,
+      40.41374
+    ],
+    "bbox": [
+      -3.69364,
+      40.40638,
+      -3.67629,
+      40.42166
+    ]
+  },
+  {
+    "id": "036",
+    "slug": "nino-jesus",
+    "name": "Niño Jesús",
+    "districtId": "03",
+    "district": "Retiro",
+    "centroid": [
+      -3.67343,
+      40.41161
+    ],
+    "bbox": [
+      -3.67883,
+      40.40666,
+      -3.66936,
+      40.41668
+    ]
+  },
+  {
+    "id": "041",
+    "slug": "recoletos",
+    "name": "Recoletos",
+    "districtId": "04",
+    "district": "Salamanca",
+    "centroid": [
+      -3.68584,
+      40.42459
+    ],
+    "bbox": [
+      -3.69309,
+      40.41934,
+      -3.67984,
+      40.42939
+    ]
+  },
+  {
+    "id": "042",
+    "slug": "goya",
+    "name": "Goya",
+    "districtId": "04",
+    "district": "Salamanca",
+    "centroid": [
+      -3.67442,
+      40.42505
+    ],
+    "bbox": [
+      -3.68035,
+      40.42119,
+      -3.66849,
+      40.42892
+    ]
+  },
+  {
+    "id": "043",
+    "slug": "fuente-del-berro",
+    "name": "Fuente del Berro",
+    "districtId": "04",
+    "district": "Salamanca",
+    "centroid": [
+      -3.66379,
+      40.42477
+    ],
+    "bbox": [
+      -3.669,
+      40.41867,
+      -3.6587,
+      40.43142
+    ]
+  },
+  {
+    "id": "044",
+    "slug": "guindalera",
+    "name": "Guindalera",
+    "districtId": "04",
+    "district": "Salamanca",
+    "centroid": [
+      -3.66659,
+      40.43634
+    ],
+    "bbox": [
+      -3.67743,
+      40.42812,
+      -3.65923,
+      40.44461
+    ]
+  },
+  {
+    "id": "045",
+    "slug": "lista",
+    "name": "Lista",
+    "districtId": "04",
+    "district": "Salamanca",
+    "centroid": [
+      -3.67582,
+      40.43201
+    ],
+    "bbox": [
+      -3.67984,
+      40.42836,
+      -3.66911,
+      40.43744
+    ]
+  },
+  {
+    "id": "046",
+    "slug": "castellana",
+    "name": "Castellana",
+    "districtId": "04",
+    "district": "Salamanca",
+    "centroid": [
+      -3.6843,
+      40.43355
+    ],
+    "bbox": [
+      -3.69072,
+      40.42892,
+      -3.67913,
+      40.43798
+    ]
+  },
+  {
+    "id": "051",
+    "slug": "el-viso",
+    "name": "El Viso",
+    "districtId": "05",
+    "district": "Chamartín",
+    "centroid": [
+      -3.68479,
+      40.44487
+    ],
+    "bbox": [
+      -3.69179,
+      40.43744,
+      -3.67756,
+      40.45213
+    ]
+  },
+  {
+    "id": "052",
+    "slug": "prosperidad",
+    "name": "Prosperidad",
+    "districtId": "05",
+    "district": "Chamartín",
+    "centroid": [
+      -3.66929,
+      40.44423
+    ],
+    "bbox": [
+      -3.67913,
+      40.43739,
+      -3.6606,
+      40.45316
+    ]
+  },
+  {
+    "id": "053",
+    "slug": "ciudad-jardin",
+    "name": "Ciudad Jardín",
+    "districtId": "05",
+    "district": "Chamartín",
+    "centroid": [
+      -3.673,
+      40.4483
+    ],
+    "bbox": [
+      -3.6787,
+      40.44168,
+      -3.66492,
+      40.45248
+    ]
+  },
+  {
+    "id": "054",
+    "slug": "hispanoamerica",
+    "name": "Hispanoamérica",
+    "districtId": "05",
+    "district": "Chamartín",
+    "centroid": [
+      -3.67715,
+      40.45537
+    ],
+    "bbox": [
+      -3.6907,
+      40.45164,
+      -3.66313,
+      40.46003
+    ]
+  },
+  {
+    "id": "055",
+    "slug": "nueva-espana",
+    "name": "Nueva España",
+    "districtId": "05",
+    "district": "Chamartín",
+    "centroid": [
+      -3.67814,
+      40.46276
+    ],
+    "bbox": [
+      -3.69003,
+      40.45844,
+      -3.66494,
+      40.46777
+    ]
+  },
+  {
+    "id": "056",
+    "slug": "castilla",
+    "name": "Castilla",
+    "districtId": "05",
+    "district": "Chamartín",
+    "centroid": [
+      -3.67972,
+      40.47432
+    ],
+    "bbox": [
+      -3.68934,
+      40.46604,
+      -3.66841,
+      40.48406
+    ]
+  },
+  {
+    "id": "061",
+    "slug": "bellas-vistas",
+    "name": "Bellas Vistas",
+    "districtId": "06",
+    "district": "Tetuán",
+    "centroid": [
+      -3.70764,
+      40.45246
+    ],
+    "bbox": [
+      -3.71327,
+      40.44686,
+      -3.70291,
+      40.45765
+    ]
+  },
+  {
+    "id": "062",
+    "slug": "cuatro-caminos",
+    "name": "Cuatro Caminos",
+    "districtId": "06",
+    "district": "Tetuán",
+    "centroid": [
+      -3.69705,
+      40.45153
+    ],
+    "bbox": [
+      -3.70395,
+      40.44621,
+      -3.69031,
+      40.4575
+    ]
+  },
+  {
+    "id": "063",
+    "slug": "castillejos",
+    "name": "Castillejos",
+    "districtId": "06",
+    "district": "Tetuán",
+    "centroid": [
+      -3.69416,
+      40.46042
+    ],
+    "bbox": [
+      -3.70148,
+      40.45614,
+      -3.68934,
+      40.46604
+    ]
+  },
+  {
+    "id": "064",
+    "slug": "almenara",
+    "name": "Almenara",
+    "districtId": "06",
+    "district": "Tetuán",
+    "centroid": [
+      -3.69431,
+      40.47066
+    ],
+    "bbox": [
+      -3.70214,
+      40.46472,
+      -3.68712,
+      40.47498
+    ]
+  },
+  {
+    "id": "065",
+    "slug": "valdeacederas",
+    "name": "Valdeacederas",
+    "districtId": "06",
+    "district": "Tetuán",
+    "centroid": [
+      -3.70416,
+      40.46702
+    ],
+    "bbox": [
+      -3.71328,
+      40.46063,
+      -3.69444,
+      40.47377
+    ]
+  },
+  {
+    "id": "066",
+    "slug": "berruguete",
+    "name": "Berruguete",
+    "districtId": "06",
+    "district": "Tetuán",
+    "centroid": [
+      -3.70496,
+      40.45962
+    ],
+    "bbox": [
+      -3.7115,
+      40.45402,
+      -3.69839,
+      40.46402
+    ]
+  },
+  {
+    "id": "071",
+    "slug": "gaztambide",
+    "name": "Gaztambide",
+    "districtId": "07",
+    "district": "Chamberí",
+    "centroid": [
+      -3.71461,
+      40.43498
+    ],
+    "bbox": [
+      -3.71841,
+      40.43019,
+      -3.71113,
+      40.43923
+    ]
+  },
+  {
+    "id": "072",
+    "slug": "arapiles",
+    "name": "Arapiles",
+    "districtId": "07",
+    "district": "Chamberí",
+    "centroid": [
+      -3.70803,
+      40.43441
+    ],
+    "bbox": [
+      -3.71186,
+      40.42961,
+      -3.70424,
+      40.43891
+    ]
+  },
+  {
+    "id": "073",
+    "slug": "trafalgar",
+    "name": "Trafalgar",
+    "districtId": "07",
+    "district": "Chamberí",
+    "centroid": [
+      -3.70113,
+      40.43285
+    ],
+    "bbox": [
+      -3.70581,
+      40.42764,
+      -3.69576,
+      40.43868
+    ]
+  },
+  {
+    "id": "074",
+    "slug": "almagro",
+    "name": "Almagro",
+    "districtId": "07",
+    "district": "Chamberí",
+    "centroid": [
+      -3.69354,
+      40.43285
+    ],
+    "bbox": [
+      -3.70026,
+      40.42526,
+      -3.68841,
+      40.43849
+    ]
+  },
+  {
+    "id": "075",
+    "slug": "rios-rosas",
+    "name": "Ríos Rosas",
+    "districtId": "07",
+    "district": "Chamberí",
+    "centroid": [
+      -3.69775,
+      40.44242
+    ],
+    "bbox": [
+      -3.70424,
+      40.43798,
+      -3.69072,
+      40.44686
+    ]
+  },
+  {
+    "id": "076",
+    "slug": "vallehermoso",
+    "name": "Vallehermoso",
+    "districtId": "07",
+    "district": "Chamberí",
+    "centroid": [
+      -3.71124,
+      40.44289
+    ],
+    "bbox": [
+      -3.71993,
+      40.43868,
+      -3.70395,
+      40.44713
+    ]
+  },
+  {
+    "id": "081",
+    "slug": "el-pardo",
+    "name": "El Pardo",
+    "districtId": "08",
+    "district": "Fuencarral - El Pardo",
+    "centroid": [
+      -3.76745,
+      40.5529
+    ],
+    "bbox": [
+      -3.88896,
+      40.4692,
+      -3.60178,
+      40.64328
+    ]
+  },
+  {
+    "id": "082",
+    "slug": "fuentelarreina",
+    "name": "Fuentelarreina",
+    "districtId": "08",
+    "district": "Fuencarral - El Pardo",
+    "centroid": [
+      -3.74179,
+      40.48111
+    ],
+    "bbox": [
+      -3.75179,
+      40.47012,
+      -3.73204,
+      40.49055
+    ]
+  },
+  {
+    "id": "083",
+    "slug": "penagrande",
+    "name": "Peñagrande",
+    "districtId": "08",
+    "district": "Fuencarral - El Pardo",
+    "centroid": [
+      -3.7258,
+      40.47878
+    ],
+    "bbox": [
+      -3.73929,
+      40.46963,
+      -3.71264,
+      40.48697
+    ]
+  },
+  {
+    "id": "084",
+    "slug": "pilar",
+    "name": "Pilar",
+    "districtId": "08",
+    "district": "Fuencarral - El Pardo",
+    "centroid": [
+      -3.70959,
+      40.47714
+    ],
+    "bbox": [
+      -3.71648,
+      40.46851,
+      -3.70209,
+      40.48558
+    ]
+  },
+  {
+    "id": "085",
+    "slug": "la-paz",
+    "name": "La Paz",
+    "districtId": "08",
+    "district": "Fuencarral - El Pardo",
+    "centroid": [
+      -3.6966,
+      40.48114
+    ],
+    "bbox": [
+      -3.70931,
+      40.47377,
+      -3.68508,
+      40.49009
+    ]
+  },
+  {
+    "id": "086",
+    "slug": "valverde",
+    "name": "Valverde",
+    "districtId": "08",
+    "district": "Fuencarral - El Pardo",
+    "centroid": [
+      -3.67879,
+      40.50023
+    ],
+    "bbox": [
+      -3.70093,
+      40.48227,
+      -3.65761,
+      40.52003
+    ]
+  },
+  {
+    "id": "087",
+    "slug": "mirasierra",
+    "name": "Mirasierra",
+    "districtId": "08",
+    "district": "Fuencarral - El Pardo",
+    "centroid": [
+      -3.71957,
+      40.49631
+    ],
+    "bbox": [
+      -3.74203,
+      40.48308,
+      -3.69619,
+      40.51331
+    ]
+  },
+  {
+    "id": "088",
+    "slug": "el-goloso",
+    "name": "El Goloso",
+    "districtId": "08",
+    "district": "Fuencarral - El Pardo",
+    "centroid": [
+      -3.7,
+      40.53439
+    ],
+    "bbox": [
+      -3.73942,
+      40.50151,
+      -3.66287,
+      40.57856
+    ]
+  },
+  {
+    "id": "091",
+    "slug": "casa-de-campo",
+    "name": "Casa de Campo",
+    "districtId": "09",
+    "district": "Moncloa - Aravaca",
+    "centroid": [
+      -3.75307,
+      40.42363
+    ],
+    "bbox": [
+      -3.7814,
+      40.3991,
+      -3.71477,
+      40.44955
+    ]
+  },
+  {
+    "id": "092",
+    "slug": "arguelles",
+    "name": "Argüelles",
+    "districtId": "09",
+    "district": "Moncloa - Aravaca",
+    "centroid": [
+      -3.71784,
+      40.42821
+    ],
+    "bbox": [
+      -3.72519,
+      40.42029,
+      -3.71089,
+      40.43574
+    ]
+  },
+  {
+    "id": "093",
+    "slug": "ciudad-universitaria",
+    "name": "Ciudad Universitaria",
+    "districtId": "09",
+    "district": "Moncloa - Aravaca",
+    "centroid": [
+      -3.7384,
+      40.45595
+    ],
+    "bbox": [
+      -3.76587,
+      40.43421,
+      -3.70831,
+      40.47978
+    ]
+  },
+  {
+    "id": "094",
+    "slug": "valdezarza",
+    "name": "Valdezarza",
+    "districtId": "09",
+    "district": "Moncloa - Aravaca",
+    "centroid": [
+      -3.7173,
+      40.46525
+    ],
+    "bbox": [
+      -3.72853,
+      40.45749,
+      -3.70847,
+      40.47296
+    ]
+  },
+  {
+    "id": "095",
+    "slug": "valdemarin",
+    "name": "Valdemarín",
+    "districtId": "09",
+    "district": "Moncloa - Aravaca",
+    "centroid": [
+      -3.77891,
+      40.46814
+    ],
+    "bbox": [
+      -3.80208,
+      40.46123,
+      -3.76203,
+      40.47463
+    ]
+  },
+  {
+    "id": "096",
+    "slug": "el-plantio",
+    "name": "El Plantío",
+    "districtId": "09",
+    "district": "Moncloa - Aravaca",
+    "centroid": [
+      -3.82086,
+      40.4697
+    ],
+    "bbox": [
+      -3.83826,
+      40.45906,
+      -3.79895,
+      40.47958
+    ]
+  },
+  {
+    "id": "097",
+    "slug": "aravaca",
+    "name": "Aravaca",
+    "districtId": "09",
+    "district": "Moncloa - Aravaca",
+    "centroid": [
+      -3.77912,
+      40.45467
+    ],
+    "bbox": [
+      -3.80144,
+      40.44234,
+      -3.75721,
+      40.46559
+    ]
+  },
+  {
+    "id": "101",
+    "slug": "los-carmenes",
+    "name": "Los Cármenes",
+    "districtId": "10",
+    "district": "Latina",
+    "centroid": [
+      -3.73593,
+      40.40149
+    ],
+    "bbox": [
+      -3.74485,
+      40.393,
+      -3.72182,
+      40.40875
+    ]
+  },
+  {
+    "id": "102",
+    "slug": "puerta-del-angel",
+    "name": "Puerta del Ángel",
+    "districtId": "10",
+    "district": "Latina",
+    "centroid": [
+      -3.7318,
+      40.40969
+    ],
+    "bbox": [
+      -3.74231,
+      40.40384,
+      -3.72182,
+      40.41717
+    ]
+  },
+  {
+    "id": "103",
+    "slug": "lucero",
+    "name": "Lucero",
+    "districtId": "10",
+    "district": "Latina",
+    "centroid": [
+      -3.75035,
+      40.40229
+    ],
+    "bbox": [
+      -3.76081,
+      40.39509,
+      -3.74107,
+      40.40958
+    ]
+  },
+  {
+    "id": "104",
+    "slug": "aluche",
+    "name": "Aluche",
+    "districtId": "10",
+    "district": "Latina",
+    "centroid": [
+      -3.75669,
+      40.39191
+    ],
+    "bbox": [
+      -3.77157,
+      40.38353,
+      -3.74088,
+      40.40288
+    ]
+  },
+  {
+    "id": "105",
+    "slug": "campamento",
+    "name": "Campamento",
+    "districtId": "10",
+    "district": "Latina",
+    "centroid": [
+      -3.80369,
+      40.38514
+    ],
+    "bbox": [
+      -3.83416,
+      40.36372,
+      -3.76436,
+      40.40031
+    ]
+  },
+  {
+    "id": "106",
+    "slug": "cuatro-vientos",
+    "name": "Cuatro Vientos",
+    "districtId": "10",
+    "district": "Latina",
+    "centroid": [
+      -3.78405,
+      40.36868
+    ],
+    "bbox": [
+      -3.80693,
+      40.3587,
+      -3.76181,
+      40.38167
+    ]
+  },
+  {
+    "id": "107",
+    "slug": "aguilas",
+    "name": "Águilas",
+    "districtId": "10",
+    "district": "Latina",
+    "centroid": [
+      -3.77109,
+      40.3818
+    ],
+    "bbox": [
+      -3.7877,
+      40.37262,
+      -3.75595,
+      40.39384
+    ]
+  },
+  {
+    "id": "111",
+    "slug": "comillas",
+    "name": "Comillas",
+    "districtId": "11",
+    "district": "Carabanchel",
+    "centroid": [
+      -3.71196,
+      40.3935
+    ],
+    "bbox": [
+      -3.71756,
+      40.38528,
+      -3.70464,
+      40.39967
+    ]
+  },
+  {
+    "id": "112",
+    "slug": "opanel",
+    "name": "Opañel",
+    "districtId": "11",
+    "district": "Carabanchel",
+    "centroid": [
+      -3.72178,
+      40.39023
+    ],
+    "bbox": [
+      -3.73223,
+      40.38523,
+      -3.7151,
+      40.39772
+    ]
+  },
+  {
+    "id": "113",
+    "slug": "san-isidro",
+    "name": "San Isidro",
+    "districtId": "11",
+    "district": "Carabanchel",
+    "centroid": [
+      -3.72833,
+      40.3966
+    ],
+    "bbox": [
+      -3.74088,
+      40.38852,
+      -3.7149,
+      40.40552
+    ]
+  },
+  {
+    "id": "114",
+    "slug": "vista-alegre",
+    "name": "Vista Alegre",
+    "districtId": "11",
+    "district": "Carabanchel",
+    "centroid": [
+      -3.74575,
+      40.38432
+    ],
+    "bbox": [
+      -3.75931,
+      40.37583,
+      -3.73177,
+      40.393
+    ]
+  },
+  {
+    "id": "115",
+    "slug": "puerta-bonita",
+    "name": "Puerta Bonita",
+    "districtId": "11",
+    "district": "Carabanchel",
+    "centroid": [
+      -3.73909,
+      40.37966
+    ],
+    "bbox": [
+      -3.75079,
+      40.37284,
+      -3.7277,
+      40.38821
+    ]
+  },
+  {
+    "id": "116",
+    "slug": "buenavista",
+    "name": "Buenavista",
+    "districtId": "11",
+    "district": "Carabanchel",
+    "centroid": [
+      -3.74608,
+      40.3671
+    ],
+    "bbox": [
+      -3.77162,
+      40.35726,
+      -3.71976,
+      40.37855
+    ]
+  },
+  {
+    "id": "117",
+    "slug": "abrantes",
+    "name": "Abrantes",
+    "districtId": "11",
+    "district": "Carabanchel",
+    "centroid": [
+      -3.72617,
+      40.37898
+    ],
+    "bbox": [
+      -3.73716,
+      40.3732,
+      -3.71756,
+      40.38626
+    ]
+  },
+  {
+    "id": "121",
+    "slug": "orcasitas",
+    "name": "Orcasitas",
+    "districtId": "12",
+    "district": "Usera",
+    "centroid": [
+      -3.71242,
+      40.36863
+    ],
+    "bbox": [
+      -3.72098,
+      40.36366,
+      -3.70311,
+      40.37383
+    ]
+  },
+  {
+    "id": "122",
+    "slug": "orcasur",
+    "name": "Orcasur",
+    "districtId": "12",
+    "district": "Usera",
+    "centroid": [
+      -3.69812,
+      40.37222
+    ],
+    "bbox": [
+      -3.7049,
+      40.36356,
+      -3.68975,
+      40.38411
+    ]
+  },
+  {
+    "id": "123",
+    "slug": "san-fermin",
+    "name": "San Fermín",
+    "districtId": "12",
+    "district": "Usera",
+    "centroid": [
+      -3.68907,
+      40.37061
+    ],
+    "bbox": [
+      -3.69494,
+      40.3613,
+      -3.68174,
+      40.38233
+    ]
+  },
+  {
+    "id": "124",
+    "slug": "almendrales",
+    "name": "Almendrales",
+    "districtId": "12",
+    "district": "Usera",
+    "centroid": [
+      -3.69926,
+      40.38367
+    ],
+    "bbox": [
+      -3.70576,
+      40.37853,
+      -3.69215,
+      40.3891
+    ]
+  },
+  {
+    "id": "125",
+    "slug": "moscardo",
+    "name": "Moscardó",
+    "districtId": "12",
+    "district": "Usera",
+    "centroid": [
+      -3.70682,
+      40.389
+    ],
+    "bbox": [
+      -3.71756,
+      40.38513,
+      -3.69809,
+      40.39523
+    ]
+  },
+  {
+    "id": "126",
+    "slug": "zofio",
+    "name": "Zofío",
+    "districtId": "12",
+    "district": "Usera",
+    "centroid": [
+      -3.71532,
+      40.37937
+    ],
+    "bbox": [
+      -3.71976,
+      40.37334,
+      -3.71124,
+      40.38528
+    ]
+  },
+  {
+    "id": "127",
+    "slug": "pradolongo",
+    "name": "Pradolongo",
+    "districtId": "12",
+    "district": "Usera",
+    "centroid": [
+      -3.70712,
+      40.37814
+    ],
+    "bbox": [
+      -3.71232,
+      40.37116,
+      -3.70009,
+      40.38585
+    ]
+  },
+  {
+    "id": "131",
+    "slug": "entrevias",
+    "name": "Entrevías",
+    "districtId": "13",
+    "district": "Puente de Vallecas",
+    "centroid": [
+      -3.67311,
+      40.37479
+    ],
+    "bbox": [
+      -3.68975,
+      40.36068,
+      -3.65236,
+      40.39431
+    ]
+  },
+  {
+    "id": "132",
+    "slug": "san-diego",
+    "name": "San Diego",
+    "districtId": "13",
+    "district": "Puente de Vallecas",
+    "centroid": [
+      -3.66787,
+      40.39003
+    ],
+    "bbox": [
+      -3.67352,
+      40.38064,
+      -3.66239,
+      40.39832
+    ]
+  },
+  {
+    "id": "133",
+    "slug": "palomeras-bajas",
+    "name": "Palomeras Bajas",
+    "districtId": "13",
+    "district": "Puente de Vallecas",
+    "centroid": [
+      -3.65888,
+      40.38476
+    ],
+    "bbox": [
+      -3.66696,
+      40.37603,
+      -3.65283,
+      40.39472
+    ]
+  },
+  {
+    "id": "134",
+    "slug": "palomeras-sureste",
+    "name": "Palomeras Sureste",
+    "districtId": "13",
+    "district": "Puente de Vallecas",
+    "centroid": [
+      -3.63729,
+      40.38522
+    ],
+    "bbox": [
+      -3.65438,
+      40.37602,
+      -3.62189,
+      40.3948
+    ]
+  },
+  {
+    "id": "135",
+    "slug": "portazgo",
+    "name": "Portazgo",
+    "districtId": "13",
+    "district": "Puente de Vallecas",
+    "centroid": [
+      -3.64824,
+      40.39061
+    ],
+    "bbox": [
+      -3.65407,
+      40.38142,
+      -3.63998,
+      40.39854
+    ]
+  },
+  {
+    "id": "136",
+    "slug": "numancia",
+    "name": "Numancia",
+    "districtId": "13",
+    "district": "Puente de Vallecas",
+    "centroid": [
+      -3.65853,
+      40.3995
+    ],
+    "bbox": [
+      -3.66926,
+      40.39158,
+      -3.64706,
+      40.40634
+    ]
+  },
+  {
+    "id": "141",
+    "slug": "pavones",
+    "name": "Pavones",
+    "districtId": "14",
+    "district": "Moratalaz",
+    "centroid": [
+      -3.63217,
+      40.39853
+    ],
+    "bbox": [
+      -3.63998,
+      40.39256,
+      -3.62527,
+      40.40439
+    ]
+  },
+  {
+    "id": "142",
+    "slug": "horcajo",
+    "name": "Horcajo",
+    "districtId": "14",
+    "district": "Moratalaz",
+    "centroid": [
+      -3.62694,
+      40.40858
+    ],
+    "bbox": [
+      -3.63429,
+      40.40366,
+      -3.62036,
+      40.41438
+    ]
+  },
+  {
+    "id": "143",
+    "slug": "marroquina",
+    "name": "Marroquina",
+    "districtId": "14",
+    "district": "Moratalaz",
+    "centroid": [
+      -3.64061,
+      40.41073
+    ],
+    "bbox": [
+      -3.65394,
+      40.40375,
+      -3.62759,
+      40.41609
+    ]
+  },
+  {
+    "id": "144",
+    "slug": "media-legua",
+    "name": "Media Legua",
+    "districtId": "14",
+    "district": "Moratalaz",
+    "centroid": [
+      -3.65682,
+      40.41189
+    ],
+    "bbox": [
+      -3.66409,
+      40.40561,
+      -3.65013,
+      40.41867
+    ]
+  },
+  {
+    "id": "145",
+    "slug": "fontarron",
+    "name": "Fontarrón",
+    "districtId": "14",
+    "district": "Moratalaz",
+    "centroid": [
+      -3.64678,
+      40.40142
+    ],
+    "bbox": [
+      -3.66521,
+      40.3948,
+      -3.63617,
+      40.40852
+    ]
+  },
+  {
+    "id": "146",
+    "slug": "vinateros",
+    "name": "Vinateros",
+    "districtId": "14",
+    "district": "Moratalaz",
+    "centroid": [
+      -3.64249,
+      40.40525
+    ],
+    "bbox": [
+      -3.65104,
+      40.40096,
+      -3.63429,
+      40.40983
+    ]
+  },
+  {
+    "id": "151",
+    "slug": "ventas",
+    "name": "Ventas",
+    "districtId": "15",
+    "district": "Ciudad Lineal",
+    "centroid": [
+      -3.64741,
+      40.42248
+    ],
+    "bbox": [
+      -3.66081,
+      40.41438,
+      -3.62678,
+      40.43312
+    ]
+  },
+  {
+    "id": "152",
+    "slug": "pueblo-nuevo",
+    "name": "Pueblo Nuevo",
+    "districtId": "15",
+    "district": "Ciudad Lineal",
+    "centroid": [
+      -3.63546,
+      40.42629
+    ],
+    "bbox": [
+      -3.64824,
+      40.41306,
+      -3.62036,
+      40.43789
+    ]
+  },
+  {
+    "id": "153",
+    "slug": "quintana",
+    "name": "Quintana",
+    "districtId": "15",
+    "district": "Ciudad Lineal",
+    "centroid": [
+      -3.64506,
+      40.43701
+    ],
+    "bbox": [
+      -3.65589,
+      40.43212,
+      -3.63547,
+      40.44259
+    ]
+  },
+  {
+    "id": "154",
+    "slug": "la-concepcion",
+    "name": "La Concepción",
+    "districtId": "15",
+    "district": "Ciudad Lineal",
+    "centroid": [
+      -3.64928,
+      40.43932
+    ],
+    "bbox": [
+      -3.66081,
+      40.43142,
+      -3.63836,
+      40.44691
+    ]
+  },
+  {
+    "id": "155",
+    "slug": "san-pascual",
+    "name": "San Pascual",
+    "districtId": "15",
+    "district": "Ciudad Lineal",
+    "centroid": [
+      -3.65346,
+      40.44286
+    ],
+    "bbox": [
+      -3.6606,
+      40.43598,
+      -3.64491,
+      40.44945
+    ]
+  },
+  {
+    "id": "156",
+    "slug": "san-juan-bautista",
+    "name": "San Juan Bautista",
+    "districtId": "15",
+    "district": "Ciudad Lineal",
+    "centroid": [
+      -3.65636,
+      40.45069
+    ],
+    "bbox": [
+      -3.66313,
+      40.44461,
+      -3.64812,
+      40.45692
+    ]
+  },
+  {
+    "id": "157",
+    "slug": "colina",
+    "name": "Colina",
+    "districtId": "15",
+    "district": "Ciudad Lineal",
+    "centroid": [
+      -3.66031,
+      40.45805
+    ],
+    "bbox": [
+      -3.66494,
+      40.45316,
+      -3.65421,
+      40.46337
+    ]
+  },
+  {
+    "id": "158",
+    "slug": "atalaya",
+    "name": "Atalaya",
+    "districtId": "15",
+    "district": "Ciudad Lineal",
+    "centroid": [
+      -3.66494,
+      40.46427
+    ],
+    "bbox": [
+      -3.66841,
+      40.46003,
+      -3.66204,
+      40.46748
+    ]
+  },
+  {
+    "id": "159",
+    "slug": "costillares",
+    "name": "Costillares",
+    "districtId": "15",
+    "district": "Ciudad Lineal",
+    "centroid": [
+      -3.66852,
+      40.47665
+    ],
+    "bbox": [
+      -3.67444,
+      40.4667,
+      -3.65935,
+      40.48418
+    ]
+  },
+  {
+    "id": "161",
+    "slug": "palomas",
+    "name": "Palomas",
+    "districtId": "16",
+    "district": "Hortaleza",
+    "centroid": [
+      -3.61615,
+      40.4526
+    ],
+    "bbox": [
+      -3.62664,
+      40.44953,
+      -3.60449,
+      40.45815
+    ]
+  },
+  {
+    "id": "162",
+    "slug": "piovera",
+    "name": "Piovera",
+    "districtId": "16",
+    "district": "Hortaleza",
+    "centroid": [
+      -3.63508,
+      40.45571
+    ],
+    "bbox": [
+      -3.65421,
+      40.44858,
+      -3.61739,
+      40.46269
+    ]
+  },
+  {
+    "id": "163",
+    "slug": "canillas",
+    "name": "Canillas",
+    "districtId": "16",
+    "district": "Hortaleza",
+    "centroid": [
+      -3.64371,
+      40.46378
+    ],
+    "bbox": [
+      -3.66034,
+      40.45692,
+      -3.62342,
+      40.46948
+    ]
+  },
+  {
+    "id": "164",
+    "slug": "pinar-del-rey",
+    "name": "Pinar del Rey",
+    "districtId": "16",
+    "district": "Hortaleza",
+    "centroid": [
+      -3.64703,
+      40.47249
+    ],
+    "bbox": [
+      -3.66345,
+      40.46219,
+      -3.62797,
+      40.48126
+    ]
+  },
+  {
+    "id": "165",
+    "slug": "apostol-santiago",
+    "name": "Apóstol Santiago",
+    "districtId": "16",
+    "district": "Hortaleza",
+    "centroid": [
+      -3.65942,
+      40.4764
+    ],
+    "bbox": [
+      -3.66576,
+      40.46748,
+      -3.65002,
+      40.48291
+    ]
+  },
+  {
+    "id": "166",
+    "slug": "valdefuentes",
+    "name": "Valdefuentes",
+    "districtId": "16",
+    "district": "Hortaleza",
+    "centroid": [
+      -3.63515,
+      40.49373
+    ],
+    "bbox": [
+      -3.67346,
+      40.46848,
+      -3.60171,
+      40.5131
+    ]
+  },
+  {
+    "id": "171",
+    "slug": "villaverde-alto-casco-historico-de-villaverde",
+    "name": "Villaverde Alto - Casco Histórico de Villaverde",
+    "districtId": "17",
+    "district": "Villaverde",
+    "centroid": [
+      -3.70895,
+      40.34145
+    ],
+    "bbox": [
+      -3.72493,
+      40.32005,
+      -3.69228,
+      40.36479
+    ]
+  },
+  {
+    "id": "172",
+    "slug": "san-cristobal",
+    "name": "San Cristóbal",
+    "districtId": "17",
+    "district": "Villaverde",
+    "centroid": [
+      -3.68837,
+      40.34089
+    ],
+    "bbox": [
+      -3.69297,
+      40.33273,
+      -3.68375,
+      40.35023
+    ]
+  },
+  {
+    "id": "173",
+    "slug": "butarque",
+    "name": "Butarque",
+    "districtId": "17",
+    "district": "Villaverde",
+    "centroid": [
+      -3.67626,
+      40.3371
+    ],
+    "bbox": [
+      -3.69255,
+      40.32049,
+      -3.65751,
+      40.35974
+    ]
+  },
+  {
+    "id": "174",
+    "slug": "los-rosales",
+    "name": "Los Rosales",
+    "districtId": "17",
+    "district": "Villaverde",
+    "centroid": [
+      -3.68849,
+      40.3557
+    ],
+    "bbox": [
+      -3.694,
+      40.34585,
+      -3.68095,
+      40.36453
+    ]
+  },
+  {
+    "id": "175",
+    "slug": "angeles",
+    "name": "Ángeles",
+    "districtId": "17",
+    "district": "Villaverde",
+    "centroid": [
+      -3.69914,
+      40.35579
+    ],
+    "bbox": [
+      -3.70707,
+      40.34564,
+      -3.69297,
+      40.36453
+    ]
+  },
+  {
+    "id": "181",
+    "slug": "casco-historico-de-vallecas",
+    "name": "Casco Histórico de Vallecas",
+    "districtId": "18",
+    "district": "Villa de Vallecas",
+    "centroid": [
+      -3.61828,
+      40.34589
+    ],
+    "bbox": [
+      -3.68192,
+      40.31206,
+      -3.55425,
+      40.38332
+    ]
+  },
+  {
+    "id": "182",
+    "slug": "santa-eugenia",
+    "name": "Santa Eugenia",
+    "districtId": "18",
+    "district": "Villa de Vallecas",
+    "centroid": [
+      -3.61133,
+      40.38342
+    ],
+    "bbox": [
+      -3.62532,
+      40.37593,
+      -3.59781,
+      40.39084
+    ]
+  },
+  {
+    "id": "183",
+    "slug": "ensanche-de-vallecas",
+    "name": "Ensanche de Vallecas",
+    "districtId": "18",
+    "district": "Villa de Vallecas",
+    "centroid": [
+      -3.60245,
+      40.36642
+    ],
+    "bbox": [
+      -3.63257,
+      40.35202,
+      -3.57623,
+      40.37925
+    ]
+  },
+  {
+    "id": "191",
+    "slug": "casco-historico-de-vicalvaro",
+    "name": "Casco Histórico de Vicálvaro",
+    "districtId": "19",
+    "district": "Vicálvaro",
+    "centroid": [
+      -3.57994,
+      40.38916
+    ],
+    "bbox": [
+      -3.62395,
+      40.36008,
+      -3.53363,
+      40.42604
+    ]
+  },
+  {
+    "id": "192",
+    "slug": "valdebernardo",
+    "name": "Valdebernardo",
+    "districtId": "19",
+    "district": "Vicálvaro",
+    "centroid": [
+      -3.61763,
+      40.3966
+    ],
+    "bbox": [
+      -3.62979,
+      40.38755,
+      -3.60556,
+      40.40618
+    ]
+  },
+  {
+    "id": "193",
+    "slug": "valderrivas",
+    "name": "Valderrivas",
+    "districtId": "19",
+    "district": "Vicálvaro",
+    "centroid": [
+      -3.60264,
+      40.39879
+    ],
+    "bbox": [
+      -3.60988,
+      40.39251,
+      -3.59361,
+      40.40463
+    ]
+  },
+  {
+    "id": "194",
+    "slug": "el-canaveral",
+    "name": "El Cañaveral",
+    "districtId": "19",
+    "district": "Vicálvaro",
+    "centroid": [
+      -3.54579,
+      40.40364
+    ],
+    "bbox": [
+      -3.58561,
+      40.38938,
+      -3.51813,
+      40.42008
+    ]
+  },
+  {
+    "id": "201",
+    "slug": "simancas",
+    "name": "Simancas",
+    "districtId": "20",
+    "district": "San Blas - Canillejas",
+    "centroid": [
+      -3.6251,
+      40.43533
+    ],
+    "bbox": [
+      -3.63803,
+      40.42448,
+      -3.61219,
+      40.4437
+    ]
+  },
+  {
+    "id": "202",
+    "slug": "hellin",
+    "name": "Hellín",
+    "districtId": "20",
+    "district": "San Blas - Canillejas",
+    "centroid": [
+      -3.61682,
+      40.43095
+    ],
+    "bbox": [
+      -3.62573,
+      40.42577,
+      -3.61099,
+      40.43461
+    ]
+  },
+  {
+    "id": "203",
+    "slug": "amposta",
+    "name": "Amposta",
+    "districtId": "20",
+    "district": "San Blas - Canillejas",
+    "centroid": [
+      -3.62204,
+      40.42613
+    ],
+    "bbox": [
+      -3.62841,
+      40.42212,
+      -3.61507,
+      40.42953
+    ]
+  },
+  {
+    "id": "204",
+    "slug": "arcos",
+    "name": "Arcos",
+    "districtId": "20",
+    "district": "San Blas - Canillejas",
+    "centroid": [
+      -3.61759,
+      40.42122
+    ],
+    "bbox": [
+      -3.6266,
+      40.41308,
+      -3.6108,
+      40.42901
+    ]
+  },
+  {
+    "id": "205",
+    "slug": "rosas",
+    "name": "Rosas",
+    "districtId": "20",
+    "district": "San Blas - Canillejas",
+    "centroid": [
+      -3.59429,
+      40.42767
+    ],
+    "bbox": [
+      -3.61219,
+      40.40843,
+      -3.56412,
+      40.44989
+    ]
+  },
+  {
+    "id": "206",
+    "slug": "rejas",
+    "name": "Rejas",
+    "districtId": "20",
+    "district": "San Blas - Canillejas",
+    "centroid": [
+      -3.57017,
+      40.4451
+    ],
+    "bbox": [
+      -3.60339,
+      40.43794,
+      -3.53115,
+      40.45017
+    ]
+  },
+  {
+    "id": "207",
+    "slug": "canillejas",
+    "name": "Canillejas",
+    "districtId": "20",
+    "district": "San Blas - Canillejas",
+    "centroid": [
+      -3.61053,
+      40.44326
+    ],
+    "bbox": [
+      -3.61994,
+      40.43461,
+      -3.60241,
+      40.44971
+    ]
+  },
+  {
+    "id": "208",
+    "slug": "el-salvador",
+    "name": "El Salvador",
+    "districtId": "20",
+    "district": "San Blas - Canillejas",
+    "centroid": [
+      -3.63097,
+      40.44529
+    ],
+    "bbox": [
+      -3.64812,
+      40.43858,
+      -3.61612,
+      40.44983
+    ]
+  },
+  {
+    "id": "211",
+    "slug": "alameda-de-osuna",
+    "name": "Alameda de Osuna",
+    "districtId": "21",
+    "district": "Barajas",
+    "centroid": [
+      -3.59184,
+      40.45638
+    ],
+    "bbox": [
+      -3.60776,
+      40.44965,
+      -3.57791,
+      40.46533
+    ]
+  },
+  {
+    "id": "212",
+    "slug": "aeropuerto",
+    "name": "Aeropuerto",
+    "districtId": "21",
+    "district": "Barajas",
+    "centroid": [
+      -3.5635,
+      40.47858
+    ],
+    "bbox": [
+      -3.60193,
+      40.44656,
+      -3.52491,
+      40.5124
+    ]
+  },
+  {
+    "id": "213",
+    "slug": "casco-historico-de-barajas",
+    "name": "Casco Histórico de Barajas",
+    "districtId": "21",
+    "district": "Barajas",
+    "centroid": [
+      -3.57887,
+      40.474
+    ],
+    "bbox": [
+      -3.58237,
+      40.46745,
+      -3.57423,
+      40.47959
+    ]
+  },
+  {
+    "id": "214",
+    "slug": "timon",
+    "name": "Timón",
+    "districtId": "21",
+    "district": "Barajas",
+    "centroid": [
+      -3.60353,
+      40.4764
+    ],
+    "bbox": [
+      -3.62591,
+      40.46769,
+      -3.58054,
+      40.48502
+    ]
+  },
+  {
+    "id": "215",
+    "slug": "corralejos",
+    "name": "Corralejos",
+    "districtId": "21",
+    "district": "Barajas",
+    "centroid": [
+      -3.60714,
+      40.46419
+    ],
+    "bbox": [
+      -3.62797,
+      40.45276,
+      -3.58225,
+      40.47253
+    ]
+  }
+]
