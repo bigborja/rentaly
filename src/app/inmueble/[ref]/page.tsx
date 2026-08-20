@@ -1,14 +1,15 @@
 import Link from "next/link";
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { summarizeUses } from "@/lib/catastro";
-import { loadFincaDossier } from "@/lib/dossier";
+import { loadFincaShell } from "@/lib/dossier";
+import { listReports } from "@/lib/reports";
 import { formatM2, prettyUse } from "@/lib/format";
 import { ReportList } from "@/components/ReportList";
-import { OwnershipForm } from "@/components/OwnershipForm";
 import { getCurrentUser } from "@/lib/auth";
-import { serpaviUrlForSection } from "@/clients/mitma/indice-alquiler";
 import { compactRef, isCadastralRef } from "@/lib/parse";
 import { notFound } from "next/navigation";
+import { ContextPanel, OverlayFallback, OwnershipPanel, VutPanel } from "./overlays";
 
 export const dynamic = "force-dynamic";
 
@@ -22,24 +23,18 @@ export default async function InmueblePage({ params }: { params: Promise<{ ref: 
   const ref = compactRef(raw);
   if (!isCadastralRef(ref)) notFound();
 
-  let dossier;
+  let shell;
   try {
-    dossier = await loadFincaDossier(ref);
+    shell = await loadFincaShell(ref);
   } catch {
     notFound();
   }
 
-  const { catastro: property, barrio, touristLicenses, inspections, reports, rentContext, ownershipClaims } = dossier;
+  const { catastro: property, barrio } = shell;
   const user = await getCurrentUser();
+  const reports = await listReports({ ref: property.parcelRef });
   const uses = summarizeUses(property);
   const units = property.units;
-  const onParcelVut = touristLicenses.filter((item) => item.onParcel);
-  const nearbyVut = touristLicenses.filter((item) => !item.onParcel);
-  const vutUnits = onParcelVut.reduce((sum, item) => sum + item.units, 0);
-  const ite = inspections[0];
-  const income = rentContext?.meanHouseholdIncomeEuros
-    ? Math.round(rentContext.meanHouseholdIncomeEuros).toLocaleString("es-ES")
-    : null;
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-10">
@@ -56,7 +51,17 @@ export default async function InmueblePage({ params }: { params: Promise<{ ref: 
         </p>
       ) : null}
 
-      <dl className="mt-8 grid gap-3 sm:grid-cols-4">
+      <div className="mt-8 rounded-3xl bg-ink px-5 py-5 text-paper">
+        <p className="text-xs uppercase tracking-[0.16em] text-gold">Contrasta el anuncio</p>
+        <p className="mt-2 font-display text-4xl">{formatM2(property.areaM2)}</p>
+        <p className="mt-2 max-w-xl text-sm text-paper/70">
+          Superficie que publica el Catastro
+          {property.use ? ` · uso ${prettyUse(property.use)}` : ""}
+          {property.year ? ` · hacia ${property.year}` : ""}. Si el portal dice más metros, esta cifra manda.
+        </p>
+      </div>
+
+      <dl className="mt-6 grid gap-3 sm:grid-cols-4">
         <Mini label="Uso" value={prettyUse(property.use)} />
         <Mini label="Superficie" value={formatM2(property.areaM2)} />
         <Mini label="Antigüedad" value={property.year ? String(property.year) : "—"} />
@@ -68,8 +73,7 @@ export default async function InmueblePage({ params }: { params: Promise<{ ref: 
       <section className="mt-10">
         <h2 className="font-display text-3xl">Distribución de inmuebles</h2>
         <p className="mt-2 max-w-2xl text-sm text-ink/65">
-          Resumen de usos y superficies que publica el Catastro para esta finca. Sirve para contrastar si el anuncio
-          vende una vivienda, un local o un anejo, y si los metros cuadrados cuadran.
+          Resumen de usos y superficies que publica el Catastro para esta finca.
         </p>
         <ul className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {uses.map((item) => (
@@ -154,118 +158,19 @@ export default async function InmueblePage({ params }: { params: Promise<{ ref: 
       </div>
 
       <section className="mt-14 grid gap-4 md:grid-cols-2">
-        <div className="rounded-3xl border border-ink/10 bg-white/70 px-5 py-5">
-          <p className="text-xs uppercase tracking-[0.14em] text-ink/50">Viviendas de uso turístico</p>
-          <h2 className="mt-1 font-display text-2xl">Licencias VUT</h2>
-          {onParcelVut.length ? (
-            <p className="mt-2 text-sm text-ink/65">
-              {vutUnits} unidad{vutUnits === 1 ? "" : "es"} con licencia urbanística de hospedaje en{" "}
-              <strong>esta parcela</strong> (dirección del Geoportal cruzada con el callejero catastral).
-            </p>
-          ) : (
-            <p className="mt-2 text-sm text-ink/65">
-              Ninguna licencia VUT del Geoportal ha coincidido con esta referencia catastral. Puede haber hospedaje
-              sin licencia o un desfase en la dirección.
-            </p>
-          )}
-          {onParcelVut.length ? (
-            <ul className="mt-3 space-y-2 text-sm">
-              {onParcelVut.slice(0, 6).map((license) => (
-                <li key={`${license.expedienteLu}-${license.address}-${license.floor}`}>
-                  <span className="font-medium">{license.address || "Dirección no informada"}</span>
-                  {license.floor ? ` · planta ${license.floor.toLowerCase()}` : ""}
-                  {license.expedienteLu ? (
-                    <span className="block font-mono text-xs text-ink/50">{license.expedienteLu}</span>
-                  ) : null}
-                </li>
-              ))}
-            </ul>
-          ) : null}
-          {nearbyVut.length ? (
-            <p className="mt-3 text-xs text-ink/50">
-              {nearbyVut.length} licencia{nearbyVut.length === 1 ? "" : "s"} más en el entorno (80&nbsp;m) sin cruzar a
-              esta RC.
-            </p>
-          ) : null}
-          <a
-            className="mt-3 inline-block text-sm underline decoration-gold"
-            href="https://datos.madrid.es/dataset/300694-0-viviendas-turisticas-geoportal"
-            target="_blank"
-            rel="noreferrer"
-          >
-            Fuente: datos.madrid.es
-          </a>
-        </div>
-        <div className="rounded-3xl border border-ink/10 bg-white/70 px-5 py-5">
-          <p className="text-xs uppercase tracking-[0.14em] text-ink/50">Sección censal · renta</p>
-          <h2 className="mt-1 font-display text-2xl">Contexto de barrio estadístico</h2>
-          {rentContext ? (
-            <>
-              <p className="mt-2 font-mono text-sm text-ink/60">CUSEC {rentContext.censusSectionCode}</p>
-              <p className="mt-2 text-sm text-ink/65">
-                Renta neta media por hogar ({rentContext.year}):{" "}
-                <strong>{income ? `${income} €` : "no publicada"}</strong>. Es un agregado INE, no la renta de esta
-                finca.
-              </p>
-              <a
-                className="mt-3 inline-block text-sm underline decoration-gold"
-                href={serpaviUrlForSection(rentContext.censusSectionCode)}
-                target="_blank"
-                rel="noreferrer"
-              >
-                Consultar el índice estatal de alquiler (SERPAVI) para esta sección
-              </a>
-            </>
-          ) : (
-            <p className="mt-2 text-sm text-ink/65">
-              Sin coordenadas catastrales no se puede asignar sección censal. El visor SERPAVI del Ministerio cubre el
-              alquiler de referencia.
-            </p>
-          )}
-          {ite ? (
-            <a
-              className="mt-4 inline-flex rounded-full bg-ink px-4 py-2 text-sm text-paper"
-              href={ite.consultUrl}
-              target="_blank"
-              rel="noreferrer"
-            >
-              Consultar ITE/IEE en la sede
-            </a>
-          ) : null}
-        </div>
+        <Suspense fallback={<OverlayFallback title="Licencias VUT" />}>
+          <VutPanel parcelRef={property.parcelRef} longitude={property.longitude} latitude={property.latitude} />
+        </Suspense>
+        <Suspense fallback={<OverlayFallback title="Renta e ITE" />}>
+          <ContextPanel longitude={property.longitude} latitude={property.latitude} address={property.address} />
+        </Suspense>
       </section>
 
-      <section className="mt-14 rounded-3xl border border-ink/10 bg-white/70 px-5 py-5">
-        <p className="text-xs uppercase tracking-[0.14em] text-ink/50">Titularidad</p>
-        <h2 className="mt-1 font-display text-2xl">Personas jurídicas en esta finca</h2>
-        <p className="mt-2 max-w-2xl text-sm text-ink/65">
-          El Catastro no publica propietarios personas físicas. Aquí solo hay CIF (SOCIMI, fondos, SL…) aportados con
-          enlace a BORM o registro, o como aviso vecinal de baja confianza.
-        </p>
-        {ownershipClaims.length ? (
-          <ul className="mt-4 space-y-2 text-sm">
-            {ownershipClaims.map((claim) => (
-              <li key={claim.id}>
-                <Link className="font-medium underline decoration-gold" href={`/entidad/${claim.legalEntity?.taxId}`}>
-                  {claim.legalEntity?.legalName}
-                </Link>{" "}
-                <span className="font-mono text-xs text-ink/50">{claim.legalEntity?.taxId}</span>
-                {claim.largeHolderCandidate ? " · gran tenedor (forma jurídica)" : ""}
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p className="mt-3 text-sm text-ink/55">Nadie ha vinculado todavía una persona jurídica a esta parcela.</p>
-        )}
-        {user ? <OwnershipForm parcelRef={property.parcelRef} /> : (
-          <p className="mt-4 text-sm">
-            <Link className="underline" href="/entrar">
-              Entra
-            </Link>{" "}
-            para aportar un CIF. No se aceptan notas simples ni DNI.
-          </p>
-        )}
-      </section>
+      <div className="mt-14">
+        <Suspense fallback={<OverlayFallback title="Personas jurídicas" />}>
+          <OwnershipPanel parcelRef={property.parcelRef} signedIn={Boolean(user)} />
+        </Suspense>
+      </div>
 
       <section className="mt-14">
         <h2 className="font-display text-3xl">Memoria de esta finca</h2>

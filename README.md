@@ -87,7 +87,7 @@ Para dejar la web pública:
 
 En Vercel el sistema de archivos es de solo lectura. Sin `SUPABASE_SECRET_KEY` (ni `DATABASE_URL`), cuentas, sesiones y aportes se escriben en `/tmp/rentaly-data` y se pierden al reciclar la instancia. En local, el mismo fallback usa `data/`.
 
-Las rutas `/api/*` pasan por un rate limit en el Edge (`slidingWindow`, 15 peticiones / 10 s por IP) con `@upstash/ratelimit`. En Vercel añade `UPSTASH_REDIS_REST_URL` y `UPSTASH_REDIS_REST_TOKEN` (REST, misma región que el proyecto). Si faltan o Redis falla, la API sigue (fail-open) y responde `429` + `Retry-After` solo cuando el cupo está agotado.
+Las rutas `/api/*` pasan por un rate limit en el Edge (`slidingWindow`, 15 peticiones / 10 s por IP) con `@upstash/ratelimit`. El Catastro tiene además un tope global (40 consultas / 10 s) para no tumbar el OVC. Un cron diario (`/api/cron/overlays`, `CRON_SECRET`) espeja un recorte de VUT sin geocodificar. En Vercel añade `UPSTASH_REDIS_REST_URL`, `UPSTASH_REDIS_REST_TOKEN` y, si usas el cron, `CRON_SECRET`. Si Redis falta o falla, la API sigue (fail-open) y responde `429` + `Retry-After` solo cuando el cupo por IP está agotado.
 
 ## Límites actuales
 

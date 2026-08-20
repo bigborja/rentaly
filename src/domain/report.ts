@@ -49,6 +49,8 @@ export interface Report {
   managerLegalName?: string;
   createdAt: string;
   status: "published" | "pending" | "removed";
+  verification?: "anonimo" | "cuenta" | "evidencia";
+  trustBand?: "bajo" | "medio" | "alto";
 }
 
 export type PublicReport = Omit<Report, "userId">;
@@ -72,6 +74,7 @@ export interface CreateReportInput {
   recommend?: boolean;
   managerTaxId?: string;
   managerLegalName?: string;
+  evidenceJpegBase64?: string;
 }
 
 export interface ReportEvidence {

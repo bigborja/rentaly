@@ -29,9 +29,14 @@ export default async function EntidadPage({ params }: { params: Promise<{ taxId:
       <h1 className="mt-2 font-display text-4xl">{entity.legalName}</h1>
       <p className="mt-2 font-mono text-sm text-ink/60">{entity.taxId}</p>
       <p className="mt-2 text-sm text-ink/65">
-        {entity.kind.toUpperCase()} · {parcels.length} finca{parcels.length === 1 ? "" : "s"} aportadas por la comunidad
-        o por fuentes públicas. El Catastro no identifica a personas físicas.
+        {entity.kind.toUpperCase()} · {parcels.length} finca{parcels.length === 1 ? "" : "s"} con este CIF en Rentaly.
+        El Catastro no identifica a personas físicas.
       </p>
+      {parcels.length > 1 ? (
+        <p className="mt-3 rounded-2xl bg-wine/10 px-4 py-3 text-sm">
+          Esta persona jurídica aparece en más de una parcela: es el núcleo de una cartera, no un vecino.
+        </p>
+      ) : null}
       {entity.kind === "socimi" || entity.kind === "fondo" ? (
         <p className="mt-3 rounded-2xl bg-wine/10 px-4 py-3 text-sm">
           Candidata a gran tenedor por forma jurídica, no por un censo de viviendas oficiales.

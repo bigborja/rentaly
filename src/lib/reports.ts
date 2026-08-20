@@ -7,7 +7,9 @@ import { publicAuthor, sanitizeReportText } from "@/domain/privacy";
 import { assertLegalPersonTaxId } from "@/domain/ownership";
 import { prisma } from "./db";
 import { ensureDatabase } from "./ensure-db";
-import { hasSupabase, sbInsert, sbSelect } from "./supabase-rest";
+import { hasSupabase, sbInsert, sbIn, sbSelect } from "./supabase-rest";
+import { hashDiscardedJpeg } from "./jpeg-crop";
+import { trustFrom } from "./trust";
 import seedReports from "@/data/seed-reports.json";
 import type { Report as DbReport } from "@prisma/client";
 
@@ -56,6 +58,8 @@ function mapReport(row: Omit<DbReport, "createdAt"> & { createdAt: Date | string
     recommend: row.recommend ?? undefined,
     createdAt: isoDate(row.createdAt),
     status: row.status,
+    verification: row.userId ? "cuenta" : "anonimo",
+    trustBand: row.userId ? "medio" : "bajo",
   };
 }
 
@@ -87,7 +91,7 @@ export async function listReports(filters?: {
   userId?: string;
 }): Promise<Report[]> {
   const reports = await readStore();
-  return reports
+  const filtered = reports
     .filter((report) => report.status === "published")
     .filter((report) => !filters?.barrioId || report.barrioId === filters.barrioId)
     .filter((report) => !filters?.type || report.type === filters.type)
@@ -100,6 +104,32 @@ export async function listReports(filters?: {
       return value === needle || value.startsWith(needle.slice(0, 14)) || needle.startsWith(value.slice(0, 14));
     })
     .sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+  return attachTrust(filtered);
+}
+
+async function attachTrust(reports: Report[]): Promise<Report[]> {
+  if (!reports.length) return reports;
+  const evidenced = new Set<string>();
+  const ids = reports.map((report) => report.id);
+  const db = prisma();
+  try {
+    if (db) {
+      const rows = await db.reportEvidence.findMany({ where: { reportId: { in: ids } }, select: { reportId: true } });
+      for (const row of rows) evidenced.add(row.reportId);
+    } else if (hasSupabase()) {
+      const rows = await sbSelect<{ reportId: string }>("report_evidence", `${sbIn("reportId", ids.slice(0, 80))}&select=reportId`);
+      for (const row of rows) evidenced.add(row.reportId);
+    }
+  } catch {
+    // evidence table optional
+  }
+  return reports.map((report) => {
+    const trust = trustFrom({
+      userId: report.userId,
+      hasEvidence: evidenced.has(report.id) || report.verification === "evidencia",
+    });
+    return { ...report, ...trust };
+  });
 }
 
 export async function reportStats() {
@@ -182,6 +212,18 @@ export async function createReport(input: CreateReportInput): Promise<Report> {
     status: "published",
   };
 
+  let evidenceMeta: { sha256: string; bytes: number } | undefined;
+  if (input.evidenceJpegBase64) {
+    evidenceMeta = hashDiscardedJpeg(input.evidenceJpegBase64);
+    const trust = trustFrom({ userId: report.userId, hasEvidence: true });
+    report.verification = trust.verification;
+    report.trustBand = trust.trustBand;
+  } else {
+    const trust = trustFrom({ userId: report.userId });
+    report.verification = trust.verification;
+    report.trustBand = trust.trustBand;
+  }
+
   writeQueue = writeQueue.then(async () => {
     const db = prisma();
     if (db) {
@@ -243,6 +285,13 @@ export async function createReport(input: CreateReportInput): Promise<Report> {
     await writeStore(reports);
   });
   await writeQueue;
+  if (evidenceMeta) {
+    try {
+      await persistEvidence(report.id, evidenceMeta);
+    } catch {
+      // report stands without the hash if storage is down
+    }
+  }
   if (report.managerTaxId && report.managerLegalName && cadastralRef) {
     try {
       const { createOwnershipClaim } = await import("./ownership-store");
@@ -257,4 +306,33 @@ export async function createReport(input: CreateReportInput): Promise<Report> {
     }
   }
   return report;
+}
+
+async function persistEvidence(reportId: string, meta: { sha256: string; bytes: number }) {
+  const row = {
+    id: randomUUID(),
+    reportId,
+    kind: "contrato_fragmento" as const,
+    storageKey: `crop:${meta.sha256}`,
+    contentType: "image/jpeg",
+    redacted: true,
+    createdAt: new Date().toISOString(),
+  };
+  const db = prisma();
+  if (db) {
+    await db.reportEvidence.create({
+      data: {
+        id: row.id,
+        reportId,
+        kind: "contrato_fragmento",
+        storageKey: row.storageKey,
+        contentType: row.contentType,
+        redacted: true,
+      },
+    });
+    return;
+  }
+  if (hasSupabase()) {
+    await sbInsert("report_evidence", row);
+  }
 }

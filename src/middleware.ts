@@ -64,6 +64,9 @@ export async function middleware(request: NextRequest, event: NextFetchEvent) {
   if (!request.nextUrl.pathname.startsWith("/api/")) {
     return NextResponse.next();
   }
+  if (request.nextUrl.pathname.startsWith("/api/cron/")) {
+    return NextResponse.next();
+  }
   if (isPrefetch(request) || request.method === "OPTIONS") {
     return NextResponse.next();
   }

@@ -6,7 +6,7 @@ import type {
   StreetCandidate,
 } from "@/domain";
 import { TtlCache } from "@/cache/ttl";
-import { ConcurrencyLimiter } from "@/cache/limiter";
+import { withOvcBudget } from "@/cache/ovc-global";
 import { prisma } from "@/lib/db";
 import { hasSupabase, sbEq, sbInsert, sbPatch, sbSelect } from "@/lib/supabase-rest";
 import type { Prisma } from "@prisma/client";
@@ -26,7 +26,6 @@ const HEADERS = {
 type Json = Record<string, unknown>;
 
 const responseCache = new TtlCache<Json>(30 * 60 * 1000, 800);
-const catastroLimiter = new ConcurrencyLimiter(3);
 const SNAPSHOT_MS = 24 * 60 * 60 * 1000;
 
 function asRecord(value: unknown): Json {
@@ -83,7 +82,7 @@ async function catastroGet(url: string): Promise<Json> {
     }
   }
 
-  const json = await catastroLimiter.run(async () => {
+  const json = await withOvcBudget(async () => {
     const response = await fetch(url, {
       headers: HEADERS,
       next: { revalidate: 60 * 30 },

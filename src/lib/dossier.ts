@@ -38,7 +38,6 @@ export async function loadFincaDossier(ref: string): Promise<FincaDossier> {
     censusSectionCode: rentContext?.censusSectionCode,
   });
   await persistParcel(parcel);
-
   return {
     parcel,
     catastro,
@@ -52,7 +51,18 @@ export async function loadFincaDossier(ref: string): Promise<FincaDossier> {
   };
 }
 
-async function persistParcel(parcel: ReturnType<typeof parcelFromCatastro>) {
+export async function loadFincaShell(ref: string) {
+  const catastro = await lookupByRef(ref);
+  const barrio =
+    catastro.longitude != null && catastro.latitude != null
+      ? await barrioAt(catastro.longitude, catastro.latitude)
+      : undefined;
+  const parcel = parcelFromCatastro(catastro, { barrioId: barrio?.id });
+  void persistParcel(parcel);
+  return { catastro, barrio, parcel };
+}
+
+export async function persistParcel(parcel: ReturnType<typeof parcelFromCatastro>) {
   try {
     await ensureDatabase();
     const db = prisma();

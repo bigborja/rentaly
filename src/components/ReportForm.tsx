@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { BARRIOS } from "@/lib/barrios-data";
 import { ABUSE_LABELS } from "@/lib/format";
 import type { AbuseCategory, ReportType } from "@/lib/types";
+import { EvidenceCrop } from "@/components/EvidenceCrop";
 
 export function ReportForm({
   defaultBarrioId,
@@ -24,6 +25,7 @@ export function ReportForm({
   const [recommend, setRecommend] = useState<string>("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [evidenceJpegBase64, setEvidenceJpegBase64] = useState<string | null>(null);
 
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -45,6 +47,7 @@ export function ReportForm({
       abuseCategory: (form.get("abuseCategory") || undefined) as AbuseCategory | undefined,
       severity: (form.get("severity") || undefined) as "baja" | "media" | "alta" | undefined,
       recommend: recommend === "" ? undefined : recommend === "si",
+      evidenceJpegBase64: evidenceJpegBase64 || undefined,
     };
     try {
       const response = await fetch("/api/reports", {
@@ -196,6 +199,7 @@ export function ReportForm({
         No publiques DNI, cuentas bancarias ni el nombre de menores. No subas notas simples: si conoces la gestora,
         basta el CIF y la razón social. Si hay delito o riesgo, 112.
       </p>
+      <EvidenceCrop onChange={setEvidenceJpegBase64} />
       {error ? <p className="text-sm text-wine">{error}</p> : null}
       <button type="submit" disabled={loading} className="btn btn-primary">
         {loading ? "Publicando…" : "Publicar en la memoria vecinal"}

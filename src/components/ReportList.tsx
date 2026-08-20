@@ -59,6 +59,15 @@ export function ReportList({ reports }: { reports: Report[] }) {
                   {report.cadastralRef}
                 </Link>
               ) : null}
+              {report.trustBand ? (
+                <span>
+                  {report.trustBand === "alto"
+                    ? "verificado con recorte"
+                    : report.trustBand === "medio"
+                      ? "cuenta"
+                      : "anónimo"}
+                </span>
+              ) : null}
             </div>
           </li>
         );

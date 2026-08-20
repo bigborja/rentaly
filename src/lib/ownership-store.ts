@@ -6,6 +6,7 @@ import { ensureDatabase } from "./ensure-db";
 import { compactRef, isCadastralRef } from "./parse";
 import { sanitizeReportText } from "@/domain/privacy";
 import { hasSupabase, sbEq, sbIn, sbInsert, sbPatch, sbSelect, sbUpsert } from "./supabase-rest";
+import { assertAllowedSourceUrl } from "./source-url";
 
 const LARGE_HOLDER = new Set<LegalEntityKind>(["socimi", "fondo"]);
 
@@ -97,10 +98,12 @@ export async function createOwnershipClaim(input: {
   if (legalName.length < 3) throw new Error("Indica la razón social, no un nombre de persona.");
   const kind = input.kind || "otra_juridica";
   const source = input.source || "user_verified";
-  const sourceUrl = input.sourceUrl?.trim() || undefined;
-  if (sourceUrl && !/^https?:\/\//i.test(sourceUrl)) {
-    throw new Error("El enlace a BORM o al registro tiene que ser una URL http(s).");
+  let sourceUrl = input.sourceUrl?.trim() || undefined;
+  if (source === "borm" || source === "registro_mercantil") {
+    if (!sourceUrl) throw new Error("Un aviso BORM o de registro necesita el enlace https al anuncio.");
   }
+  if (sourceUrl) sourceUrl = assertAllowedSourceUrl(sourceUrl);
+  const confidence = source === "borm" || source === "registro_mercantil" ? "high" : "low";
 
   const db = prisma();
   if (db) {
@@ -125,7 +128,7 @@ export async function createOwnershipClaim(input: {
         source,
         sourceUrl,
         observedAt: new Date(),
-        confidence: source === "borm" || source === "registro_mercantil" ? "high" : "low",
+        confidence,
         largeHolderCandidate: LARGE_HOLDER.has(kind),
       },
       include: { legalEntity: true },
@@ -159,7 +162,7 @@ export async function createOwnershipClaim(input: {
       source,
       sourceUrl: sourceUrl || null,
       observedAt,
-      confidence: source === "borm" || source === "registro_mercantil" ? "high" : "low",
+      confidence,
       largeHolderCandidate: LARGE_HOLDER.has(kind),
     });
     const claim = inserted[0];
@@ -168,6 +171,22 @@ export async function createOwnershipClaim(input: {
   }
 
   throw new Error("Hace falta SUPABASE_SECRET_KEY o DATABASE_URL para guardar personas jurídicas.");
+}
+
+export async function parcelCountsByTaxId(taxIds: string[]): Promise<Record<string, number>> {
+  const unique = [...new Set(taxIds.map((id) => id.trim().toUpperCase()).filter(Boolean))];
+  const counts: Record<string, number> = {};
+  await Promise.all(
+    unique.map(async (taxId) => {
+      try {
+        const portfolio = await portfolioForTaxId(taxId);
+        counts[taxId] = portfolio ? new Set(portfolio.claims.map((claim) => claim.parcelRef)).size : 0;
+      } catch {
+        counts[taxId] = 0;
+      }
+    }),
+  );
+  return counts;
 }
 
 async function hydrateClaims(claims: ClaimRow[], known: EntityRow[] = []): Promise<OwnershipClaim[]> {

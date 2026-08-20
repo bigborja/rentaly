@@ -2,7 +2,7 @@
 
 import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
-import { LEGAL_ENTITY_KINDS, type LegalEntityKind } from "@/domain/ownership";
+import { LEGAL_ENTITY_KINDS, type LegalEntityKind, type OwnershipSource } from "@/domain/ownership";
 
 const KIND_LABEL: Record<LegalEntityKind, string> = {
   socimi: "SOCIMI",
@@ -18,6 +18,7 @@ export function OwnershipForm({ parcelRef }: { parcelRef: string }) {
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [source, setSource] = useState<OwnershipSource>("user_verified");
 
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -33,13 +34,14 @@ export function OwnershipForm({ parcelRef }: { parcelRef: string }) {
           taxId: String(form.get("taxId") || ""),
           legalName: String(form.get("legalName") || ""),
           kind: String(form.get("kind") || "otra_juridica"),
-          source: String(form.get("source") || "user_verified"),
+          source,
           sourceUrl: String(form.get("sourceUrl") || "") || undefined,
         }),
       });
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || "No se ha podido guardar.");
       event.currentTarget.reset();
+      setSource("user_verified");
       router.refresh();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Error al guardar.");
@@ -48,11 +50,13 @@ export function OwnershipForm({ parcelRef }: { parcelRef: string }) {
     }
   }
 
+  const needsUrl = source === "borm" || source === "registro_mercantil";
+
   return (
     <form onSubmit={onSubmit} className="mt-4 space-y-3 rounded-2xl bg-mist/80 p-4">
       <p className="text-xs leading-5 text-ink/60">
-        Solo personas jurídicas (CIF). No pegues un DNI ni subas la nota simple: extrae la razón social y el enlace al
-        BORM o al registro mercantil.
+        Solo personas jurídicas (CIF). No pegues un DNI ni subas la nota simple. Un aporte vecinal queda como baja
+        confianza hasta que haya enlace a BOE, BORM o registradores.
       </p>
       <div className="grid gap-3 sm:grid-cols-2">
         <label className="text-sm">
@@ -75,16 +79,27 @@ export function OwnershipForm({ parcelRef }: { parcelRef: string }) {
         </label>
         <label className="text-sm">
           <span className="mb-1 block text-ink/70">Fuente</span>
-          <select name="source" className="field-input" defaultValue="user_verified">
-            <option value="user_verified">Aporte vecinal</option>
+          <select
+            name="source"
+            className="field-input"
+            value={source}
+            onChange={(event) => setSource(event.target.value as OwnershipSource)}
+          >
+            <option value="user_verified">Aporte vecinal (baja confianza)</option>
             <option value="borm">BORM</option>
             <option value="registro_mercantil">Registro mercantil</option>
           </select>
         </label>
       </div>
       <label className="block text-sm">
-        <span className="mb-1 block text-ink/70">URL de la fuente (opcional)</span>
-        <input name="sourceUrl" type="url" className="field-input" placeholder="https://…" />
+        <span className="mb-1 block text-ink/70">URL de la fuente {needsUrl ? "(obligatoria)" : "(si la tienes)"}</span>
+        <input
+          name="sourceUrl"
+          type="url"
+          required={needsUrl}
+          className="field-input"
+          placeholder="https://www.boe.es/…"
+        />
       </label>
       {error ? <p className="text-sm text-wine">{error}</p> : null}
       <button type="submit" disabled={loading} className="rounded-full bg-ink px-4 py-2 text-sm text-paper">

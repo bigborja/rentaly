@@ -96,10 +96,13 @@ export function SearchPanel({ initialQuery = "", compact = false }: { initialQue
             <Stat label="Inmuebles" value={String(units.length || 1)} />
             <Stat label="Uso principal" value={prettyUse(result.property.use || units[0]?.use)} />
             <Stat
-              label="Superficie"
+              label="Superficie Catastro"
               value={formatM2(result.property.areaM2 || units.reduce((sum, unit) => sum + (unit.areaM2 || 0), 0))}
             />
           </div>
+          <p className="text-sm leading-6 text-ink/70">
+            Si el anuncio dice más metros, fíate de esta cifra. El Catastro no vende terraza ni trastero como vivienda.
+          </p>
           {units.length > 1 ? (
             <div className="overflow-hidden rounded-2xl border border-ink/10">
               <table className="w-full text-left text-sm">
