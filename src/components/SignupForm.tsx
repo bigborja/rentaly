@@ -50,7 +50,8 @@ export function SignupForm() {
         <input name="password" type="password" required minLength={8} className="field-input" autoComplete="new-password" />
       </label>
       <p className="text-xs leading-5 text-ink/55">
-        El correo sirve para verificar un relato si hace falta, como en Reviu. Nunca se muestra junto al aviso.
+        El apodo es lo que se lee en cada relato. El correo sirve para entrar y, si hace falta, para verificar un hecho:
+        nunca se muestra junto al aviso. Contraseña de al menos 8 caracteres. No pedimos DNI.
       </p>
       {error ? <p className="text-sm text-wine">{error}</p> : null}
       <button type="submit" disabled={loading} className="btn btn-primary w-full">

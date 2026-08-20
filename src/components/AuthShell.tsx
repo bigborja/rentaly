@@ -25,7 +25,8 @@ export function AuthShell({
           <div className="mt-6 space-y-3 text-sm leading-6 text-paper/75">{aside}</div>
         </div>
         <p className="mt-10 text-xs text-paper/50">
-          El email no se publica. En la memoria vecinal solo aparece tu apodo.
+          El email no se publica. En la memoria vecinal solo aparece tu apodo. Puedes leer fichas y barrios sin
+          registrarte.
         </p>
       </aside>
       <div className="card p-6 sm:p-8">{children}</div>

@@ -44,11 +44,12 @@ export function EvidenceCrop({ onChange }: { onChange: (jpegBase64: string | nul
     <fieldset className="rounded-2xl border border-ink/10 bg-mist/60 p-4">
       <legend className="px-1 text-sm font-medium">Recorte ofuscado (opcional)</legend>
       <p className="mt-1 text-xs leading-5 text-ink/60">
-        Tapa nombres, DNI e IBAN. Deja CIF, referencia catastral, fechas e importe. El original no se sube: al dibujar
-        en este recuadro se pierde el EXIF. Conservación 24 meses o hasta que retires el aviso.
+        Opcional. Sirve para subir la confianza del aviso. Tapa nombres, DNI e IBAN en el recuadro; deja CIF, referencia
+        catastral, fechas e importe. El original no se sube: al dibujar aquí se pierde el EXIF (ubicación de la foto).
+        Guardamos un hash, no el archivo nítido. Conservación 24 meses o hasta que retires el aviso.
       </p>
       <p className="mt-2 text-xs leading-5 text-ink/55">
-        Público: apodo + sello de confianza. Moderación: solo el hash del recorte, nunca tu correo.
+        En público se ve apodo y sello de confianza. PDF y notas simples no se aceptan.
       </p>
       <input
         className="mt-3 block w-full text-sm"

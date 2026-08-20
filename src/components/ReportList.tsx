@@ -10,7 +10,11 @@ export function ReportList({ reports }: { reports: Report[] }) {
     return (
       <div className="rounded-3xl border border-dashed border-ink/20 bg-white/40 px-6 py-10 text-center">
         <p className="font-display text-xl">Aún no hay memoria vecinal aquí</p>
-        <p className="mt-2 text-sm text-ink/60">Sé la primera persona en dejar una experiencia, un incidente o un aviso.</p>
+        <p className="mt-2 text-sm text-ink/60">
+          Nadie ha publicado todavía una experiencia, un incidente o un aviso de abuso en este sitio. Si has alquilado
+          aquí, un relato con fechas y cantidades ayuda a quien venga detrás. Hace falta cuenta; en público solo se ve el
+          apodo.
+        </p>
         <Link href="/aportar" className="mt-4 inline-flex rounded-full bg-wine px-4 py-2 text-sm text-paper">
           Aportar
         </Link>
@@ -62,10 +66,10 @@ export function ReportList({ reports }: { reports: Report[] }) {
               {report.trustBand ? (
                 <span>
                   {report.trustBand === "alto"
-                    ? "verificado con recorte"
+                    ? "confianza alta (recorte de prueba)"
                     : report.trustBand === "medio"
-                      ? "cuenta"
-                      : "anónimo"}
+                      ? "confianza media (cuenta)"
+                      : "confianza baja"}
                 </span>
               ) : null}
             </div>

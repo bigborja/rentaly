@@ -55,8 +55,9 @@ export function OwnershipForm({ parcelRef }: { parcelRef: string }) {
   return (
     <form onSubmit={onSubmit} className="mt-4 space-y-3 rounded-2xl bg-mist/80 p-4">
       <p className="text-xs leading-5 text-ink/60">
-        Solo personas jurídicas (CIF). No pegues un DNI ni subas la nota simple. Un aporte vecinal queda como baja
-        confianza hasta que haya enlace a BOE, BORM o registradores.
+        Solo personas jurídicas: el CIF de una SL, SA, SOCIMI o fondo. No pegues un DNI, un nombre particular ni subas
+        la nota simple. Un aporte vecinal queda como baja confianza. Si tienes enlace a BOE, BORM o registradores, elige
+        esa fuente y pega la URL https.
       </p>
       <div className="grid gap-3 sm:grid-cols-2">
         <label className="text-sm">

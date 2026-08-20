@@ -75,7 +75,8 @@ export function ReportForm({
   return (
     <form onSubmit={onSubmit} className="card space-y-5 p-6">
       <p className="text-sm text-ink/60">
-        Se publicará como <strong>{nickname}</strong>. El correo de la cuenta no aparece.
+        Se publicará como <strong>{nickname}</strong>. El correo de la cuenta no aparece. Elige el tipo y cuenta hechos:
+        fechas, cantidades, qué pedían, cómo se resolvió.
       </p>
       <div className="grid gap-2 sm:grid-cols-3">
         {(["experiencia", "incidente", "abuso"] as ReportType[]).map((value) => (
@@ -95,10 +96,25 @@ export function ReportForm({
           </button>
         ))}
       </div>
+      <p className="text-xs leading-5 text-ink/55">
+        {type === "experiencia"
+          ? "Experiencia: cómo fue vivir el contrato (renta, trato, vecinos, si lo recomendarías). Útil aunque el alquiler fuera razonable."
+          : type === "incidente"
+            ? "Incidente: algo del edificio o de la gestión que no es necesariamente un abuso (humedad, calefacción, portería, obras, ruidos)."
+            : "Aviso de abuso: fianza irregular, honorarios indebidos, entrada sin permiso, discriminación, contrato simulado u otra irregularidad. Si hay delito, 112 además de este texto."}
+      </p>
 
       <Field label="Título">
-        <input name="title" required minLength={8} maxLength={120} className="field-input" placeholder="Qué deberían saber otras personas inquilinas" />
+        <input
+          name="title"
+          required
+          minLength={8}
+          maxLength={120}
+          className="field-input"
+          placeholder="Qué deberían saber otras personas inquilinas"
+        />
       </Field>
+      <p className="-mt-3 text-xs text-ink/50">Una frase clara. Evita insultos y nombres propios.</p>
       <Field label="Relato">
         <textarea
           name="body"
@@ -142,9 +158,17 @@ export function ReportForm({
           </select>
         </Field>
         <Field label="Referencia catastral (opcional)">
-          <input name="cadastralRef" defaultValue={defaultRef} className="field-input font-mono" placeholder="14 o 20 caracteres" />
+          <input
+            name="cadastralRef"
+            defaultValue={defaultRef}
+            className="field-input font-mono"
+            placeholder="14 o 20 caracteres"
+          />
         </Field>
       </div>
+      <p className="-mt-3 text-xs text-ink/50">
+        La referencia sale en la ficha de Rentaly o en el recibo del IBI. Si no la tienes, basta el barrio y la calle.
+      </p>
       <Field label="Calle o entorno">
         <input name="addressLabel" defaultValue={defaultAddress} className="field-input" placeholder="Calle y portal, o zona" />
       </Field>
@@ -156,6 +180,10 @@ export function ReportForm({
           <input name="managerLegalName" className="field-input" placeholder="Solo persona jurídica" />
         </Field>
       </div>
+      <p className="-mt-3 text-xs text-ink/50">
+        CIF es el identificador de una empresa (empieza por letra). Nunca un DNI. La razón social es el nombre de esa
+        sociedad, no el de un particular.
+      </p>
       <div className="grid gap-4 sm:grid-cols-3">
         <Field label="Año">
           <input name="yearFrom" type="number" min="1990" max="2026" className="field-input" />

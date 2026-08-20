@@ -131,13 +131,18 @@ export default function MapCanvas({
         <FitBarrio barrio={focus} />
         <ClickCatastro enabled={catastro} />
       </MapContainer>
-      <div className="absolute bottom-4 left-4 z-[400] flex gap-2">
+      <div className="absolute top-4 left-4 z-[400] max-w-xs rounded-2xl bg-paper/95 px-3 py-2 text-xs leading-5 text-ink/80 shadow-card">
+        {catastro
+          ? "Parcelas del Catastro activas: pulsa un edificio para abrir su ficha (metros, uso y memoria)."
+          : "Pulsa un barrio para entrar. El verde se oscurece con más relatos; el vino marca avisos de abuso."}
+      </div>
+      <div className="absolute bottom-4 left-4 z-[400] flex flex-wrap gap-2">
         <button
           type="button"
           onClick={() => setCatastro((value) => !value)}
           className="rounded-full bg-ink/90 px-3 py-2 text-xs text-paper shadow-card"
         >
-          {catastro ? "Clic en parcela: abrir finca" : "Activar parcelas del Catastro"}
+          {catastro ? "Volver a barrios (sin parcelas)" : "Activar parcelas del Catastro"}
         </button>
       </div>
     </div>

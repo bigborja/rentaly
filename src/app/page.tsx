@@ -2,6 +2,7 @@ import Link from "next/link";
 import { SearchPanel } from "@/components/SearchPanel";
 import { MadridMap } from "@/components/MadridMap";
 import { ReportList } from "@/components/ReportList";
+import { Guide, Steps } from "@/components/Guide";
 import { reportStats, listReports } from "@/lib/reports";
 import { BARRIOS } from "@/lib/barrios-data";
 import { getCurrentUser } from "@/lib/auth";
@@ -23,8 +24,8 @@ export default async function HomePage() {
           Alquila con los ojos abiertos.
         </h1>
         <p className="mt-5 max-w-2xl text-lg leading-7 text-ink/75">
-          No listamos pisos. Contrastamos el Catastro, el barrio y la memoria de quien ya firmó, para que el siguiente
-          contrato no se negocie a ciegas.
+          No listamos pisos. Contrastamos el Catastro (metros, uso, unidades), el barrio municipal y la memoria de quien
+          ya firmó, para que el siguiente contrato en Madrid capital no se negocie a ciegas.
         </p>
         {user ? (
           <p className="mt-4 text-sm text-sage">
@@ -51,6 +52,31 @@ export default async function HomePage() {
         <div className="mt-8">
           <SearchPanel />
         </div>
+        <div className="mt-8">
+          <Guide title="Si no sabes por dónde empezar">
+            <Steps
+              items={[
+                {
+                  title: "Escribe calle y número, o pega la referencia catastral",
+                  body: "El Catastro te devolverá el portal: viviendas, locales, trasteros y los metros oficiales. Si el anuncio infla la superficie, esa cifra manda.",
+                },
+                {
+                  title: "Entra en el barrio o en la ficha",
+                  body: "Ahí verás avisos de otras inquilinas, si hay viviendas turísticas en la parcela y un enlace para consultar la inspección del edificio.",
+                },
+                {
+                  title: "Usa la lista antes de firmar o deja memoria si ya vives ahí",
+                  body: "Leer no pide cuenta. Publicar sí, con apodo en público y correo privado.",
+                },
+              ]}
+            />
+            <p className="pt-1">
+              <Link href="/como-funciona" className="underline decoration-gold">
+                Guía completa y glosario (Catastro, VUT, CIF)
+              </Link>
+            </p>
+          </Guide>
+        </div>
         <div className="mt-8 grid gap-3 md:grid-cols-3">
           <Job
             href="/checklist"
@@ -68,7 +94,7 @@ export default async function HomePage() {
             href={user ? "/aportar" : "/registro?next=/aportar"}
             kicker="Comunidad"
             title="Deja rastro"
-            body="Como Reviu: se lo recomendarías a una amiga. Apodo público, correo privado."
+            body="Experiencia, incidente o aviso de abuso. Apodo en público, correo privado. Leer no pide cuenta."
           />
         </div>
         <dl className="mt-8 grid gap-3 sm:grid-cols-4">
@@ -84,8 +110,9 @@ export default async function HomePage() {
           <div>
             <h2 className="font-display text-3xl">Mapa de Madrid</h2>
             <p className="text-sm text-ink/60">
-              El color marca dónde hay más memoria. El vino, avisos de abuso. Activa parcelas del Catastro para abrir una
-              finca.
+              Cada polígono es un barrio oficial. El verde se oscurece donde hay más relatos; el vino marca avisos de
+              abuso. Pulsa un barrio para entrar. El botón inferior activa las parcelas del Catastro: entonces un clic
+              abre la ficha de esa finca.
             </p>
           </div>
           <Link href="/como-funciona" className="text-sm underline decoration-gold">
@@ -98,7 +125,10 @@ export default async function HomePage() {
       <section className="mx-auto grid max-w-6xl gap-10 px-4 pb-20 lg:grid-cols-[1.1fr_0.9fr]">
         <div>
           <h2 className="font-display text-3xl">Última memoria vecinal</h2>
-          <p className="mb-5 mt-2 text-sm text-ink/60">Relatos de la comunidad. No son sentencias ni titularidad.</p>
+          <p className="mb-5 mt-2 text-sm text-ink/60">
+            Experiencias de un alquiler, incidentes de finca y avisos de abuso. Son relatos de la comunidad, no
+            sentencias ni titularidad. Un solo texto no basta; un patrón en el mismo portal sí es una señal.
+          </p>
           <ReportList reports={latest} />
         </div>
         <aside className="space-y-4">
@@ -120,8 +150,8 @@ export default async function HomePage() {
           <article className="card p-6">
             <h3 className="font-display text-2xl">Datos oficiales, no de portales</h3>
             <p className="mt-2 text-sm leading-6 text-ink/70">
-              La ficha sale de los servicios libres del Catastro: uso, superficie, antigüedad y unidades. Who Owns What
-              hace lo mismo con registros públicos de Nueva York. Aquí, Madrid.
+              La ficha sale de los servicios libres del Catastro: uso, superficie, antigüedad y unidades. No es un
+              anuncio ni un tasador. Si el portal infla metros o vende un local como piso, esa cifra es el ancla.
             </p>
           </article>
         </aside>

@@ -4,6 +4,7 @@ import { LogoutButton } from "./LogoutButton";
 import { getCurrentUser } from "@/lib/auth";
 
 const links = [
+  { href: "/como-funciona", label: "Cómo funciona" },
   { href: "/checklist", label: "Antes de firmar" },
   { href: "/barrios", label: "Barrios" },
   { href: "/aportar", label: "Aportar" },

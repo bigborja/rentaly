@@ -11,6 +11,7 @@ export function OverlayFallback({ title }: { title: string }) {
     <div className="animate-pulse rounded-3xl border border-ink/10 bg-white/50 px-5 py-5">
       <p className="text-xs uppercase tracking-[0.14em] text-ink/40">Cargando</p>
       <p className="mt-2 font-display text-2xl text-ink/30">{title}</p>
+      <p className="mt-2 text-xs text-ink/40">Consultando fuentes públicas. Tarda unos segundos.</p>
       <p className="mt-2 h-12 rounded-xl bg-mist/80" />
     </div>
   );
@@ -34,6 +35,10 @@ export async function VutPanel({
     <div className="rounded-3xl border border-ink/10 bg-white/70 px-5 py-5">
       <p className="text-xs uppercase tracking-[0.14em] text-ink/50">Viviendas de uso turístico</p>
       <h2 className="mt-1 font-display text-2xl">Licencias VUT</h2>
+      <p className="mt-2 text-xs leading-5 text-ink/55">
+        VUT es una vivienda con licencia para alquilar a turistas. Cruzamos el listado del Ayuntamiento con la
+        referencia catastral de esta parcela. No implica que el piso del anuncio esté en esa lista.
+      </p>
       {vut.onParcel.length ? (
         <p className="mt-2 text-sm text-ink/65">
           {vutUnits} unidad{vutUnits === 1 ? "" : "es"} con licencia urbanística de hospedaje en{" "}
@@ -90,6 +95,11 @@ export async function ContextPanel({
     <div className="rounded-3xl border border-ink/10 bg-white/70 px-5 py-5">
       <p className="text-xs uppercase tracking-[0.14em] text-ink/50">Sección censal · renta</p>
       <h2 className="mt-1 font-display text-2xl">Contexto de barrio estadístico</h2>
+      <p className="mt-2 text-xs leading-5 text-ink/55">
+        La sección censal es un recorte del INE más pequeño que el barrio. La renta es la media de los hogares de esa
+        pieza, no de este portal. SERPAVI abre el visor estatal de precios de alquiler de la zona. ITE es la inspección
+        técnica del edificio: el resultado solo lo da el Ayuntamiento.
+      </p>
       {rentContext ? (
         <>
           <p className="mt-2 font-mono text-sm text-ink/60">CUSEC {rentContext.censusSectionCode}</p>
@@ -137,8 +147,9 @@ export async function OwnershipPanel({
       <p className="text-xs uppercase tracking-[0.14em] text-ink/50">Titularidad</p>
       <h2 className="mt-1 font-display text-2xl">Personas jurídicas en esta finca</h2>
       <p className="mt-2 max-w-2xl text-sm text-ink/65">
-        El Catastro no publica propietarios personas físicas. Aquí solo hay CIF. Un aporte vecinal se marca como baja
-        confianza.
+        El Catastro no publica el nombre de dueños particulares y aquí tampoco. Solo se vincula un CIF (empresa, SOCIMI,
+        fondo). Un aporte vecinal queda como baja confianza hasta que haya un enlace a BOE, BORM o registradores. Si el
+        mismo CIF aparece en más de una finca, es el núcleo de una cartera, no un vecino.
       </p>
       {ownershipClaims.length ? (
         <ul className="mt-4 space-y-2 text-sm">
@@ -171,7 +182,7 @@ export async function OwnershipPanel({
           <Link className="underline" href="/entrar">
             Entra
           </Link>{" "}
-          para aportar un CIF. No se aceptan notas simples ni DNI.
+          para aportar un CIF si conoces la gestora. No se aceptan notas simples, DNI ni nombres de personas físicas.
         </p>
       )}
     </section>

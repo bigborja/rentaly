@@ -37,6 +37,17 @@ export function SearchPanel({ initialQuery = "", compact = false }: { initialQue
 
   return (
     <section className={compact ? "" : "card p-5"}>
+      {compact ? (
+        <p className="mb-3 text-sm leading-6 text-ink/65">
+          Escribe calle y número de Madrid capital, o pega la referencia catastral (14 o 20 caracteres). Si el Catastro
+          no distingue la vía, te pedirá que elijas el tipo (calle, avenida…) y añadas el portal.
+        </p>
+      ) : (
+        <p className="mb-3 text-sm leading-6 text-ink/65">
+          No buscamos anuncios: consultamos el Catastro. Ejemplo: «Calle Embajadores 41». Si ya tienes la referencia
+          catastral del contrato o del recibo, pégala aquí. Madrid capital únicamente.
+        </p>
+      )}
       <form onSubmit={onSubmit} className="flex flex-col gap-3 sm:flex-row">
         <label className="sr-only" htmlFor="search-q">
           Buscar inmueble
@@ -74,7 +85,7 @@ export function SearchPanel({ initialQuery = "", compact = false }: { initialQue
                 <span className="font-medium">
                   {street.type} {street.name}
                 </span>
-                <span className="ml-2 text-ink/50">añade el número de portal</span>
+                <span className="ml-2 text-ink/50">pulsa y añade el número de portal</span>
               </button>
             </li>
           ))}
@@ -101,7 +112,8 @@ export function SearchPanel({ initialQuery = "", compact = false }: { initialQue
             />
           </div>
           <p className="text-sm leading-6 text-ink/70">
-            Si el anuncio dice más metros, fíate de esta cifra. El Catastro no vende terraza ni trastero como vivienda.
+            Superficie y uso oficiales. Si el anuncio dice más metros o vende un local como piso, fíate de esta cifra: el
+            Catastro no cuenta terraza ni trastero como vivienda. Abre la ficha para ver unidades, VUT y memoria vecinal.
           </p>
           {units.length > 1 ? (
             <div className="overflow-hidden rounded-2xl border border-ink/10">

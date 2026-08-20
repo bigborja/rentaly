@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { portfolioForTaxId } from "@/lib/ownership-store";
+import { Guide } from "@/components/Guide";
 
 export const dynamic = "force-dynamic";
 
@@ -30,8 +31,18 @@ export default async function EntidadPage({ params }: { params: Promise<{ taxId:
       <p className="mt-2 font-mono text-sm text-ink/60">{entity.taxId}</p>
       <p className="mt-2 text-sm text-ink/65">
         {entity.kind.toUpperCase()} · {parcels.length} finca{parcels.length === 1 ? "" : "s"} con este CIF en Rentaly.
-        El Catastro no identifica a personas físicas.
+        El Catastro no identifica a personas físicas: esta página solo agrupa parcelas que la comunidad ha vinculado al
+        mismo identificador de empresa.
       </p>
+      <div className="mt-6">
+        <Guide kicker="Cómo leer esta cartera" title="Un CIF, varias fincas">
+          <p>
+            Cada enlace abre la ficha de una parcela. La confianza es alta si hay URL a BOE, BORM o registradores; baja
+            si es un aporte vecinal. «Gran tenedor» aquí significa forma jurídica (SOCIMI, fondo) o más de una finca con
+            el mismo CIF, no un censo oficial de viviendas.
+          </p>
+        </Guide>
+      </div>
       {parcels.length > 1 ? (
         <p className="mt-3 rounded-2xl bg-wine/10 px-4 py-3 text-sm">
           Esta persona jurídica aparece en más de una parcela: es el núcleo de una cartera, no un vecino.

@@ -19,16 +19,23 @@ export default async function EntrarPage() {
       aside={
         <>
           <p>
-            En los portales de anuncios la información suele estar del lado de quien alquila. Rentaly es el cuaderno de
-            quien vive el contrato: Catastro, barrio y memoria vecinal.
+            Puedes leer el mapa, las fichas del Catastro y la memoria vecinal sin cuenta. Entras para publicar: así hay
+            una persona detrás del apodo y podemos pedir pruebas si un relato no encaja. El correo no se muestra junto al
+            aviso.
           </p>
-          <p>Puedes leer el mapa sin cuenta. Para publicar, sí: así podemos pedir pruebas si un relato no encaja.</p>
+          <p>
+            Si solo quieres probar, usa la cuenta de ejemplo del formulario. No sustituye tu propio registro si vas a
+            dejar un aviso real.
+          </p>
         </>
       }
     >
       <p className="kicker">Ya tengo cuenta</p>
       <h2 className="mt-2 font-display text-3xl">Entrar</h2>
-      <p className="mt-2 mb-6 text-sm text-ink/65">Madrid capital. Sin anuncios, sin comisiones.</p>
+      <p className="mt-2 mb-6 text-sm text-ink/65">
+        Madrid capital. Sin anuncios y sin comisiones. Después de entrar, si aún no has elegido momento y barrio, te
+        llevamos a esos cuatro pasos.
+      </p>
       <Suspense>
         <LoginForm />
       </Suspense>

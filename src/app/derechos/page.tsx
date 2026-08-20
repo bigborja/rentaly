@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { officialLinks } from "@/lib/format";
+import { Guide, Steps } from "@/components/Guide";
 
 export const metadata: Metadata = { title: "Derechos y recursos" };
 
@@ -36,9 +37,30 @@ export default function DerechosPage() {
       <p className="text-xs uppercase tracking-[0.18em] text-wine">No es asesoramiento jurídico</p>
       <h1 className="mt-2 font-display text-5xl">Derechos para no firmar a ciegas</h1>
       <p className="mt-4 leading-7 text-ink/75">
-        Rentaly resume puntos que suelen aparecer en abusos de alquiler en Madrid. Contrasta siempre con el BOE, la
-        Oficina de Vivienda y, si hace falta, con un sindicato o un abogado. En emergencia, 112.
+        Rentaly resume puntos que suelen aparecer en abusos de alquiler en Madrid. No es un despacho ni sustituye el
+        BOE, la Oficina de Vivienda, un sindicato o un abogado. Úsalo para saber qué preguntar por escrito antes de
+        firmar o de pagar. En emergencia, 112.
       </p>
+      <div className="mt-6">
+        <Guide title="Si algo del contrato no te encaja">
+          <Steps
+            items={[
+              {
+                title: "No firmes el mismo día",
+                body: "Pide el modelo de contrato, el desglose de fianza y honorarios, y las cláusulas de actualización por escrito (correo o WhatsApp valen).",
+              },
+              {
+                title: "Contrasta metros y uso",
+                body: "Abre la dirección en Rentaly o en la sede del Catastro. Si el anuncio infla metros o vende un local como piso, esa es una señal de alarma.",
+              },
+              {
+                title: "Si hay riesgo o delito, canales oficiales",
+                body: "112 y denuncia. Un aviso en esta web no abre un procedimiento. El listado de abajo enlaza oficinas y normas.",
+              },
+            ]}
+          />
+        </Guide>
+      </div>
       <div className="mt-10 space-y-5">
         {points.map((point) => (
           <article key={point.title} className="rounded-3xl border border-ink/10 bg-white/70 p-5">
@@ -48,6 +70,9 @@ export default function DerechosPage() {
         ))}
       </div>
       <h2 className="mt-12 font-display text-3xl">Canales oficiales</h2>
+      <p className="mt-2 text-sm text-ink/65">
+        Estas sedes son la fuente. Rentaly solo las enlaza; no tramitamos ayudas ni denuncias.
+      </p>
       <ul className="mt-4 space-y-3">
         {officialLinks().map((link) => (
           <li key={link.href} className="rounded-2xl bg-mist px-4 py-3">

@@ -9,6 +9,7 @@ import { ReportList } from "@/components/ReportList";
 import { getCurrentUser } from "@/lib/auth";
 import { compactRef, isCadastralRef } from "@/lib/parse";
 import { notFound } from "next/navigation";
+import { Guide } from "@/components/Guide";
 import { ContextPanel, OverlayFallback, OwnershipPanel, VutPanel } from "./overlays";
 
 export const dynamic = "force-dynamic";
@@ -51,13 +52,29 @@ export default async function InmueblePage({ params }: { params: Promise<{ ref: 
         </p>
       ) : null}
 
+      <div className="mt-6">
+        <Guide kicker="Qué estás viendo" title="Ficha de una finca, no de un anuncio">
+          <p>
+            Estos datos salen del Catastro: superficie, uso (vivienda, local, trastero…), año y las unidades que hay en
+            el portal. No es un tasador ni dice quién es el dueño persona física. Compáralos con el anuncio antes de
+            firmar o de pagar una reserva.
+          </p>
+          <p>
+            Más abajo, si hay coordenadas, cruzamos licencias de vivienda turística, renta media de la sección censal (un
+            recorte estadístico más pequeño que el barrio) y un enlace a la inspección del edificio. Los CIF los aporta
+            la comunidad.
+          </p>
+        </Guide>
+      </div>
+
       <div className="mt-8 rounded-3xl bg-ink px-5 py-5 text-paper">
         <p className="text-xs uppercase tracking-[0.16em] text-gold">Contrasta el anuncio</p>
         <p className="mt-2 font-display text-4xl">{formatM2(property.areaM2)}</p>
         <p className="mt-2 max-w-xl text-sm text-paper/70">
-          Superficie que publica el Catastro
+          Superficie construida que publica el Catastro
           {property.use ? ` · uso ${prettyUse(property.use)}` : ""}
-          {property.year ? ` · hacia ${property.year}` : ""}. Si el portal dice más metros, esta cifra manda.
+          {property.year ? ` · hacia ${property.year}` : ""}. Si el anuncio dice más metros o un uso distinto, esta cifra
+          manda: pregunta por escrito antes de reservar.
         </p>
       </div>
 
@@ -73,7 +90,8 @@ export default async function InmueblePage({ params }: { params: Promise<{ ref: 
       <section className="mt-10">
         <h2 className="font-display text-3xl">Distribución de inmuebles</h2>
         <p className="mt-2 max-w-2xl text-sm text-ink/65">
-          Resumen de usos y superficies que publica el Catastro para esta finca.
+          Un portal suele mezclar viviendas con locales, trasteros o plazas. Aquí ves cuántas partes hay de cada uso y
+          sus metros. Si te venden como piso algo que el Catastro marca como comercial, para.
         </p>
         <ul className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {uses.map((item) => (
@@ -89,6 +107,10 @@ export default async function InmueblePage({ params }: { params: Promise<{ ref: 
 
       {units.length > 1 ? (
         <section className="mt-10 overflow-hidden rounded-3xl border border-ink/10">
+          <p className="bg-mist px-4 py-3 text-sm text-ink/70">
+            Cada fila es un inmueble con su propia referencia de 20 caracteres (piso, local, trastero). Pulsa una para
+            abrirla. La de 14 caracteres de arriba es la parcela completa.
+          </p>
           <table className="w-full text-left text-sm">
             <thead className="bg-mist">
               <tr>
@@ -175,7 +197,9 @@ export default async function InmueblePage({ params }: { params: Promise<{ ref: 
       <section className="mt-14">
         <h2 className="font-display text-3xl">Memoria de esta finca</h2>
         <p className="mb-5 mt-2 text-sm text-ink/60">
-          Aportes ligados a esta parcela o a cualquiera de sus inmuebles.
+          Relatos ligados a esta parcela o a cualquiera de sus inmuebles. Experiencia = cómo se alquiló; incidente =
+          algo de la finca (humedad, portería, ruidos); abuso = fianza, entrada, discriminación u otra irregularidad.
+          Lee el patrón, no una sola frase.
         </p>
         <ReportList reports={reports} />
       </section>
