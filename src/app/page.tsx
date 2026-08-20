@@ -80,7 +80,7 @@ export default async function HomePage() {
               },
               {
                 title: "O entra por el mapa",
-                body: "Cada polígono es un barrio oficial. Si conoces la geografía de Madrid pero no el nombre, pulsa donde vives o donde estás mirando piso.",
+                body: "Cada polígono es un barrio oficial. Si acercas (zoom de calle) o activas parcelas, un clic en el edificio abre una hoja con metros, VUT y memoria, sin saltar de página.",
               },
               {
                 title: "Usa la lista antes de firmar o deja memoria si ya vives ahí",

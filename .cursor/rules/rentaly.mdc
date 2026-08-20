@@ -1,0 +1,36 @@
+---
+description: Rentaly civic-tech rules — GDPR, stack we actually ship, map-to-sheet
+alwaysApply: true
+---
+
+# Rentaly (Who Owns What · Madrid)
+
+Civic PWA for Madrid-capital tenants. Open data + crowdsourcing. Not a listings portal.
+
+## Stack we ship (do not swap on a whim)
+
+- Next.js App Router, TypeScript, Tailwind, Prisma / Supabase REST, Upstash on `/api`.
+- Maps: **Leaflet + Catastro WMS**, not Mapbox/Deck.gl (no token wallet, WMS already works).
+- UI: paper / ink / wine / gold / sage, Fraunces + Outfit, Phosphor, `motion`, **Vaul** sheets, Sonner.
+- Do **not** introduce shadcn zinc-dark, Tremor, or Geist-as-SaaS chrome. Wine is reserved for abuse.
+
+## Interaction
+
+- Map-first. At street zoom, a parcel click opens a **bottom sheet** (scorecard), then the full `/inmueble/[rc]` dossier.
+- Scorecard tiles: Catastro m²/uso, VUT density, community memory, CIF/gestora, SERPAVI (official range, not a fake traffic light), ITE **sede link only**.
+- Rent reference is **SERPAVI + IRAV**, never IVIMA and never Idealista prices.
+
+## Privacy and data (hard)
+
+- Never store or show DNI, natural-person owner names, or notas simples PDFs.
+- Legal persons only (`assertLegalPersonTaxId`). Portfolios are CIF → parcels (`/entidad`) and CIF → reports (`/gestora`).
+- Do not scrape ITE sede, BORM, RAIN, or Idealista. Do not fetch user-supplied URLs (SSRF). Source URLs must be allowlisted (BOE, BORM, registradores, CNMV, datos.gob.es, madrid.es, comunidad.madrid).
+- JPEG evidence: hash a crop and discard pixels (stronger than EXIF strip). No PII in storage.
+- Trust bands: anónimo < cuenta < evidencia.
+- Public `/api/*` stays behind Upstash rate limit (fail-open).
+
+## Code
+
+- No `any`. Shared types live in `src/domain`.
+- Server Components by default; Client for map, sheet, forms.
+- Fallback UI / skeletons for Catastro and overlays. Do not invent ITE outcomes or SERPAVI euro amounts.

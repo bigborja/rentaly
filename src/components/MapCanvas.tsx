@@ -1,13 +1,15 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { GeoJSON, MapContainer, TileLayer, WMSTileLayer, useMap } from "react-leaflet";
 import type { Layer } from "leaflet";
 import type { Feature, GeoJsonObject } from "geojson";
 import "leaflet/dist/leaflet.css";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 import { CATASTRO_WMS } from "@/clients/catastro/wms";
 import type { Barrio } from "@/lib/types";
+import { ParcelSheet, type ParcelHit } from "@/components/ParcelSheet";
 
 type Stats = Record<string, { total: number; abuso: number }>;
 
@@ -41,24 +43,50 @@ function InvalidateSize() {
   return null;
 }
 
-function ClickCatastro({ enabled }: { enabled: boolean }) {
+function AutoParcels({ onEnable }: { onEnable: () => void }) {
   const map = useMap();
-  const router = useRouter();
+  useEffect(() => {
+    const sync = () => {
+      if (map.getZoom() >= 15) onEnable();
+    };
+    sync();
+    map.on("zoomend", sync);
+    return () => {
+      map.off("zoomend", sync);
+    };
+  }, [map, onEnable]);
+  return null;
+}
+
+function ClickCatastro({
+  enabled,
+  onSelect,
+}: {
+  enabled: boolean;
+  onSelect: (hit: ParcelHit) => void;
+}) {
+  const map = useMap();
   useEffect(() => {
     if (!enabled) return;
     const onClick = async (event: { latlng: { lng: number; lat: number } }) => {
       const { lng, lat } = event.latlng;
-      const response = await fetch(`/api/catastro/coords?lng=${lng}&lat=${lat}`);
-      const data = await response.json();
-      if (data.parcelRef) {
-        router.push(`/inmueble/${data.parcelRef}`);
+      try {
+        const response = await fetch(`/api/catastro/coords?lng=${lng}&lat=${lat}`);
+        const data = (await response.json()) as { parcelRef?: string; address?: string; error?: string };
+        if (!response.ok || !data.parcelRef) {
+          toast.error(data.error || "No hay parcela en ese punto.");
+          return;
+        }
+        onSelect({ parcelRef: data.parcelRef, address: data.address });
+      } catch {
+        toast.error("No se ha podido consultar el Catastro.");
       }
     };
     map.on("click", onClick);
     return () => {
       map.off("click", onClick);
     };
-  }, [enabled, map, router]);
+  }, [enabled, map, onSelect]);
   return null;
 }
 
@@ -80,10 +108,12 @@ export default function MapCanvas({
   const router = useRouter();
   const [geo, setGeo] = useState<GeoJsonObject | null>(null);
   const [catastro, setCatastro] = useState(false);
+  const [hit, setHit] = useState<ParcelHit | null>(null);
   const maxTotal = useMemo(
     () => Math.max(1, ...Object.values(statsByBarrio).map((item) => item.total)),
     [statsByBarrio],
   );
+  const enableParcels = useCallback(() => setCatastro(true), []);
   const bleed = frame === "bleed";
 
   useEffect(() => {
@@ -94,8 +124,8 @@ export default function MapCanvas({
   }, []);
 
   const defaultHint = catastro
-    ? "Parcelas del Catastro activas: pulsa un edificio para abrir su ficha (metros, uso y memoria)."
-    : "Pulsa un barrio para entrar. El verde se oscurece con más relatos; el vino marca avisos de abuso.";
+    ? "Parcelas del Catastro: pulsa un edificio para abrir su ficha en una hoja, sin salir del mapa."
+    : "Pulsa un barrio para entrar. Acerca el mapa (zoom 15+) o activa parcelas para pinchar un portal.";
 
   return (
     <div
@@ -161,35 +191,39 @@ export default function MapCanvas({
         ) : null}
         <InvalidateSize />
         <FitBarrio barrio={focus} />
-        <ClickCatastro enabled={catastro} />
+        <AutoParcels onEnable={enableParcels} />
+        <ClickCatastro enabled={catastro} onSelect={setHit} />
       </MapContainer>
-      {chrome ? (
-        <div className="pointer-events-none absolute inset-0 z-[400]">
-          <div className="pointer-events-auto absolute left-4 top-4 max-w-xs rounded-2xl bg-paper/95 px-3 py-2 text-xs leading-5 text-ink/80 shadow-float">
-            {hint || defaultHint}
-          </div>
-          <div className="pointer-events-auto absolute right-4 top-4 space-y-1.5 rounded-2xl bg-paper/95 px-3 py-2 text-xs text-ink/75 shadow-float">
-            <p className="flex items-center gap-2">
-              <span className="h-2.5 w-2.5 rounded-full bg-sage" />
-              Memoria vecinal
-            </p>
-            <p className="flex items-center gap-2">
-              <span className="h-2.5 w-2.5 rounded-full bg-wine" />
-              Avisos de abuso
-            </p>
-          </div>
-          <button
-            type="button"
-            aria-pressed={catastro}
-            onClick={() => setCatastro((value) => !value)}
-            className={`pointer-events-auto absolute bottom-4 left-4 rounded-full px-3 py-2 text-xs shadow-float transition ${
-              catastro ? "bg-gold text-ink" : "bg-ink/90 text-paper"
-            }`}
-          >
-            {catastro ? "Parcelas Catastro · activas" : "Activar parcelas del Catastro"}
-          </button>
-        </div>
-      ) : null}
+      <div className="pointer-events-none absolute inset-0 z-[400]">
+        {chrome ? (
+          <>
+            <div className="pointer-events-auto absolute left-4 top-4 max-w-xs rounded-2xl bg-paper/95 px-3 py-2 text-xs leading-5 text-ink/80 shadow-float">
+              {hint || defaultHint}
+            </div>
+            <div className="pointer-events-auto absolute right-4 top-4 space-y-1.5 rounded-2xl bg-paper/95 px-3 py-2 text-xs text-ink/75 shadow-float">
+              <p className="flex items-center gap-2">
+                <span className="h-2.5 w-2.5 rounded-full bg-sage" />
+                Memoria vecinal
+              </p>
+              <p className="flex items-center gap-2">
+                <span className="h-2.5 w-2.5 rounded-full bg-wine" />
+                Avisos de abuso
+              </p>
+            </div>
+          </>
+        ) : null}
+        <button
+          type="button"
+          aria-pressed={catastro}
+          onClick={() => setCatastro((value) => !value)}
+          className={`pointer-events-auto absolute bottom-4 left-4 rounded-full px-3 py-2 text-xs shadow-float transition ${
+            catastro ? "bg-gold text-ink" : "bg-ink/90 text-paper"
+          }`}
+        >
+          {catastro ? "Parcelas Catastro · activas" : "Activar parcelas del Catastro"}
+        </button>
+      </div>
+      <ParcelSheet hit={hit} onClose={() => setHit(null)} />
     </div>
   );
 }
