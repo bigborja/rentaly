@@ -3,6 +3,7 @@ import { DATA_SOURCES } from "@/domain/sources";
 import { TtlCache } from "@/cache/ttl";
 import { UpstreamError, getJson } from "@/clients/http";
 import { prisma } from "@/lib/db";
+import { hasSupabase, sbEq, sbInsert, sbPatch, sbSelect, sbUpsert } from "@/lib/supabase-rest";
 
 const cache = new TtlCache<CensusRentStat | null>(24 * 60 * 60 * 1000, 400);
 
@@ -74,19 +75,32 @@ export async function householdIncomeBySection(cusec: string, year = 2023): Prom
         where: { censusSectionCode_year_source: { censusSectionCode: code, year, source: "ine_adrh" } },
       });
       if (row) {
-        const stat: CensusRentStat = {
-          censusSectionCode: row.censusSectionCode,
-          year: row.year,
-          referenceRentEurosM2: row.referenceRentEurosM2 ?? undefined,
-          meanHouseholdIncomeEuros: row.meanHouseholdIncomeEuros ?? undefined,
-          medianHouseholdIncomeEuros: row.medianHouseholdIncomeEuros ?? undefined,
-          source: "ine_adrh",
-        };
+        const stat = rentStatFromRow(row);
         cache.set(key, stat);
         return stat;
       }
     } catch {
       // not migrated
+    }
+  } else if (hasSupabase()) {
+    try {
+      const rows = await sbSelect<{
+        censusSectionCode: string;
+        year: number;
+        referenceRentEurosM2: number | null;
+        meanHouseholdIncomeEuros: number | null;
+        medianHouseholdIncomeEuros: number | null;
+      }>(
+        "census_rent_stats",
+        `${sbEq("censusSectionCode", code)}&year=eq.${year}&source=eq.ine_adrh&select=*`,
+      );
+      if (rows[0]) {
+        const stat = rentStatFromRow(rows[0]);
+        cache.set(key, stat);
+        return stat;
+      }
+    } catch {
+      // REST cache optional
     }
   }
 
@@ -114,41 +128,91 @@ export async function householdIncomeBySection(cusec: string, year = 2023): Prom
   }
 }
 
+function rentStatFromRow(row: {
+  censusSectionCode: string;
+  year: number;
+  referenceRentEurosM2?: number | null;
+  meanHouseholdIncomeEuros?: number | null;
+  medianHouseholdIncomeEuros?: number | null;
+}): CensusRentStat {
+  return {
+    censusSectionCode: row.censusSectionCode,
+    year: row.year,
+    referenceRentEurosM2: row.referenceRentEurosM2 ?? undefined,
+    meanHouseholdIncomeEuros: row.meanHouseholdIncomeEuros ?? undefined,
+    medianHouseholdIncomeEuros: row.medianHouseholdIncomeEuros ?? undefined,
+    source: "ine_adrh",
+  };
+}
+
 async function persistRentStat(stat: CensusRentStat) {
   const db = prisma();
-  if (!db) return;
+  if (db) {
+    try {
+      await db.censusSection.upsert({
+        where: { code: stat.censusSectionCode },
+        create: {
+          code: stat.censusSectionCode,
+          municipalityCode: stat.censusSectionCode.slice(0, 5),
+          districtCode: stat.censusSectionCode.slice(5, 7),
+          year: stat.year,
+        },
+        update: {},
+      });
+      await db.censusRentStat.upsert({
+        where: {
+          censusSectionCode_year_source: {
+            censusSectionCode: stat.censusSectionCode,
+            year: stat.year,
+            source: stat.source,
+          },
+        },
+        create: {
+          censusSectionCode: stat.censusSectionCode,
+          year: stat.year,
+          meanHouseholdIncomeEuros: stat.meanHouseholdIncomeEuros,
+          referenceRentEurosM2: stat.referenceRentEurosM2,
+          source: stat.source,
+        },
+        update: {
+          meanHouseholdIncomeEuros: stat.meanHouseholdIncomeEuros,
+          referenceRentEurosM2: stat.referenceRentEurosM2,
+        },
+      });
+    } catch {
+      // ignore until migrate
+    }
+    return;
+  }
+  if (!hasSupabase()) return;
   try {
-    await db.censusSection.upsert({
-      where: { code: stat.censusSectionCode },
-      create: {
+    await sbUpsert(
+      "census_sections",
+      {
         code: stat.censusSectionCode,
         municipalityCode: stat.censusSectionCode.slice(0, 5),
         districtCode: stat.censusSectionCode.slice(5, 7),
         year: stat.year,
       },
-      update: {},
-    });
-    await db.censusRentStat.upsert({
-      where: {
-        censusSectionCode_year_source: {
-          censusSectionCode: stat.censusSectionCode,
-          year: stat.year,
-          source: stat.source,
-        },
-      },
-      create: {
-        censusSectionCode: stat.censusSectionCode,
-        year: stat.year,
-        meanHouseholdIncomeEuros: stat.meanHouseholdIncomeEuros,
-        referenceRentEurosM2: stat.referenceRentEurosM2,
-        source: stat.source,
-      },
-      update: {
-        meanHouseholdIncomeEuros: stat.meanHouseholdIncomeEuros,
-        referenceRentEurosM2: stat.referenceRentEurosM2,
-      },
-    });
+      "code",
+    );
+    const existing = await sbSelect<{ id: string }>(
+      "census_rent_stats",
+      `${sbEq("censusSectionCode", stat.censusSectionCode)}&year=eq.${stat.year}&${sbEq("source", stat.source)}&select=id`,
+    );
+    const payload = {
+      censusSectionCode: stat.censusSectionCode,
+      year: stat.year,
+      meanHouseholdIncomeEuros: stat.meanHouseholdIncomeEuros ?? null,
+      referenceRentEurosM2: stat.referenceRentEurosM2 ?? null,
+      source: stat.source,
+    };
+    if (existing[0]) {
+      await sbPatch("census_rent_stats", sbEq("id", existing[0].id), payload);
+    } else {
+      await sbInsert("census_rent_stats", { id: crypto.randomUUID(), ...payload });
+    }
   } catch {
-    // ignore until migrate
+    // REST cache optional
   }
 }

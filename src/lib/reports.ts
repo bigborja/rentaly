@@ -7,6 +7,7 @@ import { publicAuthor, sanitizeReportText } from "@/domain/privacy";
 import { assertLegalPersonTaxId } from "@/domain/ownership";
 import { prisma } from "./db";
 import { ensureDatabase } from "./ensure-db";
+import { hasSupabase, sbInsert, sbSelect } from "./supabase-rest";
 import seedReports from "@/data/seed-reports.json";
 import type { Report as DbReport } from "@prisma/client";
 
@@ -28,7 +29,11 @@ const ABUSE_CATEGORIES = new Set([
 
 let writeQueue: Promise<void> = Promise.resolve();
 
-function mapReport(row: DbReport): Report {
+function isoDate(value: Date | string) {
+  return typeof value === "string" ? value : value.toISOString();
+}
+
+function mapReport(row: Omit<DbReport, "createdAt"> & { createdAt: Date | string }): Report {
   return {
     id: row.id,
     type: row.type,
@@ -49,7 +54,7 @@ function mapReport(row: DbReport): Report {
     author: row.author,
     userId: row.userId || undefined,
     recommend: row.recommend ?? undefined,
-    createdAt: row.createdAt.toISOString(),
+    createdAt: isoDate(row.createdAt),
     status: row.status,
   };
 }
@@ -59,6 +64,11 @@ async function readStore(): Promise<Report[]> {
   if (db) {
     await ensureDatabase();
     const rows = await db.report.findMany({ orderBy: { createdAt: "desc" } });
+    return rows.map(mapReport);
+  }
+  if (hasSupabase()) {
+    await ensureDatabase();
+    const rows = await sbSelect<Parameters<typeof mapReport>[0]>("reports", "select=*&order=createdAt.desc&limit=1000");
     return rows.map(mapReport);
   }
   const parsed = await readJsonFile<Report[]>(REPORTS_FILE, seedReports as Report[]);
@@ -199,6 +209,32 @@ export async function createReport(input: CreateReportInput): Promise<Report> {
           createdAt: new Date(report.createdAt),
           status: "published",
         },
+      });
+      return;
+    }
+    if (hasSupabase()) {
+      await ensureDatabase();
+      await sbInsert("reports", {
+        id: report.id,
+        type: report.type,
+        title: report.title,
+        body: report.body,
+        barrioId: report.barrioId || null,
+        cadastralRef: report.cadastralRef || null,
+        addressLabel: report.addressLabel || null,
+        yearFrom: report.yearFrom ?? null,
+        yearTo: report.yearTo ?? null,
+        rentEuros: report.rentEuros ?? null,
+        rating: report.rating ?? null,
+        abuseCategory: report.abuseCategory || null,
+        severity: report.severity || null,
+        managerTaxId: report.managerTaxId || null,
+        managerLegalName: report.managerLegalName || null,
+        author: report.author,
+        userId: report.userId || null,
+        recommend: report.recommend ?? null,
+        createdAt: report.createdAt,
+        status: "published",
       });
       return;
     }

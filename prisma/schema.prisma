@@ -1,5 +1,5 @@
-// Target store: PostgreSQL + PostGIS (Supabase or a managed Postgres).
-// The app still uses JSON files until DATABASE_URL is wired.
+// Target store: PostgreSQL + PostGIS (Supabase). The app talks to it via Prisma
+// when DATABASE_URL is set, or via PostgREST (SUPABASE_SECRET_KEY) otherwise.
 // Cadastre open data never includes private owner names; do not add such columns.
 
 generator client {

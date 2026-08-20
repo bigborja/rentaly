@@ -5,41 +5,81 @@ import { prisma } from "./db";
 import { ensureDatabase } from "./ensure-db";
 import { compactRef, isCadastralRef } from "./parse";
 import { sanitizeReportText } from "@/domain/privacy";
+import { hasSupabase, sbEq, sbIn, sbInsert, sbPatch, sbSelect, sbUpsert } from "./supabase-rest";
 
 const LARGE_HOLDER = new Set<LegalEntityKind>(["socimi", "fondo"]);
 
+type EntityRow = { id: string; taxId: string; legalName: string; kind: LegalEntityKind };
+type ClaimRow = {
+  id: string;
+  parcelRef: string;
+  unitRef: string | null;
+  source: OwnershipSource;
+  sourceUrl: string | null;
+  observedAt: Date | string;
+  confidence: string;
+  largeHolderCandidate: boolean;
+  legalEntityId: string;
+};
+
 export async function listOwnershipClaims(parcelRef: string): Promise<OwnershipClaim[]> {
-  const db = prisma();
-  if (!db) return [];
-  await ensureDatabase();
   const needle = compactRef(parcelRef).slice(0, 14);
-  const rows = await db.ownershipClaim.findMany({
-    where: { parcelRef: needle },
-    include: { legalEntity: true },
-    orderBy: { observedAt: "desc" },
-  });
-  return rows.map(mapClaim);
+  const db = prisma();
+  if (db) {
+    await ensureDatabase();
+    const rows = await db.ownershipClaim.findMany({
+      where: { parcelRef: needle },
+      include: { legalEntity: true },
+      orderBy: { observedAt: "desc" },
+    });
+    return rows.map(mapClaim);
+  }
+  if (hasSupabase()) {
+    await ensureDatabase();
+    const claims = await sbSelect<ClaimRow>(
+      "ownership_claims",
+      `${sbEq("parcelRef", needle)}&order=observedAt.desc&select=*`,
+    );
+    return hydrateClaims(claims);
+  }
+  return [];
 }
 
 export async function portfolioForTaxId(taxId: string): Promise<{ entity: LegalEntity; claims: OwnershipClaim[] } | null> {
-  const db = prisma();
-  if (!db) return null;
-  await ensureDatabase();
   const compact = assertLegalPersonTaxId(taxId);
-  const entity = await db.legalEntity.findUnique({
-    where: { taxId: compact },
-    include: { ownershipClaims: { include: { legalEntity: true }, orderBy: { observedAt: "desc" } } },
-  });
-  if (!entity) return null;
-  return {
-    entity: {
-      id: entity.id,
-      taxId: entity.taxId,
-      legalName: entity.legalName,
-      kind: entity.kind,
-    },
-    claims: entity.ownershipClaims.map(mapClaim),
-  };
+  const db = prisma();
+  if (db) {
+    await ensureDatabase();
+    const entity = await db.legalEntity.findUnique({
+      where: { taxId: compact },
+      include: { ownershipClaims: { include: { legalEntity: true }, orderBy: { observedAt: "desc" } } },
+    });
+    if (!entity) return null;
+    return {
+      entity: {
+        id: entity.id,
+        taxId: entity.taxId,
+        legalName: entity.legalName,
+        kind: entity.kind,
+      },
+      claims: entity.ownershipClaims.map(mapClaim),
+    };
+  }
+  if (hasSupabase()) {
+    await ensureDatabase();
+    const entities = await sbSelect<EntityRow>("legal_entities", `${sbEq("taxId", compact)}&select=*`);
+    const entity = entities[0];
+    if (!entity) return null;
+    const claims = await sbSelect<ClaimRow>(
+      "ownership_claims",
+      `${sbEq("legalEntityId", entity.id)}&order=observedAt.desc&select=*`,
+    );
+    return {
+      entity: { id: entity.id, taxId: entity.taxId, legalName: entity.legalName, kind: entity.kind },
+      claims: await hydrateClaims(claims, [entity]),
+    };
+  }
+  return null;
 }
 
 export async function createOwnershipClaim(input: {
@@ -50,11 +90,6 @@ export async function createOwnershipClaim(input: {
   source?: OwnershipSource;
   sourceUrl?: string;
 }): Promise<OwnershipClaim> {
-  const db = prisma();
-  if (!db) {
-    throw new Error("Hace falta la base de datos de Supabase (DATABASE_URL) para guardar personas jurídicas.");
-  }
-  await ensureDatabase();
   const parcelRef = compactRef(input.parcelRef).slice(0, 14);
   if (!isCadastralRef(parcelRef)) throw new Error("La referencia catastral no es válida.");
   const taxId = assertLegalPersonTaxId(input.taxId);
@@ -67,32 +102,86 @@ export async function createOwnershipClaim(input: {
     throw new Error("El enlace a BORM o al registro tiene que ser una URL http(s).");
   }
 
-  await db.parcel.upsert({
-    where: { parcelRef },
-    create: { parcelRef, fetchedAt: new Date() },
-    update: {},
-  });
+  const db = prisma();
+  if (db) {
+    await ensureDatabase();
+    await db.parcel.upsert({
+      where: { parcelRef },
+      create: { parcelRef, fetchedAt: new Date() },
+      update: {},
+    });
 
-  const entity = await db.legalEntity.upsert({
-    where: { taxId },
-    create: { id: randomUUID(), taxId, legalName, kind },
-    update: { legalName, kind },
-  });
+    const entity = await db.legalEntity.upsert({
+      where: { taxId },
+      create: { id: randomUUID(), taxId, legalName, kind },
+      update: { legalName, kind },
+    });
 
-  const row = await db.ownershipClaim.create({
-    data: {
+    const row = await db.ownershipClaim.create({
+      data: {
+        id: randomUUID(),
+        parcelRef,
+        legalEntityId: entity.id,
+        source,
+        sourceUrl,
+        observedAt: new Date(),
+        confidence: source === "borm" || source === "registro_mercantil" ? "high" : "low",
+        largeHolderCandidate: LARGE_HOLDER.has(kind),
+      },
+      include: { legalEntity: true },
+    });
+    return mapClaim(row);
+  }
+
+  if (hasSupabase()) {
+    await ensureDatabase();
+    await sbUpsert("parcels", { parcelRef, fetchedAt: new Date().toISOString() }, "parcelRef");
+    const existing = await sbSelect<EntityRow>("legal_entities", `${sbEq("taxId", taxId)}&select=*`);
+    let entity = existing[0];
+    if (entity) {
+      const patched = await sbPatch<EntityRow>("legal_entities", sbEq("id", entity.id), { legalName, kind });
+      entity = patched[0] || { ...entity, legalName, kind };
+    } else {
+      const created = await sbInsert<EntityRow>("legal_entities", {
+        id: randomUUID(),
+        taxId,
+        legalName,
+        kind,
+      });
+      entity = created[0];
+    }
+    if (!entity) throw new Error("No se pudo guardar la persona jurídica.");
+    const observedAt = new Date().toISOString();
+    const inserted = await sbInsert<ClaimRow>("ownership_claims", {
       id: randomUUID(),
       parcelRef,
       legalEntityId: entity.id,
       source,
-      sourceUrl,
-      observedAt: new Date(),
+      sourceUrl: sourceUrl || null,
+      observedAt,
       confidence: source === "borm" || source === "registro_mercantil" ? "high" : "low",
       largeHolderCandidate: LARGE_HOLDER.has(kind),
-    },
-    include: { legalEntity: true },
+    });
+    const claim = inserted[0];
+    if (!claim) throw new Error("No se pudo guardar el vínculo con la finca.");
+    return mapClaim({ ...claim, legalEntity: entity });
+  }
+
+  throw new Error("Hace falta SUPABASE_SECRET_KEY o DATABASE_URL para guardar personas jurídicas.");
+}
+
+async function hydrateClaims(claims: ClaimRow[], known: EntityRow[] = []): Promise<OwnershipClaim[]> {
+  if (!claims.length) return [];
+  const have = new Map(known.map((entity) => [entity.id, entity]));
+  const missing = [...new Set(claims.map((claim) => claim.legalEntityId).filter((id) => !have.has(id)))];
+  if (missing.length) {
+    const extra = await sbSelect<EntityRow>("legal_entities", `${sbIn("id", missing)}&select=*`);
+    for (const entity of extra) have.set(entity.id, entity);
+  }
+  return claims.flatMap((claim) => {
+    const legalEntity = have.get(claim.legalEntityId);
+    return legalEntity ? [mapClaim({ ...claim, legalEntity })] : [];
   });
-  return mapClaim(row);
 }
 
 function mapClaim(row: {
@@ -101,7 +190,7 @@ function mapClaim(row: {
   unitRef: string | null;
   source: OwnershipSource;
   sourceUrl: string | null;
-  observedAt: Date;
+  observedAt: Date | string;
   confidence: string;
   largeHolderCandidate: boolean;
   legalEntity: { id: string; taxId: string; legalName: string; kind: LegalEntityKind };
@@ -114,7 +203,7 @@ function mapClaim(row: {
     legalEntity: row.legalEntity,
     source: row.source,
     sourceUrl: row.sourceUrl || undefined,
-    observedAt: row.observedAt.toISOString(),
+    observedAt: typeof row.observedAt === "string" ? row.observedAt : row.observedAt.toISOString(),
     confidence: row.confidence as OwnershipClaim["confidence"],
     largeHolderCandidate: row.largeHolderCandidate,
   };

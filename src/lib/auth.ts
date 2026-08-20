@@ -6,6 +6,7 @@ import { readJsonFile, writeJsonFile } from "./fs-store";
 import { hashPassword, verifyPassword } from "./auth-crypto";
 import { prisma } from "./db";
 import { ensureDatabase } from "./ensure-db";
+import { hasSupabase, sbDelete, sbEq, sbInsert, sbPatch, sbSelect } from "./supabase-rest";
 
 export { hashPassword, verifyPassword } from "./auth-crypto";
 
@@ -45,7 +46,7 @@ function fromRow(row: {
   email: string;
   nickname: string;
   passwordHash: string;
-  createdAt: Date;
+  createdAt: Date | string;
   onboardingComplete: boolean;
   intent: string | null;
   barrioId: string | null;
@@ -55,7 +56,7 @@ function fromRow(row: {
     email: row.email,
     nickname: row.nickname,
     passwordHash: row.passwordHash,
-    createdAt: row.createdAt.toISOString(),
+    createdAt: typeof row.createdAt === "string" ? row.createdAt : row.createdAt.toISOString(),
     onboardingComplete: row.onboardingComplete,
     intent: (row.intent as Intent | null) || undefined,
     barrioId: row.barrioId || undefined,
@@ -93,6 +94,11 @@ export async function listUsers(): Promise<UserRecord[]> {
     const rows = await db.user.findMany();
     return rows.map(fromRow);
   }
+  if (hasSupabase()) {
+    await ensureDatabase();
+    const rows = await sbSelect<Parameters<typeof fromRow>[0]>("users", "select=*");
+    return rows.map(fromRow);
+  }
   return ensureDemoUser(await readJson<UserRecord[]>(USERS_FILE, []));
 }
 
@@ -121,6 +127,21 @@ export async function createUser(input: { email: string; password: string; nickn
         },
       });
       return toPublic(fromRow(user));
+    }
+    if (hasSupabase()) {
+      await ensureDatabase();
+      const existing = await sbSelect<{ id: string }>("users", `${sbEq("email", email)}&select=id`);
+      if (existing.length) throw new Error("Ya hay una cuenta con ese correo.");
+      const row = {
+        id: randomUUID(),
+        email,
+        nickname,
+        passwordHash: await hashPassword(password),
+        createdAt: new Date().toISOString(),
+        onboardingComplete: false,
+      };
+      const created = await sbInsert<Parameters<typeof fromRow>[0]>("users", row);
+      return toPublic(fromRow(created[0] || row));
     }
     const users = await listUsers();
     if (users.some((user) => user.email === email)) {
@@ -158,6 +179,11 @@ export async function createSession(userId: string): Promise<string> {
       await db.session.create({ data: { token, userId, createdAt: new Date() } });
       return token;
     }
+    if (hasSupabase()) {
+      await ensureDatabase();
+      await sbInsert("sessions", { token, userId, createdAt: new Date().toISOString() });
+      return token;
+    }
     const sessions = await readJson<SessionRecord[]>(SESSIONS_FILE, []);
     sessions.push({ token, userId, createdAt: new Date().toISOString() });
     await writeJson(SESSIONS_FILE, sessions);
@@ -171,6 +197,10 @@ export async function destroySession(token: string | undefined) {
     const db = prisma();
     if (db) {
       await db.session.deleteMany({ where: { token } });
+      return;
+    }
+    if (hasSupabase()) {
+      await sbDelete("sessions", sbEq("token", token));
       return;
     }
     const sessions = await readJson<SessionRecord[]>(SESSIONS_FILE, []);
@@ -188,6 +218,17 @@ export async function userFromToken(token: string | undefined): Promise<PublicUs
     await ensureDatabase();
     const session = await db.session.findUnique({ where: { token }, include: { user: true } });
     return session?.user ? toPublic(fromRow(session.user)) : null;
+  }
+  if (hasSupabase()) {
+    await ensureDatabase();
+    const sessions = await sbSelect<{ token: string; userId: string }>(
+      "sessions",
+      `${sbEq("token", token)}&select=token,userId`,
+    );
+    const session = sessions[0];
+    if (!session) return null;
+    const users = await sbSelect<Parameters<typeof fromRow>[0]>("users", `${sbEq("id", session.userId)}&select=*`);
+    return users[0] ? toPublic(fromRow(users[0])) : null;
   }
   const sessions = await readJson<SessionRecord[]>(SESSIONS_FILE, []);
   const session = sessions.find((item) => item.token === token);
@@ -228,6 +269,22 @@ export async function updateUser(
         },
       });
       return toPublic(fromRow(updated));
+    }
+    if (hasSupabase()) {
+      await ensureDatabase();
+      const current = await sbSelect<Parameters<typeof fromRow>[0]>("users", `${sbEq("id", userId)}&select=*`);
+      if (!current[0]) throw new Error("No encontramos esa cuenta.");
+      const updated = await sbPatch<Parameters<typeof fromRow>[0]>(
+        "users",
+        sbEq("id", userId),
+        {
+          intent: patch.intent ?? current[0].intent,
+          barrioId: patch.barrioId ?? current[0].barrioId,
+          onboardingComplete: patch.onboardingComplete ?? current[0].onboardingComplete,
+          nickname: patch.nickname?.trim() ? patch.nickname.trim().slice(0, 40) : current[0].nickname,
+        },
+      );
+      return toPublic(fromRow(updated[0] || current[0]));
     }
     const users = await listUsers();
     const index = users.findIndex((user) => user.id === userId);
