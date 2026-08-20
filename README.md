@@ -39,6 +39,28 @@ Inspirado en **Reviu** (reseñas de piso + Catastro, apodo público), **JustFix 
 - Ayuntamiento de Madrid, capa de barrios del servicio de límites administrativos (WGS84).
 - Aportes de ejemplo en `src/data/seed-reports.json` para que el mapa no arranque vacío.
 
+## Despliegue en Vercel
+
+La URL de producción del proyecto es `https://rentaly-mibo1.vercel.app` (cada deploy también tiene un host único del estilo `https://rentaly-….vercel.app`). `https://rentaly.vercel.app` pertenece a **otro** proyecto y no es esta app.
+
+Si el navegador muestra la página genérica de Vercel:
+
+```
+404: NOT_FOUND
+Code: NOT_FOUND
+ID: cdg1::…
+```
+
+eso **no** es el 404 de Rentaly (el de la app dice «No está en el mapa»). Vercel Authentication está activo: la petición a `/` responde `302` a `https://vercel.com/sso-api?…`. Quien no pertenezca al equipo del proyecto acaba en `NOT_FOUND`.
+
+Para dejar la web pública:
+
+1. [Dashboard del proyecto](https://vercel.com) → **Settings** → **Deployment Protection**.
+2. Desactiva **Vercel Authentication** en Production (o déjala solo en Preview).
+3. Guarda. No hace falta redeploy: el host de producción debería servir la home en cuanto la protección caiga.
+
+En Vercel el sistema de archivos es de solo lectura. Cuentas, sesiones y aportes se escriben en `/tmp/rentaly-data` (se pierden al reciclar la instancia). En local siguen en `data/`.
+
 ## Límites actuales
 
-Los aportes se guardan en `data/reports.json` (archivo local). En un despliegue real haría falta base de datos, cuentas, moderación y, si se desea, el índice estatal de precios de alquiler por sección censal. El Catastro no publica un inventario masivo de todas las viviendas de cada barrio por estos servicios libres: la distribución de inmuebles se obtiene finca a finca, que es justo el momento en el que alguien está a punto de alquilar.
+Los aportes se guardan en JSON (archivo local, o `/tmp` en Vercel). En un despliegue duradero haría falta base de datos, moderación y, si se desea, el índice estatal de precios de alquiler por sección censal. El Catastro no publica un inventario masivo de todas las viviendas de cada barrio por estos servicios libres: la distribución de inmuebles se obtiene finca a finca, que es justo el momento en el que alguien está a punto de alquilar.

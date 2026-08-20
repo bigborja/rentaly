@@ -2,15 +2,13 @@ import { randomBytes, scrypt, timingSafeEqual } from "crypto";
 import { promisify } from "util";
 import { randomUUID } from "crypto";
 import { cookies } from "next/headers";
-import { mkdir, readFile, writeFile } from "fs/promises";
-import { join } from "path";
 import type { Intent } from "./types";
 import { getBarrio } from "./barrios-data";
+import { readJsonFile, writeJsonFile } from "./fs-store";
 
 const scryptAsync = promisify(scrypt);
-const DATA_DIR = join(process.cwd(), "data");
-const USERS_PATH = join(DATA_DIR, "users.json");
-const SESSIONS_PATH = join(DATA_DIR, "sessions.json");
+const USERS_FILE = "users.json";
+const SESSIONS_FILE = "sessions.json";
 export const SESSION_COOKIE = "rentaly_session";
 
 export interface UserRecord {
@@ -34,17 +32,12 @@ interface SessionRecord {
 
 let writeQueue: Promise<void> = Promise.resolve();
 
-async function readJson<T>(path: string, fallback: T): Promise<T> {
-  try {
-    return JSON.parse(await readFile(path, "utf8")) as T;
-  } catch {
-    return fallback;
-  }
+async function readJson<T>(file: string, fallback: T): Promise<T> {
+  return readJsonFile(file, fallback);
 }
 
-async function writeJson(path: string, value: unknown) {
-  await mkdir(DATA_DIR, { recursive: true });
-  await writeFile(path, JSON.stringify(value, null, 2), "utf8");
+async function writeJson(file: string, value: unknown) {
+  await writeJsonFile(file, value);
 }
 
 export async function hashPassword(password: string): Promise<string> {
@@ -81,12 +74,12 @@ async function ensureDemoUser(users: UserRecord[]): Promise<UserRecord[]> {
     intent: "buscar",
     barrioId: "015",
   });
-  await writeJson(USERS_PATH, users);
+  await writeJson(USERS_FILE, users);
   return users;
 }
 
 export async function listUsers(): Promise<UserRecord[]> {
-  const users = await ensureDemoUser(await readJson<UserRecord[]>(USERS_PATH, []));
+  const users = await ensureDemoUser(await readJson<UserRecord[]>(USERS_FILE, []));
   return users;
 }
 
@@ -112,7 +105,7 @@ export async function createUser(input: { email: string; password: string; nickn
       onboardingComplete: false,
     };
     users.push(user);
-    await writeJson(USERS_PATH, users);
+    await writeJson(USERS_FILE, users);
     return toPublic(user);
   });
 }
@@ -129,9 +122,9 @@ export async function authenticate(email: string, password: string): Promise<Pub
 export async function createSession(userId: string): Promise<string> {
   const token = randomBytes(32).toString("hex");
   return enqueue(async () => {
-    const sessions = await readJson<SessionRecord[]>(SESSIONS_PATH, []);
+    const sessions = await readJson<SessionRecord[]>(SESSIONS_FILE, []);
     sessions.push({ token, userId, createdAt: new Date().toISOString() });
-    await writeJson(SESSIONS_PATH, sessions);
+    await writeJson(SESSIONS_FILE, sessions);
     return token;
   });
 }
@@ -139,9 +132,9 @@ export async function createSession(userId: string): Promise<string> {
 export async function destroySession(token: string | undefined) {
   if (!token) return;
   await enqueue(async () => {
-    const sessions = await readJson<SessionRecord[]>(SESSIONS_PATH, []);
+    const sessions = await readJson<SessionRecord[]>(SESSIONS_FILE, []);
     await writeJson(
-      SESSIONS_PATH,
+      SESSIONS_FILE,
       sessions.filter((session) => session.token !== token),
     );
   });
@@ -149,7 +142,7 @@ export async function destroySession(token: string | undefined) {
 
 export async function userFromToken(token: string | undefined): Promise<PublicUser | null> {
   if (!token) return null;
-  const sessions = await readJson<SessionRecord[]>(SESSIONS_PATH, []);
+  const sessions = await readJson<SessionRecord[]>(SESSIONS_FILE, []);
   const session = sessions.find((item) => item.token === token);
   if (!session) return null;
   const users = await listUsers();
@@ -185,7 +178,7 @@ export async function updateUser(
       nickname: patch.nickname?.trim() ? patch.nickname.trim().slice(0, 40) : current.nickname,
     };
     users[index] = next;
-    await writeJson(USERS_PATH, users);
+    await writeJson(USERS_FILE, users);
     return toPublic(next);
   });
 }

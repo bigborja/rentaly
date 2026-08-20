@@ -1,12 +1,11 @@
 import { randomUUID } from "crypto";
-import { mkdir, readFile, writeFile } from "fs/promises";
-import { join } from "path";
 import type { CreateReportInput, Report, ReportType } from "./types";
 import { compactRef, isCadastralRef } from "./parse";
 import { getBarrio } from "./barrios-data";
+import { readJsonFile, writeJsonFile } from "./fs-store";
 import seedReports from "@/data/seed-reports.json";
 
-const REPORTS_PATH = join(process.cwd(), "data/reports.json");
+const REPORTS_FILE = "reports.json";
 
 const ABUSE_CATEGORIES = new Set([
   "fianza",
@@ -25,21 +24,13 @@ const ABUSE_CATEGORIES = new Set([
 let writeQueue: Promise<void> = Promise.resolve();
 
 async function readStore(): Promise<Report[]> {
-  try {
-    const raw = await readFile(REPORTS_PATH, "utf8");
-    const parsed = JSON.parse(raw) as Report[];
-    if (Array.isArray(parsed) && parsed.length) return parsed;
-  } catch {
-    // first run uses the committed seed
-  }
+  const parsed = await readJsonFile<Report[]>(REPORTS_FILE, seedReports as Report[]);
+  if (Array.isArray(parsed) && parsed.length) return parsed;
   return seedReports as Report[];
 }
 
 async function writeStore(reports: Report[]) {
-  await mkdir(join(process.cwd(), "data"), { recursive: true });
-  const temp = `${REPORTS_PATH}.${process.pid}.tmp`;
-  await writeFile(temp, JSON.stringify(reports, null, 2), "utf8");
-  await writeFile(REPORTS_PATH, JSON.stringify(reports, null, 2), "utf8");
+  await writeJsonFile(REPORTS_FILE, reports);
 }
 
 export async function listReports(filters?: {

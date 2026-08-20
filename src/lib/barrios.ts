@@ -1,5 +1,6 @@
 import type { Barrio } from "./types";
 import { getBarrio } from "./barrios-data";
+import barriosGeo from "../../public/geo/barrios.geojson";
 
 export { BARRIOS, getBarrio, districts } from "./barrios-data";
 
@@ -34,15 +35,8 @@ function pointInPolygon(lng: number, lat: number, geometry: GeoJSON.Geometry): b
   return false;
 }
 
-let cachedGeo: GeoJSON.FeatureCollection | null = null;
-
 export async function loadBarriosGeo(): Promise<GeoJSON.FeatureCollection> {
-  if (cachedGeo) return cachedGeo;
-  const { readFile } = await import("fs/promises");
-  const { join } = await import("path");
-  const raw = await readFile(join(process.cwd(), "public/geo/barrios.geojson"), "utf8");
-  cachedGeo = JSON.parse(raw) as GeoJSON.FeatureCollection;
-  return cachedGeo;
+  return barriosGeo;
 }
 
 export async function barrioAt(lng: number, lat: number): Promise<Barrio | undefined> {
