@@ -80,7 +80,7 @@ export default async function HomePage() {
               },
               {
                 title: "O entra por el mapa",
-                body: "Cada polígono es un barrio oficial. Si conoces la geografía de Madrid pero no el nombre, pulsa donde vives o donde estás mirando piso.",
+                body: "Cada polígono es un barrio oficial. Si quieres un portal concreto, activa parcelas del Catastro: un clic abre una hoja con metros y memoria. SERPAVI, IRAV y el escrito están en la ficha completa.",
               },
               {
                 title: "Usa la lista antes de firmar o deja memoria si ya vives ahí",

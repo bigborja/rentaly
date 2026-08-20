@@ -11,6 +11,7 @@ export type {
   PropertyRecord,
   PropertyUnit,
   PublicReport,
+  ParcelPeek,
   Report,
   ReportType,
   SearchResult,
