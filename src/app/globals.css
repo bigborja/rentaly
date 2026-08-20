@@ -1,0 +1,41 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: #f4efe4;
+  color: #1c1712;
+}
+
+.leaflet-container {
+  font-family: inherit;
+  background: #d7cfc0;
+}
+
+.leaflet-popup-content-wrapper,
+.leaflet-popup-tip {
+  background: #1c1712;
+  color: #f4efe4;
+  border-radius: 14px;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.28);
+}
+
+.leaflet-popup-content {
+  margin: 14px 16px;
+}
+
+.leaflet-popup-close-button {
+  color: #f4efe4 !important;
+}
+
+.field-input {
+  @apply w-full rounded-[0.9rem] border border-ink/15 bg-paper px-3 py-2.5 text-sm outline-none ring-wine/30 focus:ring-2;
+}
