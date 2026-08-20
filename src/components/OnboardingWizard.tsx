@@ -88,7 +88,10 @@ export function OnboardingWizard({
       {step === 0 ? (
         <>
           <h1 className="font-display text-4xl">¿En qué momento del alquiler estás?</h1>
-          <p className="mt-3 text-ink/70">JustFix parte de una tarea, no de un feed. Nosotros igual: elige el trabajo que tienes ahora.</p>
+          <p className="mt-3 text-ink/70">
+            Elegir una tarea nos sirve para llevarte después a la pantalla útil: la lista de firma, el barrio o el
+            formulario de aviso. Podrás cambiarlo en tu cuenta.
+          </p>
           <div className="mt-6 space-y-3">
             {INTENTS.map((item) => (
               <button
@@ -115,8 +118,8 @@ export function OnboardingWizard({
           <h1 className="font-display text-4xl">¿Qué barrio te importa ahora?</h1>
           <p className="mt-3 text-ink/70">
             {intent === "buscar"
-              ? "Donde estás mirando anuncios. Luego podrás cambiarlo."
-              : "Donde vives o has vivido. La memoria se ancla al barrio municipal."}
+              ? "Donde estás mirando anuncios. Luego podrás cambiarlo. El barrio es el oficial del Ayuntamiento, no la zona del portal inmobiliario."
+              : "Donde vives o has vivido. La memoria se ancla al barrio municipal (131 en Madrid capital). Puedes dejarlo para más tarde."}
           </p>
           <select value={barrio} onChange={(event) => setBarrio(event.target.value)} className="field-input mt-6">
             <option value="">Elegir más tarde</option>
@@ -144,7 +147,10 @@ export function OnboardingWizard({
       {step === 2 ? (
         <>
           <h1 className="font-display text-4xl">Cómo te leerán las demás</h1>
-          <p className="mt-3 text-ink/70">El apodo es lo único público. El correo se queda en la cuenta.</p>
+          <p className="mt-3 text-ink/70">
+            El apodo es lo único público en cada relato. Elige algo que no sea tu nombre real ni un DNI. El correo de la
+            cuenta no se muestra.
+          </p>
           <input value={name} onChange={(event) => setName(event.target.value)} className="field-input mt-6" maxLength={40} />
           <div className="mt-6 flex gap-3">
             <button type="button" className="btn btn-ghost" onClick={() => setStep(1)}>
@@ -160,7 +166,10 @@ export function OnboardingWizard({
       {step === 3 ? (
         <>
           <h1 className="font-display text-4xl">Pacto de la memoria</h1>
-          <p className="mt-3 text-ink/70">Shelter recuerda que el tono importa cuando alguien está bajo estrés. Aquí el pacto es corto y claro.</p>
+          <p className="mt-3 text-ink/70">
+            Quien lee un aviso suele estar bajo estrés. Estas cuatro casillas no son letra pequeña: son el tono de la
+            memoria vecinal. Sin marcarlas no se cierra el alta.
+          </p>
           <ul className="mt-6 space-y-3">
             {(
               [

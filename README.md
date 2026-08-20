@@ -49,7 +49,13 @@ prisma/schema.prisma   modelo PostGIS de destino
 
 El Catastro **no** publica titulares de personas físicas. Los “grandes tenedores” solo se modelan como personas jurídicas (BORM, CIF, SOCIMI) o como evidencia de usuaria ya anonimizada. Los aportes salen a la API sin `userId`.
 
-Hasta que haya `DATABASE_URL`, cuentas y relatos siguen en JSON (`data/` en local, `/tmp` en Vercel).
+Hasta que haya backend remoto, cuentas y relatos siguen en JSON (`data/` en local, `/tmp` en Vercel). El orden de persistencia es:
+
+1. `DATABASE_URL` → Prisma (Postgres / pooler).
+2. Si no hay URI, `SUPABASE_SECRET_KEY` → PostgREST en `https://ipnqyejdfcwcltutrrvh.supabase.co` (clave secreta, solo servidor).
+3. Si no hay ninguna de las dos, JSON.
+
+Pega `supabase/init.sql` en el SQL editor de Supabase si las tablas aún no existen. En Vercel añade `NEXT_PUBLIC_SUPABASE_URL` y `SUPABASE_SECRET_KEY` (y `DATABASE_URL` solo si usas Prisma). La clave secreta no va en el cliente.
 
 ## Fuentes
 
@@ -79,8 +85,10 @@ Para dejar la web pública:
 2. Desactiva **Vercel Authentication** en Production (o déjala solo en Preview).
 3. Guarda. No hace falta redeploy: el host de producción debería servir la home en cuanto la protección caiga.
 
-En Vercel el sistema de archivos es de solo lectura. Cuentas, sesiones y aportes se escriben en `/tmp/rentaly-data` (se pierden al reciclar la instancia). En local siguen en `data/`.
+En Vercel el sistema de archivos es de solo lectura. Sin `SUPABASE_SECRET_KEY` (ni `DATABASE_URL`), cuentas, sesiones y aportes se escriben en `/tmp/rentaly-data` y se pierden al reciclar la instancia. En local, el mismo fallback usa `data/`.
+
+Las rutas `/api/*` pasan por un rate limit en el Edge (`slidingWindow`, 15 peticiones / 10 s por IP) con `@upstash/ratelimit`. El Catastro tiene además un tope global (40 consultas / 10 s) para no tumbar el OVC. Un cron diario (`/api/cron/overlays`, `CRON_SECRET`) espeja un recorte de VUT sin geocodificar. En Vercel añade `UPSTASH_REDIS_REST_URL`, `UPSTASH_REDIS_REST_TOKEN` y, si usas el cron, `CRON_SECRET`. Si Redis falta o falla, la API sigue (fail-open) y responde `429` + `Retry-After` solo cuando el cupo por IP está agotado.
 
 ## Límites actuales
 
-Los aportes se guardan en JSON (archivo local, o `/tmp` en Vercel). En un despliegue duradero haría falta base de datos, moderación y, si se desea, el índice estatal de precios de alquiler por sección censal. El Catastro no publica un inventario masivo de todas las viviendas de cada barrio por estos servicios libres: la distribución de inmuebles se obtiene finca a finca, que es justo el momento en el que alguien está a punto de alquilar.
+Los aportes se guardan en Supabase (PostgREST con la clave secreta, o Prisma si hay `DATABASE_URL`) y, si no, en JSON. En un despliegue duradero sigue haciendo falta moderación y, si se desea, el índice estatal de precios de alquiler por sección censal. El Catastro no publica un inventario masivo de todas las viviendas de cada barrio por estos servicios libres: la distribución de inmuebles se obtiene finca a finca, que es justo el momento en el que alguien está a punto de alquilar.

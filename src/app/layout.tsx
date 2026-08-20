@@ -20,7 +20,7 @@ export const metadata: Metadata = {
     template: "%s · Rentaly",
   },
   description:
-    "Plataforma de transparencia para inquilinos en Madrid capital: Catastro, barrios e informes de la comunidad para evitar abusos.",
+    "Transparencia para inquilinos en Madrid capital: Catastro, 131 barrios y memoria vecinal para contrastar un anuncio antes de firmar.",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

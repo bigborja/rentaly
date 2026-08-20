@@ -1,5 +1,5 @@
-// Target store: PostgreSQL + PostGIS (Supabase or a managed Postgres).
-// The app still uses JSON files until DATABASE_URL is wired.
+// Target store: PostgreSQL + PostGIS (Supabase). The app talks to it via Prisma
+// when DATABASE_URL is set, or via PostgREST (SUPABASE_SECRET_KEY) otherwise.
 // Cadastre open data never includes private owner names; do not add such columns.
 
 generator client {
@@ -111,8 +111,6 @@ model Parcel {
   censusSection     CensusSection?    @relation(fields: [censusSectionCode], references: [code])
   longitude         Float?
   latitude          Float?
-  /// Optional PostGIS point; populate with ST_SetSRID(ST_MakePoint(longitude, latitude), 4326).
-  geom              Unsupported("geometry(Point, 4326)")?
   parcelAreaM2      Float?
   parcelKind        String?
   yearBuilt         Int?
@@ -308,6 +306,8 @@ model Report {
   abuseCategory      AbuseCategory?
   severity           Severity?
   conservationState  ConservationState?
+  managerTaxId       String?
+  managerLegalName   String?
   author             String
   userId             String?
   user               User?               @relation(fields: [userId], references: [id])

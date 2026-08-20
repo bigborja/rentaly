@@ -1,12 +1,15 @@
-import { randomBytes, scrypt, timingSafeEqual } from "crypto";
-import { promisify } from "util";
-import { randomUUID } from "crypto";
+import { randomBytes, randomUUID } from "crypto";
 import { cookies } from "next/headers";
 import type { Intent } from "./types";
 import { getBarrio } from "./barrios-data";
 import { readJsonFile, writeJsonFile } from "./fs-store";
+import { hashPassword, verifyPassword } from "./auth-crypto";
+import { prisma } from "./db";
+import { ensureDatabase } from "./ensure-db";
+import { hasSupabase, sbDelete, sbEq, sbInsert, sbPatch, sbSelect } from "./supabase-rest";
 
-const scryptAsync = promisify(scrypt);
+export { hashPassword, verifyPassword } from "./auth-crypto";
+
 const USERS_FILE = "users.json";
 const SESSIONS_FILE = "sessions.json";
 export const SESSION_COOKIE = "rentaly_session";
@@ -32,34 +35,40 @@ interface SessionRecord {
 
 let writeQueue: Promise<void> = Promise.resolve();
 
+function toPublic(user: UserRecord): PublicUser {
+  const { passwordHash, ...rest } = user;
+  void passwordHash;
+  return rest;
+}
+
+function fromRow(row: {
+  id: string;
+  email: string;
+  nickname: string;
+  passwordHash: string;
+  createdAt: Date | string;
+  onboardingComplete: boolean;
+  intent: string | null;
+  barrioId: string | null;
+}): UserRecord {
+  return {
+    id: row.id,
+    email: row.email,
+    nickname: row.nickname,
+    passwordHash: row.passwordHash,
+    createdAt: typeof row.createdAt === "string" ? row.createdAt : row.createdAt.toISOString(),
+    onboardingComplete: row.onboardingComplete,
+    intent: (row.intent as Intent | null) || undefined,
+    barrioId: row.barrioId || undefined,
+  };
+}
+
 async function readJson<T>(file: string, fallback: T): Promise<T> {
   return readJsonFile(file, fallback);
 }
 
 async function writeJson(file: string, value: unknown) {
   await writeJsonFile(file, value);
-}
-
-export async function hashPassword(password: string): Promise<string> {
-  const salt = randomBytes(16);
-  const derived = (await scryptAsync(password, salt, 64)) as Buffer;
-  return `${salt.toString("hex")}:${derived.toString("hex")}`;
-}
-
-export async function verifyPassword(password: string, stored: string): Promise<boolean> {
-  const [saltHex, hashHex] = stored.split(":");
-  if (!saltHex || !hashHex) return false;
-  const salt = Buffer.from(saltHex, "hex");
-  const expected = Buffer.from(hashHex, "hex");
-  const derived = (await scryptAsync(password, salt, 64)) as Buffer;
-  if (expected.length !== derived.length) return false;
-  return timingSafeEqual(expected, derived);
-}
-
-function toPublic(user: UserRecord): PublicUser {
-  const { passwordHash, ...rest } = user;
-  void passwordHash;
-  return rest;
 }
 
 async function ensureDemoUser(users: UserRecord[]): Promise<UserRecord[]> {
@@ -79,8 +88,18 @@ async function ensureDemoUser(users: UserRecord[]): Promise<UserRecord[]> {
 }
 
 export async function listUsers(): Promise<UserRecord[]> {
-  const users = await ensureDemoUser(await readJson<UserRecord[]>(USERS_FILE, []));
-  return users;
+  const db = prisma();
+  if (db) {
+    await ensureDatabase();
+    const rows = await db.user.findMany();
+    return rows.map(fromRow);
+  }
+  if (hasSupabase()) {
+    await ensureDatabase();
+    const rows = await sbSelect<Parameters<typeof fromRow>[0]>("users", "select=*");
+    return rows.map(fromRow);
+  }
+  return ensureDemoUser(await readJson<UserRecord[]>(USERS_FILE, []));
 }
 
 export async function createUser(input: { email: string; password: string; nickname: string }): Promise<PublicUser> {
@@ -92,6 +111,38 @@ export async function createUser(input: { email: string; password: string; nickn
   if (nickname.length < 2 || nickname.length > 40) throw new Error("El apodo debe tener entre 2 y 40 caracteres.");
 
   return enqueue(async () => {
+    const db = prisma();
+    if (db) {
+      await ensureDatabase();
+      const existing = await db.user.findUnique({ where: { email } });
+      if (existing) throw new Error("Ya hay una cuenta con ese correo.");
+      const user = await db.user.create({
+        data: {
+          id: randomUUID(),
+          email,
+          nickname,
+          passwordHash: await hashPassword(password),
+          createdAt: new Date(),
+          onboardingComplete: false,
+        },
+      });
+      return toPublic(fromRow(user));
+    }
+    if (hasSupabase()) {
+      await ensureDatabase();
+      const existing = await sbSelect<{ id: string }>("users", `${sbEq("email", email)}&select=id`);
+      if (existing.length) throw new Error("Ya hay una cuenta con ese correo.");
+      const row = {
+        id: randomUUID(),
+        email,
+        nickname,
+        passwordHash: await hashPassword(password),
+        createdAt: new Date().toISOString(),
+        onboardingComplete: false,
+      };
+      const created = await sbInsert<Parameters<typeof fromRow>[0]>("users", row);
+      return toPublic(fromRow(created[0] || row));
+    }
     const users = await listUsers();
     if (users.some((user) => user.email === email)) {
       throw new Error("Ya hay una cuenta con ese correo.");
@@ -122,6 +173,17 @@ export async function authenticate(email: string, password: string): Promise<Pub
 export async function createSession(userId: string): Promise<string> {
   const token = randomBytes(32).toString("hex");
   return enqueue(async () => {
+    const db = prisma();
+    if (db) {
+      await ensureDatabase();
+      await db.session.create({ data: { token, userId, createdAt: new Date() } });
+      return token;
+    }
+    if (hasSupabase()) {
+      await ensureDatabase();
+      await sbInsert("sessions", { token, userId, createdAt: new Date().toISOString() });
+      return token;
+    }
     const sessions = await readJson<SessionRecord[]>(SESSIONS_FILE, []);
     sessions.push({ token, userId, createdAt: new Date().toISOString() });
     await writeJson(SESSIONS_FILE, sessions);
@@ -132,6 +194,15 @@ export async function createSession(userId: string): Promise<string> {
 export async function destroySession(token: string | undefined) {
   if (!token) return;
   await enqueue(async () => {
+    const db = prisma();
+    if (db) {
+      await db.session.deleteMany({ where: { token } });
+      return;
+    }
+    if (hasSupabase()) {
+      await sbDelete("sessions", sbEq("token", token));
+      return;
+    }
     const sessions = await readJson<SessionRecord[]>(SESSIONS_FILE, []);
     await writeJson(
       SESSIONS_FILE,
@@ -142,6 +213,23 @@ export async function destroySession(token: string | undefined) {
 
 export async function userFromToken(token: string | undefined): Promise<PublicUser | null> {
   if (!token) return null;
+  const db = prisma();
+  if (db) {
+    await ensureDatabase();
+    const session = await db.session.findUnique({ where: { token }, include: { user: true } });
+    return session?.user ? toPublic(fromRow(session.user)) : null;
+  }
+  if (hasSupabase()) {
+    await ensureDatabase();
+    const sessions = await sbSelect<{ token: string; userId: string }>(
+      "sessions",
+      `${sbEq("token", token)}&select=token,userId`,
+    );
+    const session = sessions[0];
+    if (!session) return null;
+    const users = await sbSelect<Parameters<typeof fromRow>[0]>("users", `${sbEq("id", session.userId)}&select=*`);
+    return users[0] ? toPublic(fromRow(users[0])) : null;
+  }
   const sessions = await readJson<SessionRecord[]>(SESSIONS_FILE, []);
   const session = sessions.find((item) => item.token === token);
   if (!session) return null;
@@ -166,6 +254,38 @@ export async function updateUser(
     throw new Error("Elige un momento del alquiler.");
   }
   return enqueue(async () => {
+    const db = prisma();
+    if (db) {
+      await ensureDatabase();
+      const current = await db.user.findUnique({ where: { id: userId } });
+      if (!current) throw new Error("No encontramos esa cuenta.");
+      const updated = await db.user.update({
+        where: { id: userId },
+        data: {
+          intent: patch.intent ?? current.intent,
+          barrioId: patch.barrioId ?? current.barrioId,
+          onboardingComplete: patch.onboardingComplete ?? current.onboardingComplete,
+          nickname: patch.nickname?.trim() ? patch.nickname.trim().slice(0, 40) : current.nickname,
+        },
+      });
+      return toPublic(fromRow(updated));
+    }
+    if (hasSupabase()) {
+      await ensureDatabase();
+      const current = await sbSelect<Parameters<typeof fromRow>[0]>("users", `${sbEq("id", userId)}&select=*`);
+      if (!current[0]) throw new Error("No encontramos esa cuenta.");
+      const updated = await sbPatch<Parameters<typeof fromRow>[0]>(
+        "users",
+        sbEq("id", userId),
+        {
+          intent: patch.intent ?? current[0].intent,
+          barrioId: patch.barrioId ?? current[0].barrioId,
+          onboardingComplete: patch.onboardingComplete ?? current[0].onboardingComplete,
+          nickname: patch.nickname?.trim() ? patch.nickname.trim().slice(0, 40) : current[0].nickname,
+        },
+      );
+      return toPublic(fromRow(updated[0] || current[0]));
+    }
     const users = await listUsers();
     const index = users.findIndex((user) => user.id === userId);
     if (index < 0) throw new Error("No encontramos esa cuenta.");

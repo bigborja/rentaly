@@ -1,11 +1,19 @@
 import Link from "next/link";
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { summarizeUses } from "@/lib/catastro";
-import { loadFincaDossier } from "@/lib/dossier";
+import { loadFincaShell } from "@/lib/dossier";
+import { listReports } from "@/lib/reports";
 import { formatM2, prettyUse } from "@/lib/format";
 import { ReportList } from "@/components/ReportList";
+import { getCurrentUser } from "@/lib/auth";
 import { compactRef, isCadastralRef } from "@/lib/parse";
 import { notFound } from "next/navigation";
+import { Guide } from "@/components/Guide";
+import { CadastralStamp } from "@/components/illustrations";
+import { UiIcon } from "@/components/UiIcon";
+import { Map, PenLine, Ruler } from "lucide-react";
+import { ContextPanel, OverlayFallback, OwnershipPanel, VutPanel } from "./overlays";
 
 export const dynamic = "force-dynamic";
 
@@ -19,18 +27,18 @@ export default async function InmueblePage({ params }: { params: Promise<{ ref: 
   const ref = compactRef(raw);
   if (!isCadastralRef(ref)) notFound();
 
-  let dossier;
+  let shell;
   try {
-    dossier = await loadFincaDossier(ref);
+    shell = await loadFincaShell(ref);
   } catch {
     notFound();
   }
 
-  const { catastro: property, barrio, touristLicenses, inspections, reports } = dossier;
+  const { catastro: property, barrio } = shell;
+  const user = await getCurrentUser();
+  const reports = await listReports({ ref: property.parcelRef });
   const uses = summarizeUses(property);
   const units = property.units;
-  const vutUnits = touristLicenses.reduce((sum, item) => sum + item.units, 0);
-  const ite = inspections[0];
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-10">
@@ -47,7 +55,44 @@ export default async function InmueblePage({ params }: { params: Promise<{ ref: 
         </p>
       ) : null}
 
-      <dl className="mt-8 grid gap-3 sm:grid-cols-4">
+      <div className="mt-6">
+        <Guide kicker="Qué estás viendo" title="Ficha de una finca, no de un anuncio">
+          <p>
+            Estos datos salen del Catastro: superficie, uso (vivienda, local, trastero…), año y las unidades que hay en
+            el portal. No es un tasador ni dice quién es el dueño persona física. Compáralos con el anuncio antes de
+            firmar o de pagar una reserva.
+          </p>
+          <p>
+            Más abajo, si hay coordenadas, cruzamos licencias de vivienda turística, renta media de la sección censal (un
+            recorte estadístico más pequeño que el barrio) y un enlace a la inspección del edificio. Los CIF los aporta
+            la comunidad.
+          </p>
+        </Guide>
+      </div>
+
+      <div className="relative mt-8 overflow-hidden rounded-3xl bg-ink px-5 py-6 text-paper shadow-lift">
+        <CadastralStamp className="pointer-events-none absolute -right-2 -top-2 w-28 text-gold/25 sm:w-36" />
+        <p className="flex items-center gap-2 text-xs uppercase tracking-[0.16em] text-gold">
+          <UiIcon icon={Ruler} size="sm" className="text-gold" />
+          Contrasta el anuncio
+        </p>
+        <p className="mt-1 font-mono text-[11px] tracking-[0.14em] text-paper/45">RC · {property.ref}</p>
+        <p className="mt-3 font-display text-5xl">{formatM2(property.areaM2)}</p>
+        <div className="mt-3 flex flex-wrap gap-2 text-xs">
+          {property.use ? (
+            <span className="rounded-full border border-gold/40 px-3 py-1 text-gold">{prettyUse(property.use)}</span>
+          ) : null}
+          {property.year ? (
+            <span className="rounded-full border border-paper/20 px-3 py-1 text-paper/70">hacia {property.year}</span>
+          ) : null}
+        </div>
+        <p className="mt-3 max-w-xl text-sm text-paper/70">
+          Superficie construida que publica el Catastro. Si el anuncio dice más metros o un uso distinto, esta cifra
+          manda: pregunta por escrito antes de reservar.
+        </p>
+      </div>
+
+      <dl className="mt-6 grid gap-3 sm:grid-cols-4">
         <Mini label="Uso" value={prettyUse(property.use)} />
         <Mini label="Superficie" value={formatM2(property.areaM2)} />
         <Mini label="Antigüedad" value={property.year ? String(property.year) : "—"} />
@@ -59,12 +104,12 @@ export default async function InmueblePage({ params }: { params: Promise<{ ref: 
       <section className="mt-10">
         <h2 className="font-display text-3xl">Distribución de inmuebles</h2>
         <p className="mt-2 max-w-2xl text-sm text-ink/65">
-          Resumen de usos y superficies que publica el Catastro para esta finca. Sirve para contrastar si el anuncio
-          vende una vivienda, un local o un anejo, y si los metros cuadrados cuadran.
+          Un portal suele mezclar viviendas con locales, trasteros o plazas. Aquí ves cuántas partes hay de cada uso y
+          sus metros. Si te venden como piso algo que el Catastro marca como comercial, para.
         </p>
         <ul className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {uses.map((item) => (
-            <li key={item.use} className="rounded-2xl border border-ink/10 bg-white/70 px-4 py-3">
+            <li key={item.use} className="rounded-2xl border border-ink/10 bg-white/70 px-4 py-3 shadow-rest">
               <p className="font-medium">{prettyUse(item.use)}</p>
               <p className="text-sm text-ink/60">
                 {item.count} parte{item.count === 1 ? "" : "s"} · {formatM2(item.areaM2)}
@@ -75,8 +120,12 @@ export default async function InmueblePage({ params }: { params: Promise<{ ref: 
       </section>
 
       {units.length > 1 ? (
-        <section className="mt-10 overflow-hidden rounded-3xl border border-ink/10">
-          <table className="w-full text-left text-sm">
+        <section className="mt-10 overflow-hidden rounded-3xl border border-ink/10 shadow-rest">
+          <p className="bg-mist px-4 py-3 text-sm text-ink/70">
+            Cada fila es un inmueble con su propia referencia de 20 caracteres (piso, local, trastero). Pulsa una para
+            abrirla. La de 14 caracteres de arriba es la parcela completa.
+          </p>
+          <table className="data-table w-full text-left text-sm">
             <thead className="bg-mist">
               <tr>
                 <th className="px-4 py-3 font-medium">Referencia</th>
@@ -106,8 +155,8 @@ export default async function InmueblePage({ params }: { params: Promise<{ ref: 
       ) : null}
 
       {property.constructions.length > 0 && units.length <= 1 ? (
-        <section className="mt-8 overflow-hidden rounded-3xl border border-ink/10">
-          <table className="w-full text-left text-sm">
+        <section className="mt-8 overflow-hidden rounded-3xl border border-ink/10 shadow-rest">
+          <table className="data-table w-full text-left text-sm">
             <thead className="bg-mist">
               <tr>
                 <th className="px-4 py-3 font-medium">Unidad constructiva</th>
@@ -132,78 +181,46 @@ export default async function InmueblePage({ params }: { params: Promise<{ ref: 
 
       <div className="mt-8 flex flex-wrap gap-3 text-sm">
         {property.mapUrl ? (
-          <a className="rounded-full bg-ink px-4 py-2 text-paper" href={property.mapUrl} target="_blank" rel="noreferrer">
+          <a
+            className="inline-flex items-center gap-2 rounded-full bg-ink px-4 py-2 text-paper"
+            href={property.mapUrl}
+            target="_blank"
+            rel="noreferrer"
+          >
+            <UiIcon icon={Map} size="sm" className="text-paper" />
             Cartografía oficial del Catastro
           </a>
         ) : null}
         <Link
           href={`/aportar?ref=${property.ref}${barrio ? `&barrio=${barrio.id}` : ""}`}
-          className="rounded-full bg-wine px-4 py-2 text-paper"
+          className="inline-flex items-center gap-2 rounded-full bg-wine px-4 py-2 text-paper"
         >
+          <UiIcon icon={PenLine} size="sm" className="text-paper" />
           Dejar experiencia o aviso
         </Link>
       </div>
 
       <section className="mt-14 grid gap-4 md:grid-cols-2">
-        <div className="rounded-3xl border border-ink/10 bg-white/70 px-5 py-5">
-          <p className="text-xs uppercase tracking-[0.14em] text-ink/50">Viviendas de uso turístico</p>
-          <h2 className="mt-1 font-display text-2xl">Licencias VUT en el entorno</h2>
-          {touristLicenses.length ? (
-            <>
-              <p className="mt-2 text-sm text-ink/65">
-                {vutUnits} unidad{vutUnits === 1 ? "" : "es"} con licencia urbanística de hospedaje a menos de 60&nbsp;m
-                (Geoportal del Ayuntamiento). No implica quién es el titular.
-              </p>
-              <ul className="mt-3 space-y-2 text-sm">
-                {touristLicenses.slice(0, 6).map((license) => (
-                  <li key={`${license.expedienteLu}-${license.address}-${license.floor}`}>
-                    <span className="font-medium">{license.address || "Dirección no informada"}</span>
-                    {license.floor ? ` · planta ${license.floor.toLowerCase()}` : ""}
-                    {license.expedienteLu ? (
-                      <span className="block font-mono text-xs text-ink/50">{license.expedienteLu}</span>
-                    ) : null}
-                  </li>
-                ))}
-              </ul>
-            </>
-          ) : (
-            <p className="mt-2 text-sm text-ink/65">
-              En este radio el Geoportal no muestra licencias VUT, o el servicio municipal no ha respondido.
-            </p>
-          )}
-          <a
-            className="mt-3 inline-block text-sm underline decoration-gold"
-            href="https://datos.madrid.es/dataset/300694-0-viviendas-turisticas-geoportal"
-            target="_blank"
-            rel="noreferrer"
-          >
-            Fuente: datos.madrid.es
-          </a>
-        </div>
-        <div className="rounded-3xl border border-ink/10 bg-white/70 px-5 py-5">
-          <p className="text-xs uppercase tracking-[0.14em] text-ink/50">Conservación del edificio</p>
-          <h2 className="mt-1 font-display text-2xl">ITE / IEE</h2>
-          <p className="mt-2 text-sm text-ink/65">
-            El Ayuntamiento no publica un volcado masivo con titulares ni inspectores. La consulta oficial es por
-            dirección o expediente en el Registro de Edificios y Construcciones.
-          </p>
-          {ite ? (
-            <a
-              className="mt-4 inline-flex rounded-full bg-ink px-4 py-2 text-sm text-paper"
-              href={ite.consultUrl}
-              target="_blank"
-              rel="noreferrer"
-            >
-              Consultar ITE/IEE en la sede
-            </a>
-          ) : null}
-        </div>
+        <Suspense fallback={<OverlayFallback title="Licencias VUT" />}>
+          <VutPanel parcelRef={property.parcelRef} longitude={property.longitude} latitude={property.latitude} />
+        </Suspense>
+        <Suspense fallback={<OverlayFallback title="Renta e ITE" />}>
+          <ContextPanel longitude={property.longitude} latitude={property.latitude} address={property.address} />
+        </Suspense>
       </section>
+
+      <div className="mt-14">
+        <Suspense fallback={<OverlayFallback title="Personas jurídicas" />}>
+          <OwnershipPanel parcelRef={property.parcelRef} signedIn={Boolean(user)} />
+        </Suspense>
+      </div>
 
       <section className="mt-14">
         <h2 className="font-display text-3xl">Memoria de esta finca</h2>
         <p className="mb-5 mt-2 text-sm text-ink/60">
-          Aportes ligados a esta parcela o a cualquiera de sus inmuebles.
+          Relatos ligados a esta parcela o a cualquiera de sus inmuebles. Experiencia = cómo se alquiló; incidente =
+          algo de la finca (humedad, portería, ruidos); abuso = fianza, entrada, discriminación u otra irregularidad.
+          Lee el patrón, no una sola frase.
         </p>
         <ReportList reports={reports} />
       </section>
@@ -213,7 +230,7 @@ export default async function InmueblePage({ params }: { params: Promise<{ ref: 
 
 function Mini({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-2xl bg-white/70 px-4 py-3">
+    <div className="rounded-2xl border border-ink/10 bg-white/70 px-4 py-3 shadow-rest">
       <dt className="text-xs uppercase tracking-[0.14em] text-ink/50">{label}</dt>
       <dd className="font-display text-2xl">{value}</dd>
     </div>

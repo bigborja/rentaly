@@ -1,11 +1,16 @@
 import type { CensusRentStat } from "@/domain";
 
 /**
- * Individual rental deposits (IVIMA / Agencia de Vivienda Social) are not published
- * as address-level open data. Use the state rental reference index (MITMA/MIVAU)
- * and INE ADRH, both by census section. User-reported rents stay anonymized on Report.
+ * SERPAVI (MIVAU) publishes rent by census section as a 60MB+ workbook and map viewers,
+ * not as a per-CUSEC JSON API. We persist rows when ingested and always link the visor.
  */
+export const SERPAVI_VISOR = "https://www.mivau.gob.es/vivienda/alquila-bien-es-tu-derecho/serpavi";
+
 export async function referenceRentBySection(_cusec: string): Promise<CensusRentStat | null> {
   void _cusec;
   return null;
+}
+
+export function serpaviUrlForSection(cusec: string) {
+  return `${SERPAVI_VISOR}#cusec=${encodeURIComponent(cusec)}`;
 }

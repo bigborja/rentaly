@@ -6,7 +6,12 @@ import type {
   StreetCandidate,
 } from "@/domain";
 import { TtlCache } from "@/cache/ttl";
+import { withOvcBudget } from "@/cache/ovc-global";
+import { prisma } from "@/lib/db";
+import { hasSupabase, sbEq, sbInsert, sbPatch, sbSelect } from "@/lib/supabase-rest";
+import type { Prisma } from "@prisma/client";
 import { asArray, compactRef, formatRef, parseAddressQuery, parseCoord, parseNumber } from "@/lib/parse";
+import { randomUUID } from "crypto";
 
 const CALLEJERO =
   "https://ovc.catastro.meh.es/OVCServWeb/OVCWcfCallejero/COVCCallejero.svc/json";
@@ -21,6 +26,7 @@ const HEADERS = {
 type Json = Record<string, unknown>;
 
 const responseCache = new TtlCache<Json>(30 * 60 * 1000, 800);
+const SNAPSHOT_MS = 24 * 60 * 60 * 1000;
 
 function asRecord(value: unknown): Json {
   return value && typeof value === "object" && !Array.isArray(value) ? (value as Json) : {};
@@ -47,21 +53,99 @@ function controlError(result: unknown): string | undefined {
 async function catastroGet(url: string): Promise<Json> {
   const cached = responseCache.get(url);
   if (cached) return cached;
-  const response = await fetch(url, {
-    headers: HEADERS,
-    next: { revalidate: 60 * 30 },
+
+  const db = prisma();
+  if (db) {
+    try {
+      const snap = await db.cadastralSnapshot.findUnique({ where: { cacheKey: url } });
+      if (snap && snap.expiresAt > new Date()) {
+        const payload = snap.payload as Json;
+        responseCache.set(url, payload);
+        return payload;
+      }
+    } catch {
+      // DATABASE_URL set before migrate
+    }
+  } else if (hasSupabase()) {
+    try {
+      const snaps = await sbSelect<{ payload: Json; expiresAt: string }>(
+        "cadastral_snapshots",
+        `${sbEq("cacheKey", url)}&select=payload,expiresAt`,
+      );
+      const snap = snaps[0];
+      if (snap && new Date(snap.expiresAt) > new Date()) {
+        responseCache.set(url, snap.payload);
+        return snap.payload;
+      }
+    } catch {
+      // REST cache is optional
+    }
+  }
+
+  const json = await withOvcBudget(async () => {
+    const response = await fetch(url, {
+      headers: HEADERS,
+      next: { revalidate: 60 * 30 },
+    });
+    if (!response.ok) {
+      throw new Error(`Catastro HTTP ${response.status}`);
+    }
+    try {
+      return (await response.json()) as Json;
+    } catch {
+      throw new Error("El Catastro no ha devuelto un JSON válido.");
+    }
   });
-  if (!response.ok) {
-    throw new Error(`Catastro HTTP ${response.status}`);
-  }
-  let json: Json;
-  try {
-    json = (await response.json()) as Json;
-  } catch {
-    throw new Error("El Catastro no ha devuelto un JSON válido.");
-  }
+
   responseCache.set(url, json);
+  void persistSnapshot(url, json);
   return json;
+}
+
+async function persistSnapshot(cacheKey: string, json: Json) {
+  const fetchedAt = new Date();
+  const expiresAt = new Date(Date.now() + SNAPSHOT_MS);
+  const db = prisma();
+  if (db) {
+    void db.cadastralSnapshot
+      .upsert({
+        where: { cacheKey },
+        create: {
+          cacheKey,
+          payload: json as Prisma.InputJsonValue,
+          fetchedAt,
+          expiresAt,
+        },
+        update: {
+          payload: json as Prisma.InputJsonValue,
+          fetchedAt,
+          expiresAt,
+        },
+      })
+      .catch(() => undefined);
+    return;
+  }
+  if (!hasSupabase()) return;
+  try {
+    const existing = await sbSelect<{ id: string }>("cadastral_snapshots", `${sbEq("cacheKey", cacheKey)}&select=id`);
+    if (existing[0]) {
+      await sbPatch("cadastral_snapshots", sbEq("id", existing[0].id), {
+        payload: json,
+        fetchedAt: fetchedAt.toISOString(),
+        expiresAt: expiresAt.toISOString(),
+      });
+      return;
+    }
+    await sbInsert("cadastral_snapshots", {
+      id: randomUUID(),
+      cacheKey,
+      payload: json,
+      fetchedAt: fetchedAt.toISOString(),
+      expiresAt: expiresAt.toISOString(),
+    });
+  } catch {
+    // REST cache is optional
+  }
 }
 
 function locFrom(dt: unknown) {

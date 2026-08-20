@@ -10,6 +10,8 @@
   --gold: #c4a36a;
   --sage: #3f5e54;
   --mist: #e7e0d2;
+  --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.11 0 0 0 0 0.09 0 0 0 0 0.07 0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  --hatch: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Cpath d='M-1 1l2-2M0 8l8-8M7 9l2-2' stroke='%231c1712' stroke-opacity='.07' stroke-width='.65'/%3E%3C/svg%3E");
 }
 
 html {
@@ -17,10 +19,11 @@ html {
 }
 
 body {
-  background:
+  background-color: #f4efe4;
+  background-image: var(--grain),
     radial-gradient(1200px 500px at 10% -10%, rgb(196 163 106 / 0.18), transparent 50%),
-    radial-gradient(900px 420px at 100% 0%, rgb(143 29 44 / 0.08), transparent 46%),
-    #f4efe4;
+    radial-gradient(900px 420px at 100% 0%, rgb(143 29 44 / 0.08), transparent 46%);
+  background-size: 180px 180px, auto, auto;
   color: #1c1712;
 }
 
@@ -34,7 +37,7 @@ body {
   background: #1c1712;
   color: #f4efe4;
   border-radius: 14px;
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.28);
+  box-shadow: 0 16px 40px rgba(28, 23, 18, 0.28);
 }
 
 .leaflet-popup-content {
@@ -70,9 +73,45 @@ body {
 }
 
 .card {
-  @apply rounded-3xl border border-ink/10 bg-white/70 shadow-card;
+  @apply rounded-3xl border border-ink/10 bg-white/75 shadow-rest;
+}
+
+.card-lift {
+  @apply rounded-3xl border border-ink/10 bg-white/85 shadow-lift;
 }
 
 .kicker {
   @apply text-xs uppercase tracking-[0.18em] text-wine;
+}
+
+.texture-calco {
+  background-color: rgb(231 224 210 / 0.72);
+  background-image: var(--hatch), var(--grain);
+  background-size: 8px 8px, 180px 180px;
+}
+
+.texture-ink {
+  background-color: #1c1712;
+  background-image: var(--grain);
+  background-size: 180px 180px;
+  background-blend-mode: overlay;
+}
+
+.folio-rule {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgb(196 163 106 / 0.85), transparent);
+}
+
+.data-table tbody tr {
+  @apply transition-colors hover:bg-mist/70;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .animate-rise {
+    animation: none;
+  }
 }

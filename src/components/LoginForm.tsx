@@ -61,6 +61,10 @@ export function LoginForm() {
         <span className="mb-1 block text-ink/70">Contraseña</span>
         <input name="password" type="password" required className="field-input" autoComplete="current-password" />
       </label>
+      <p className="text-xs leading-5 text-ink/55">
+        El correo es el de tu cuenta, no se publica. La cuenta de ejemplo abre un perfil de demostración para recorrer
+        la herramienta sin crear la tuya.
+      </p>
       {error ? <p className="text-sm text-wine">{error}</p> : null}
       <button type="submit" disabled={loading} className="btn btn-primary w-full">
         {loading ? "Entrando…" : "Entrar"}

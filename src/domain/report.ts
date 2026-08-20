@@ -45,8 +45,12 @@ export interface Report {
   /** Internal account id. Strip before sending to anonymous clients. */
   userId?: string;
   recommend?: boolean;
+  managerTaxId?: string;
+  managerLegalName?: string;
   createdAt: string;
   status: "published" | "pending" | "removed";
+  verification?: "anonimo" | "cuenta" | "evidencia";
+  trustBand?: "bajo" | "medio" | "alto";
 }
 
 export type PublicReport = Omit<Report, "userId">;
@@ -68,6 +72,9 @@ export interface CreateReportInput {
   author?: string;
   userId?: string;
   recommend?: boolean;
+  managerTaxId?: string;
+  managerLegalName?: string;
+  evidenceJpegBase64?: string;
 }
 
 export interface ReportEvidence {
