@@ -87,6 +87,8 @@ Para dejar la web pública:
 
 En Vercel el sistema de archivos es de solo lectura. Sin `SUPABASE_SECRET_KEY` (ni `DATABASE_URL`), cuentas, sesiones y aportes se escriben en `/tmp/rentaly-data` y se pierden al reciclar la instancia. En local, el mismo fallback usa `data/`.
 
+Las rutas `/api/*` pasan por un rate limit en el Edge (`slidingWindow`, 15 peticiones / 10 s por IP) con `@upstash/ratelimit`. En Vercel añade `UPSTASH_REDIS_REST_URL` y `UPSTASH_REDIS_REST_TOKEN` (REST, misma región que el proyecto). Si faltan o Redis falla, la API sigue (fail-open) y responde `429` + `Retry-After` solo cuando el cupo está agotado.
+
 ## Límites actuales
 
 Los aportes se guardan en Supabase (PostgREST con la clave secreta, o Prisma si hay `DATABASE_URL`) y, si no, en JSON. En un despliegue duradero sigue haciendo falta moderación y, si se desea, el índice estatal de precios de alquiler por sección censal. El Catastro no publica un inventario masivo de todas las viviendas de cada barrio por estos servicios libres: la distribución de inmuebles se obtiene finca a finca, que es justo el momento en el que alguien está a punto de alquilar.
