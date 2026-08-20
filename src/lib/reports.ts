@@ -1,10 +1,14 @@
 import { randomUUID } from "crypto";
-import type { CreateReportInput, Report, ReportType } from "./types";
+import type { AbuseCategory, Report, ReportType, CreateReportInput } from "./types";
 import { compactRef, isCadastralRef } from "./parse";
 import { getBarrio } from "./barrios-data";
 import { readJsonFile, writeJsonFile } from "./fs-store";
 import { publicAuthor, sanitizeReportText } from "@/domain/privacy";
+import { assertLegalPersonTaxId } from "@/domain/ownership";
+import { prisma } from "./db";
+import { ensureDatabase } from "./ensure-db";
 import seedReports from "@/data/seed-reports.json";
+import type { Report as DbReport } from "@prisma/client";
 
 const REPORTS_FILE = "reports.json";
 
@@ -24,7 +28,39 @@ const ABUSE_CATEGORIES = new Set([
 
 let writeQueue: Promise<void> = Promise.resolve();
 
+function mapReport(row: DbReport): Report {
+  return {
+    id: row.id,
+    type: row.type,
+    title: row.title,
+    body: row.body,
+    barrioId: row.barrioId || undefined,
+    cadastralRef: row.cadastralRef || undefined,
+    addressLabel: row.addressLabel || undefined,
+    yearFrom: row.yearFrom || undefined,
+    yearTo: row.yearTo || undefined,
+    rentEuros: row.rentEuros || undefined,
+    rating: row.rating || undefined,
+    abuseCategory: row.abuseCategory || undefined,
+    severity: row.severity || undefined,
+    conservationState: row.conservationState || undefined,
+    managerTaxId: row.managerTaxId || undefined,
+    managerLegalName: row.managerLegalName || undefined,
+    author: row.author,
+    userId: row.userId || undefined,
+    recommend: row.recommend ?? undefined,
+    createdAt: row.createdAt.toISOString(),
+    status: row.status,
+  };
+}
+
 async function readStore(): Promise<Report[]> {
+  const db = prisma();
+  if (db) {
+    await ensureDatabase();
+    const rows = await db.report.findMany({ orderBy: { createdAt: "desc" } });
+    return rows.map(mapReport);
+  }
   const parsed = await readJsonFile<Report[]>(REPORTS_FILE, seedReports as Report[]);
   if (Array.isArray(parsed) && parsed.length) return parsed;
   return seedReports as Report[];
@@ -103,6 +139,16 @@ export async function createReport(input: CreateReportInput): Promise<Report> {
     throw new Error("La valoración va de 1 a 5.");
   }
 
+  let managerTaxId: string | undefined;
+  let managerLegalName: string | undefined;
+  if (input.managerTaxId || input.managerLegalName) {
+    if (!input.managerTaxId || !input.managerLegalName) {
+      throw new Error("Si indicas una gestora o SOCIMI, hace falta CIF y razón social. No subas notas simples.");
+    }
+    managerTaxId = assertLegalPersonTaxId(input.managerTaxId);
+    managerLegalName = sanitizeReportText(input.managerLegalName).slice(0, 120);
+  }
+
   const report: Report = {
     id: randomUUID(),
     type,
@@ -117,6 +163,8 @@ export async function createReport(input: CreateReportInput): Promise<Report> {
     rating: input.rating,
     abuseCategory: type === "abuso" ? input.abuseCategory : undefined,
     severity: input.severity,
+    managerTaxId,
+    managerLegalName,
     author: publicAuthor(input.author),
     userId: input.userId,
     recommend: input.recommend,
@@ -125,10 +173,52 @@ export async function createReport(input: CreateReportInput): Promise<Report> {
   };
 
   writeQueue = writeQueue.then(async () => {
+    const db = prisma();
+    if (db) {
+      await ensureDatabase();
+      await db.report.create({
+        data: {
+          id: report.id,
+          type: report.type,
+          title: report.title,
+          body: report.body,
+          barrioId: report.barrioId,
+          cadastralRef: report.cadastralRef,
+          addressLabel: report.addressLabel,
+          yearFrom: report.yearFrom,
+          yearTo: report.yearTo,
+          rentEuros: report.rentEuros,
+          rating: report.rating,
+          abuseCategory: (report.abuseCategory as AbuseCategory | undefined) || undefined,
+          severity: report.severity,
+          managerTaxId: report.managerTaxId,
+          managerLegalName: report.managerLegalName,
+          author: report.author,
+          userId: report.userId,
+          recommend: report.recommend,
+          createdAt: new Date(report.createdAt),
+          status: "published",
+        },
+      });
+      return;
+    }
     const reports = await readStore();
     reports.unshift(report);
     await writeStore(reports);
   });
   await writeQueue;
+  if (report.managerTaxId && report.managerLegalName && cadastralRef) {
+    try {
+      const { createOwnershipClaim } = await import("./ownership-store");
+      await createOwnershipClaim({
+        parcelRef: cadastralRef,
+        taxId: report.managerTaxId,
+        legalName: report.managerLegalName,
+        source: "user_verified",
+      });
+    } catch {
+      // report stands even if the entity claim cannot be stored yet
+    }
+  }
   return report;
 }

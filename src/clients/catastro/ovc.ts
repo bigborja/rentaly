@@ -6,6 +6,9 @@ import type {
   StreetCandidate,
 } from "@/domain";
 import { TtlCache } from "@/cache/ttl";
+import { ConcurrencyLimiter } from "@/cache/limiter";
+import { prisma } from "@/lib/db";
+import type { Prisma } from "@prisma/client";
 import { asArray, compactRef, formatRef, parseAddressQuery, parseCoord, parseNumber } from "@/lib/parse";
 
 const CALLEJERO =
@@ -21,6 +24,8 @@ const HEADERS = {
 type Json = Record<string, unknown>;
 
 const responseCache = new TtlCache<Json>(30 * 60 * 1000, 800);
+const catastroLimiter = new ConcurrencyLimiter(3);
+const SNAPSHOT_MS = 24 * 60 * 60 * 1000;
 
 function asRecord(value: unknown): Json {
   return value && typeof value === "object" && !Array.isArray(value) ? (value as Json) : {};
@@ -47,20 +52,55 @@ function controlError(result: unknown): string | undefined {
 async function catastroGet(url: string): Promise<Json> {
   const cached = responseCache.get(url);
   if (cached) return cached;
-  const response = await fetch(url, {
-    headers: HEADERS,
-    next: { revalidate: 60 * 30 },
+
+  const db = prisma();
+  if (db) {
+    try {
+      const snap = await db.cadastralSnapshot.findUnique({ where: { cacheKey: url } });
+      if (snap && snap.expiresAt > new Date()) {
+        const payload = snap.payload as Json;
+        responseCache.set(url, payload);
+        return payload;
+      }
+    } catch {
+      // DATABASE_URL set before migrate
+    }
+  }
+
+  const json = await catastroLimiter.run(async () => {
+    const response = await fetch(url, {
+      headers: HEADERS,
+      next: { revalidate: 60 * 30 },
+    });
+    if (!response.ok) {
+      throw new Error(`Catastro HTTP ${response.status}`);
+    }
+    try {
+      return (await response.json()) as Json;
+    } catch {
+      throw new Error("El Catastro no ha devuelto un JSON válido.");
+    }
   });
-  if (!response.ok) {
-    throw new Error(`Catastro HTTP ${response.status}`);
-  }
-  let json: Json;
-  try {
-    json = (await response.json()) as Json;
-  } catch {
-    throw new Error("El Catastro no ha devuelto un JSON válido.");
-  }
+
   responseCache.set(url, json);
+  if (db) {
+    void db.cadastralSnapshot
+      .upsert({
+        where: { cacheKey: url },
+        create: {
+          cacheKey: url,
+          payload: json as Prisma.InputJsonValue,
+          fetchedAt: new Date(),
+          expiresAt: new Date(Date.now() + SNAPSHOT_MS),
+        },
+        update: {
+          payload: json as Prisma.InputJsonValue,
+          fetchedAt: new Date(),
+          expiresAt: new Date(Date.now() + SNAPSHOT_MS),
+        },
+      })
+      .catch(() => undefined);
+  }
   return json;
 }
 

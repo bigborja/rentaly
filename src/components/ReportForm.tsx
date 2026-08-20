@@ -37,6 +37,8 @@ export function ReportForm({
       barrioId: String(form.get("barrioId") || "") || undefined,
       cadastralRef: String(form.get("cadastralRef") || "") || undefined,
       addressLabel: String(form.get("addressLabel") || "") || undefined,
+      managerTaxId: String(form.get("managerTaxId") || "") || undefined,
+      managerLegalName: String(form.get("managerLegalName") || "") || undefined,
       yearFrom: form.get("yearFrom") ? Number(form.get("yearFrom")) : undefined,
       rentEuros: form.get("rentEuros") ? Number(form.get("rentEuros")) : undefined,
       rating: form.get("rating") ? Number(form.get("rating")) : undefined,
@@ -143,6 +145,14 @@ export function ReportForm({
       <Field label="Calle o entorno">
         <input name="addressLabel" defaultValue={defaultAddress} className="field-input" placeholder="Calle y portal, o zona" />
       </Field>
+      <div className="grid gap-4 sm:grid-cols-2">
+        <Field label="CIF de la gestora o SOCIMI (opcional)">
+          <input name="managerTaxId" className="field-input font-mono" placeholder="A28000000 · nunca un DNI" />
+        </Field>
+        <Field label="Razón social">
+          <input name="managerLegalName" className="field-input" placeholder="Solo persona jurídica" />
+        </Field>
+      </div>
       <div className="grid gap-4 sm:grid-cols-3">
         <Field label="Año">
           <input name="yearFrom" type="number" min="1990" max="2026" className="field-input" />
@@ -183,7 +193,8 @@ export function ReportForm({
         </Field>
       ) : null}
       <p className="text-xs leading-5 text-ink/55">
-        No publiques DNI, cuentas bancarias ni el nombre de menores. Si hay delito o riesgo, 112.
+        No publiques DNI, cuentas bancarias ni el nombre de menores. No subas notas simples: si conoces la gestora,
+        basta el CIF y la razón social. Si hay delito o riesgo, 112.
       </p>
       {error ? <p className="text-sm text-wine">{error}</p> : null}
       <button type="submit" disabled={loading} className="btn btn-primary">

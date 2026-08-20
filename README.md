@@ -49,7 +49,9 @@ prisma/schema.prisma   modelo PostGIS de destino
 
 El Catastro **no** publica titulares de personas físicas. Los “grandes tenedores” solo se modelan como personas jurídicas (BORM, CIF, SOCIMI) o como evidencia de usuaria ya anonimizada. Los aportes salen a la API sin `userId`.
 
-Hasta que haya `DATABASE_URL`, cuentas y relatos siguen en JSON (`data/` en local, `/tmp` en Vercel).
+Hasta que haya `DATABASE_URL` de Supabase (`https://ipnqyejdfcwcltutrrvh.supabase.co`), cuentas y relatos siguen en JSON (`data/` en local, `/tmp` en Vercel). Con la URI, Prisma persiste fincas, snapshots del Catastro (24 h), VUT cruzadas, renta INE y CIF.
+
+Pega `supabase/init.sql` en el SQL editor de Supabase o ejecuta `npx prisma migrate diff` / `db:sql` cuando tengas la URI. En Vercel, añade `DATABASE_URL` y `NEXT_PUBLIC_SUPABASE_URL`.
 
 ## Fuentes
 

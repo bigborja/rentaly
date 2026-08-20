@@ -10,6 +10,7 @@ export interface TouristLicense {
   longitude?: number;
   latitude?: number;
   parcelRef?: string;
+  onParcel?: boolean;
   source: "ayuntamiento_madrid_vut";
 }
 

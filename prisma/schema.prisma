@@ -111,8 +111,6 @@ model Parcel {
   censusSection     CensusSection?    @relation(fields: [censusSectionCode], references: [code])
   longitude         Float?
   latitude          Float?
-  /// Optional PostGIS point; populate with ST_SetSRID(ST_MakePoint(longitude, latitude), 4326).
-  geom              Unsupported("geometry(Point, 4326)")?
   parcelAreaM2      Float?
   parcelKind        String?
   yearBuilt         Int?
@@ -308,6 +306,8 @@ model Report {
   abuseCategory      AbuseCategory?
   severity           Severity?
   conservationState  ConservationState?
+  managerTaxId       String?
+  managerLegalName   String?
   author             String
   userId             String?
   user               User?               @relation(fields: [userId], references: [id])

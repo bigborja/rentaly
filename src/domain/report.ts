@@ -45,6 +45,8 @@ export interface Report {
   /** Internal account id. Strip before sending to anonymous clients. */
   userId?: string;
   recommend?: boolean;
+  managerTaxId?: string;
+  managerLegalName?: string;
   createdAt: string;
   status: "published" | "pending" | "removed";
 }
@@ -68,6 +70,8 @@ export interface CreateReportInput {
   author?: string;
   userId?: string;
   recommend?: boolean;
+  managerTaxId?: string;
+  managerLegalName?: string;
 }
 
 export interface ReportEvidence {
