@@ -26,6 +26,20 @@ export const SINDICATO_INQUILINAS = {
 export const CATASTRO_SEDE = "https://www.sedecatastro.gob.es/";
 export const EMERGENCY_NUMBER = "112";
 
+/** Public colegiado searchers. Link out; never ingest names, numbers or emails. */
+export const CAF_MADRID = {
+  title: "CAF Madrid · ¿Su administrador está colegiado?",
+  href: "https://cafmadrid.es/su-administrador-esta-colegiado/",
+  detail:
+    "Colegio Profesional de Administradores de Fincas de Madrid. El listado es suyo; pide que los datos personales no se usen con fines comerciales.",
+};
+
+export const COAPI_MADRID = {
+  title: "COAPI Madrid · APIs colegiados",
+  href: "https://www.coapimadrid.es/nuestros_apis.php",
+  detail: "Colegio Oficial de Agentes de la Propiedad Inmobiliaria de Madrid. Censo de colegiados en su sede web.",
+};
+
 export function serpaviAppUrl(cadastralRef?: string) {
   if (!cadastralRef) return SERPAVI_APP;
   return `${SERPAVI_APP}?refcat=${encodeURIComponent(cadastralRef)}`;

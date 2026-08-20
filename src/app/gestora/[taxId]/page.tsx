@@ -8,6 +8,7 @@ import { Guide } from "@/components/Guide";
 import { UiIcon } from "@/components/UiIcon";
 import { BuildingsIcon } from "@phosphor-icons/react/ssr";
 import { DATA_SOURCES } from "@/domain/sources";
+import { ColegioDisclaimer } from "@/components/ColegioDisclaimer";
 
 export const dynamic = "force-dynamic";
 
@@ -107,6 +108,7 @@ export default async function GestoraPage({ params }: { params: Promise<{ taxId:
       ) : (
         <p className="text-sm text-ink/55">Aún no hay relatos con este CIF. El primero cuenta.</p>
       )}
+      <ColegioDisclaimer />
     </div>
   );
 }

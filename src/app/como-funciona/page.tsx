@@ -112,9 +112,9 @@ export default function ComoFuncionaPage() {
                 "Identificador fiscal de una empresa o entidad (empieza por letra, no por número de DNI). El buscador de gestoras agrupa relatos que citan ese CIF; la ficha de entidad, las parcelas. Nunca DNI ni notas simples.",
             },
             {
-              term: "RAIN",
+              term: "CAF / COAPI",
               meaning:
-                "Registro de Agentes Inmobiliarios de la Comunidad de Madrid (datos abiertos, adhesión voluntaria). En Rentaly solo entran las sociedades con CIF. No es un listado de colegiados CAF/COAPI ni de anunciantes de portales.",
+                "Colegios profesionales de administradores de fincas y de agentes de la propiedad inmobiliaria. Publican buscadores de colegiados en su web. Rentaly no copia esos nombres: te enlaza a la fuente oficial.",
             },
             {
               term: "ITE / IEE",
@@ -150,7 +150,7 @@ export default function ComoFuncionaPage() {
         <ul className="mt-3 list-disc space-y-2 pl-5 text-sm leading-6 text-paper/75">
           <li>No listamos pisos ni cobramos comisión.</li>
           <li>No mostramos titularidad de personas físicas ni almacenamos DNI.</li>
-          <li>No scrapamos Idealista, Fotocasa, Google Places ni directorios de colegiados.</li>
+          <li>No scrapamos Idealista, Fotocasa, Google Places ni directorios de colegiados: CAF y COAPI se consultan en su sede.</li>
           <li>No sustituimos denuncia, sindicato ni asesoría jurídica.</li>
           <li>Los relatos vecinales son opiniones: no certificamos cada frase.</li>
         </ul>

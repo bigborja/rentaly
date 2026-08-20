@@ -25,7 +25,7 @@ Civic PWA for Madrid-capital tenants. Open data + crowdsourcing. Not a listings 
 
 - Never store or show DNI, natural-person owner names, or notas simples PDFs.
 - Legal persons only (`assertLegalPersonTaxId`). Portfolios are CIF → parcels (`/entidad`) and CIF → reports (`/gestora`).
-- RAIN (Comunidad de Madrid open data, CC BY): ingest the official CSV, **CIF-only**. Drop NIF/NIE and natural-person names. Do not scrape the RAIN HTML portal, CAF Madrid, COAPI, Idealista, Fotocasa, Google Places, Infocif/eInforma/Axesor, or OpenCorporates officer lists.
+- RAIN (Comunidad de Madrid open data, CC BY): ingest the official CSV, **CIF-only**. Drop NIF/NIE and natural-person names. Do not scrape the RAIN HTML portal, CAF Madrid, COAPI, Idealista, Fotocasa, Google Places, Infocif/eInforma/Axesor, or OpenCorporates officer lists. CAF/COAPI public searchers may be **linked** as official sources; never copy colegiado names.
 - Do not scrape ITE sede or BORM. Do not fetch user-supplied URLs (SSRF). Source URLs must be allowlisted (BOE, BORM, registradores, CNMV, datos.gob.es, madrid.es, comunidad.madrid).
 - JPEG evidence: hash a crop and discard pixels (stronger than EXIF strip). No PII in storage.
 - Trust bands: anónimo < cuenta < evidencia.

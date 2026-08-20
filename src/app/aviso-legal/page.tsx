@@ -31,7 +31,9 @@ export default function AvisoLegalPage() {
           conjunto de datos municipales. La renta de sección censal es un agregado del INE, no de una finca. El
           directorio de gestoras cruza la memoria vecinal con el Registro de Agentes Inmobiliarios (RAIN) de la
           Comunidad de Madrid (CC BY): solo personas jurídicas con CIF; se descartan NIF/NIE y nombres de particulares.
-          No ingerimos CAF Madrid, COAPI, OpenCorporates, Infocif, Idealista, Fotocasa ni Google Places.
+          Los buscadores de colegiados del CAF Madrid y del COAPI Madrid se enlazan como fuente oficial: no copiamos
+          esos censos (el CAF indica que los datos personales de su listado no pueden usarse con fines comerciales). No
+          ingerimos OpenCorporates, Infocif, Idealista, Fotocasa ni Google Places.
         </p>
         <p>
           Los aportes (experiencias, incidentes, avisos de abuso) son opiniones o relatos de usuarias y usuarios. No

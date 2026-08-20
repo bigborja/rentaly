@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { MagnifyingGlassIcon, BuildingsIcon } from "@phosphor-icons/react/ssr";
 import { Callout, Guide } from "@/components/Guide";
+import { ColegioDisclaimer } from "@/components/ColegioDisclaimer";
 import { UiIcon } from "@/components/UiIcon";
 import { searchGestoras, type GestoraHit } from "@/lib/gestoras";
 import { DATA_SOURCES } from "@/domain/sources";
@@ -29,7 +30,8 @@ export default async function GestorasPage({
         <a className="underline decoration-gold" href={DATA_SOURCES.madridRain.homepage} target="_blank" rel="noreferrer">
           Registro de Agentes Inmobiliarios (RAIN)
         </a>{" "}
-        de la Comunidad de Madrid. No hay directorio de colegiados, ni reseñas de Google, ni scrapes de Idealista.
+        de la Comunidad de Madrid. Los colegios de personas físicas se consultan en su sede; abajo van los enlaces
+        oficiales. No hay reseñas de Google ni scrapes de Idealista.
       </p>
 
       <form action="/gestoras" method="get" className="mt-6 flex flex-col gap-3 sm:flex-row">
@@ -59,8 +61,8 @@ export default async function GestorasPage({
           <p>
             RAIN es adhesión voluntaria y cubre toda la Comunidad, no solo Madrid capital. Filtramos el volcado abierto:
             se quedan SL, SA y otras personas jurídicas; se tiran NIF, NIE y nombres de agentes particulares. CAF Madrid
-            y COAPI son colegios de personas físicas: no los indexamos. CNMV, BME o BORM sirven como enlace de evidencia
-            en una finca, no como directorio masivo.
+            y COAPI publican buscadores de colegiados: enlazamos a esas sedes y no copiamos el censo. CNMV, BME o BORM
+            sirven como enlace de evidencia en una finca, no como directorio masivo.
           </p>
         </Guide>
       </div>
@@ -87,6 +89,8 @@ export default async function GestorasPage({
         </Link>
         .
       </Callout>
+
+      <ColegioDisclaimer />
     </div>
   );
 }
