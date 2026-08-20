@@ -1,5 +1,5 @@
 import { Ratelimit } from "@upstash/ratelimit";
-import { Redis } from "@upstash/redis";
+import { Redis } from "@upstash/redis/cloudflare";
 import { NextResponse, type NextFetchEvent, type NextRequest } from "next/server";
 import { clientIpFromRequest } from "@/lib/client-ip";
 
